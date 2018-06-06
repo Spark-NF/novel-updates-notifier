@@ -3,11 +3,11 @@
     "name": "Novel Updates",
 	"version": "1.0",
 
-    "description": "Adds a solid red border to all webpages matching mozilla.org.",
-	"homepage_url": "https://github.com/mdn/webextensions-examples/tree/master/beastify",
+    "description": "Add a notification icon and reading shortcuts for your Novel Updates reading list..",
+	"homepage_url": "https://github.com/Spark-NF/firefox-novel-updates",
     "icons": {
-        "48": "icons/border-48.png",
-        "96": "icons/border-96.png"
+        "48": "icons/icon-48.png",
+        "96": "icons/icon-96.png"
 	},
 
 	"background": {
@@ -21,11 +21,23 @@
 	],
 
 	"browser_action": {
-		"default_icon": "icons/border-32.png",
+		"default_icon": {
+			"16": "icons/action-16.png",
+			"32": "icons/action-32.png",
+			"64": "icons/action-64.png"
+		},
 		"theme_icons": [{
-			"light": "icons/border-32-light.png",
-			"dark": "icons/border-32.png",
+			"light": "icons/action-16-light.png",
+			"dark": "icons/action-16.png",
+			"size": 16
+		},{
+			"light": "icons/action-32-light.png",
+			"dark": "icons/action-32.png",
 			"size": 32
+		},{
+			"light": "icons/action-64-light.png",
+			"dark": "icons/action-64.png",
+			"size": 64
 		}],
 		"default_title": "Novel Updates",
 		"default_popup": "popup/main.html"
