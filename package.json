@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Add-on for Firefox that notifies you when a novel from your reading list has a new chapter available.",
   "scripts": {
-    "postinstall": "bash scripts/postinstall.sh"
+    "postinstall": "bash scripts/postinstall.sh",
+    "build": "bash scripts/build.sh",
+    "check": "bash scripts/check.sh"
   },
   "repository": {
     "type": "git",
@@ -16,6 +18,9 @@
   },
   "homepage": "https://github.com/Spark-NF/firefox-novel-updates#readme",
   "dependencies": {
-    "bootstrap": "^4.1.1"
+    "@types/firefox-webext-browser": "^58.0.3",
+    "bootstrap": "^4.1.1",
+    "tslint": "^5.10.0",
+    "typescript": "^2.9.1"
   }
 }

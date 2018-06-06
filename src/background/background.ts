@@ -1,26 +1,31 @@
+// tslint:disable-next-line
+interface Window {
+	readingList: any;
+}
+
 // Async sleep helper
-function sleep(ms) {
-	return new Promise(resolve => setTimeout(resolve, ms));
+function sleep(ms: number) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 // Ajax helper
-function objectToParams(obj) {
+function objectToParams(obj: { [key: string]: string }) {
 	let str = "";
 	for (const key in obj) {
-		if (str != "") {
+		if (str !== "") {
 			str += "&";
 		}
 		str += key + "=" + encodeURIComponent(obj[key]);
 	}
 	return str;
 }
-function ajax(url, method, data, contentType) {
-    return new Promise(function(resolve, reject) {
+function ajax(url: string, method?: "GET" | "POST", data?: any, contentType?: string) {
+	return new Promise<XMLHttpRequest>((resolve, reject) => {
 		const xhr = new XMLHttpRequest();
 		xhr.onload = function() {
 			resolve(this);
-		}
-        xhr.onerror = reject;
+		};
+		xhr.onerror = reject;
 		xhr.open(method || "GET", url, true);
 		if (contentType) {
 			xhr.setRequestHeader("Content-type", contentType);
@@ -32,7 +37,7 @@ function ajax(url, method, data, contentType) {
 		} else {
 			xhr.send();
 		}
-    });
+	});
 }
 
 // Storage methods
@@ -42,24 +47,24 @@ try {
 } catch (e) {
 	store = browser.storage.local;
 }*/
-var store = browser.storage.local;
-async function setSettings(values) {
-	return await store.set(values);
+const store = browser.storage.local;
+function setSettings(values: { [key: string]: any }) {
+	return store.set(values);
 }
-async function getSettings() {
-	return await store.get(null);
+function getSettings() {
+	return store.get(null);
 }
 
 // Perform a series search
-async function search(name) {
+async function search(query: string) {
 	const rq = await ajax("https://www.novelupdates.com/wp-admin/admin-ajax.php", "POST", {
 		action: "nd_ajaxsearchmain",
 		strType: "desktop",
-		strOne: name
+		strOne: query,
 	});
 	const parser = new DOMParser();
 	const xml = parser.parseFromString(rq.responseText, "text/html");
-	const links = xml.getElementsByClassName("a_search");
+	const links = xml.getElementsByClassName("a_search") as HTMLCollectionOf<HTMLLinkElement>;
 
 	const results = [];
 	for (const link of links) {
@@ -76,10 +81,10 @@ async function search(name) {
 }
 
 // List management functions
-async function putInList(id) {
-	return ajax(`https://www.novelupdates.com/updatelist.php?sid=${id}&lid=0&act=move`)
+async function putInList(id: number) {
+	return ajax(`https://www.novelupdates.com/updatelist.php?sid=${id}&lid=0&act=move`);
 }
-async function removeFromList(id) {
+async function removeFromList(id: number) {
 	return ajax(`https://www.novelupdates.com/readinglist_update.php?rid=0&sid=${id}&checked=noo`);
 }
 
@@ -93,12 +98,12 @@ async function checkLoginStatus() {
 	}
 
 	browser.browserAction.setBadgeText({ text: "OFF" });
-	browser.browserAction.setBadgeBackgroundColor({ 'color': 'orange' });
+	browser.browserAction.setBadgeBackgroundColor({ color: "orange" });
 	return false;
 }
 
 // Send login request
-function login(username, password) {
+function login(username: string, password: string) {
 	return ajax("https://www.novelupdates.com/login/", "POST", {
 		log: username,
 		pwd: password,
@@ -110,7 +115,7 @@ async function tryLogin() {
 		return false;
 	}
 	login(settings.username, settings.password);
-	for (var i = 0; i < 30; ++i) {
+	for (let i = 0; i < 30; ++i) {
 		if (await checkLoginStatus()) {
 			return true;
 		}
@@ -128,7 +133,7 @@ async function loadReadingList() {
 	const rq = await ajax("https://www.novelupdates.com/reading-list/");
 	const parser = new DOMParser();
 	const xml = parser.parseFromString(rq.responseText, "text/html");
-	const rows = xml.getElementsByClassName("rl_links");
+	const rows = xml.getElementsByClassName("rl_links") as HTMLCollectionOf<HTMLTableRowElement>;
 
 	const novels = [];
 	let novelsWithChanges = 0;
@@ -164,7 +169,7 @@ async function loadReadingList() {
 	}
 
 	browser.browserAction.setBadgeText({ text: novelsWithChanges > 0 ? novelsWithChanges.toString() : "" });
-	browser.browserAction.setBadgeBackgroundColor({ 'color': 'red' });
+	browser.browserAction.setBadgeBackgroundColor({ color: "red" });
 
 	return novels;
 }
@@ -182,7 +187,7 @@ async function getReadingList() {
 setInterval(reloadReadingList, 5 * 60 * 1000);
 
 // Initial load
-(async function() {
+(async () => {
 	if (await checkLoginStatus() || await tryLogin()) {
 		reloadReadingList();
 	}

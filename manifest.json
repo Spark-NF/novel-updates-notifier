@@ -11,7 +11,7 @@
 	},
 
 	"background": {
-		"scripts": ["background/background.js"]
+		"scripts": ["src/background/background.js"]
 	},
 
 	"permissions": [
@@ -40,6 +40,6 @@
 			"size": 64
 		}],
 		"default_title": "Novel Updates",
-		"default_popup": "popup/main.html"
+		"default_popup": "src/popup/main.html"
 	}
 }

@@ -1,6 +1,9 @@
 # Vendor scripts
 vendor/
 
+# Compiled TypeScript files
+src/**/*.js
+
 # Logs
 logs
 *.log

@@ -1,0 +1,10 @@
+{
+	"extends": "../base",
+	"compilerOptions": {
+		"outFile": "main.js"
+	},
+	"include": [
+		"**/*.ts",
+		"../common/**/*.ts"
+	]
+}
