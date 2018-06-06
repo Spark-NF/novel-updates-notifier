@@ -1,6 +1,7 @@
 const background = browser.extension.getBackgroundPage();
 
-const loader = document.getElementById("loader");
+const loaderDiv = document.getElementById("loader");
+const loaderText = loaderDiv.getElementsByTagName("span")[0];
 const loginDiv = document.getElementById("login-form");
 const loginForm = loginDiv.getElementsByTagName("form")[0];
 const loginFormError = document.getElementById("login-error");
@@ -21,16 +22,16 @@ async function displayNovels() {
 		latestCell.innerHTML = novel.latest.name;
 	}
 
-	loader.classList.add("hidden");
+	loaderDiv.classList.add("hidden");
 	novelsDiv.classList.remove("hidden");
 }
 
 (async function() {
 	if (await background.checkLoginStatus()) {
-		loader.innerHTML = "Loading reading list...";
+		loaderText.innerHTML = "Loading reading list...";
 		await displayNovels();
 	} else {
-		loader.classList.add("hidden");
+		loaderDiv.classList.add("hidden");
 		loginDiv.classList.remove("hidden");
 	}
 
@@ -38,8 +39,8 @@ async function displayNovels() {
 	loginForm.onsubmit = async function(e) {
 		e.preventDefault();
 
-		loader.innerHTML = "Logging in...";
-		loader.classList.remove("hidden");
+		loaderText.innerHTML = "Logging in...";
+		loaderDiv.classList.remove("hidden");
 		loginDiv.classList.add("hidden");
 
 		await background.setSettings({
@@ -56,7 +57,7 @@ async function displayNovels() {
 			loginFormError.innerHTML = "Login failure";
 			loginFormError.classList.remove("hidden");
 
-			loader.classList.add("hidden");
+			loaderDiv.classList.add("hidden");
 			loginDiv.classList.remove("hidden");
 		}
 
