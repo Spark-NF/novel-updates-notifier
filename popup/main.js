@@ -7,10 +7,18 @@ const loginForm = loginDiv.getElementsByTagName("form")[0];
 const loginFormError = document.getElementById("login-error");
 const novelsDiv = document.getElementById("novel-list");
 const novelsTable = novelsDiv.getElementsByTagName("table")[0];
+const novelsRefreshButton = document.getElementById("refresh-novel-list");
 
 async function displayNovels() {
 	const novels = await background.getReadingList();
 
+	// Empty the novels table first
+	var rowCount = novelsTable.rows.length;
+	while (--rowCount > 0) {
+		novelsTable.deleteRow(rowCount);
+	}
+
+	// Populate the table
 	for (const novel of novels) {
 		const row = novelsTable.insertRow();
 		const nameCell = row.insertCell();
@@ -26,6 +34,44 @@ async function displayNovels() {
 	novelsDiv.classList.remove("hidden");
 }
 
+// Button to refresh novel list
+novelsRefreshButton.onclick = async function() {
+	loaderText.innerHTML = "Refreshing novels...";
+	loaderDiv.classList.remove("hidden");
+
+	await background.reloadReadingList();
+	await displayNovels();
+};
+
+// Store credentials on login form submit
+loginForm.onsubmit = async function(e) {
+	e.preventDefault();
+
+	loaderText.innerHTML = "Logging in...";
+	loaderDiv.classList.remove("hidden");
+
+	await background.setSettings({
+		username: document.getElementsByName("username")[0].value,
+		password: document.getElementsByName("password")[0].value,
+	});
+
+	if (await background.tryLogin()) {
+		loginFormError.classList.add("hidden");
+		loginDiv.classList.add("hidden");
+
+		await background.reloadReadingList();
+		await displayNovels();
+	} else {
+		loginFormError.innerHTML = "Login failure";
+		loginFormError.classList.remove("hidden");
+
+		loaderDiv.classList.add("hidden");
+	}
+
+	return false;
+};
+
+// Show novels or login form on popup load
 (async function() {
 	if (await background.checkLoginStatus()) {
 		loaderText.innerHTML = "Loading reading list...";
@@ -33,34 +79,5 @@ async function displayNovels() {
 	} else {
 		loaderDiv.classList.add("hidden");
 		loginDiv.classList.remove("hidden");
-	}
-
-	// Store credentials on login form submit
-	loginForm.onsubmit = async function(e) {
-		e.preventDefault();
-
-		loaderText.innerHTML = "Logging in...";
-		loaderDiv.classList.remove("hidden");
-		loginDiv.classList.add("hidden");
-
-		await background.setSettings({
-			username: document.getElementsByName("username")[0].value,
-			password: document.getElementsByName("password")[0].value,
-		});
-
-		if (await background.tryLogin()) {
-			loginFormError.classList.add("hidden");
-
-			await background.reloadReadingList();
-			await displayNovels();
-		} else {
-			loginFormError.innerHTML = "Login failure";
-			loginFormError.classList.remove("hidden");
-
-			loaderDiv.classList.add("hidden");
-			loginDiv.classList.remove("hidden");
-		}
-
-		return false;
 	}
 })();
