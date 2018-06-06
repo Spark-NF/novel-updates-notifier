@@ -2,7 +2,6 @@
 	"extends": "tslint:latest",
 	"rules": {
 		"forin": false,
-		"indent": [true, "tabs"],
 		"object-literal-sort-keys": false
 	}
 }
