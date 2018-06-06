@@ -150,7 +150,7 @@ setInterval(reloadReadingList, 5 * 60 * 1000);
 
 // Initial load
 (async function() {
-	if (await tryLogin()) {
+	if (await checkLoginStatus() || await tryLogin()) {
 		reloadReadingList();
 	}
 })();
