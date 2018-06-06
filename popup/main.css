@@ -26,3 +26,7 @@ body {
 #loader img {
 	margin-bottom: 10px;
 }
+
+#search .search_hl {
+    font-weight: bold;
+}

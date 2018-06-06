@@ -8,6 +8,8 @@ const loginFormError = document.getElementById("login-error");
 const novelsDiv = document.getElementById("novel-list");
 const novelsTable = novelsDiv.getElementsByTagName("table")[0];
 const novelsRefreshButton = document.getElementById("refresh-novel-list");
+const searchInput = document.getElementById("search").getElementsByTagName("input")[0];
+const searchResults = document.getElementById("search-results");
 
 async function displayNovels() {
 	const novels = await background.getReadingList();
@@ -41,6 +43,19 @@ novelsRefreshButton.onclick = async function() {
 
 	await background.reloadReadingList();
 	await displayNovels();
+};
+
+// Show search results input change
+searchInput.onchange = async function() {
+	searchResults.innerHTML = "Loading results...";
+	const results = await background.search(this.value);
+	searchResults.innerHTML = "";
+	for (var i = 0; i < 5 && i < results.length; ++i) {
+		const result = results[i];
+		var li = document.createElement('li');
+		li.innerHTML = result.name;
+		searchResults.appendChild(li);
+	}
 };
 
 // Store credentials on login form submit

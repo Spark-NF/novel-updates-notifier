@@ -50,6 +50,31 @@ async function getSettings() {
 	return await store.get(null);
 }
 
+// Perform a series search
+async function search(name) {
+	const rq = await ajax("https://www.novelupdates.com/wp-admin/admin-ajax.php", "POST", {
+		action: "nd_ajaxsearchmain",
+		strType: "desktop",
+		strOne: name
+	});
+	const parser = new DOMParser();
+	const xml = parser.parseFromString(rq.responseText, "text/html");
+	const links = xml.getElementsByClassName("a_search");
+
+	const results = [];
+	for (const link of links) {
+		const img = link.getElementsByTagName("img")[0];
+		const name = link.getElementsByTagName("span")[0];
+		results.push({
+			name: name.innerHTML.trim(),
+			url: link.href,
+			img: img.src,
+		});
+	}
+
+	return results;
+}
+
 // Check if we are logged in
 async function checkLoginStatus() {
 	const cookies = await browser.cookies.getAll({ url: "https://www.novelupdates.com" });
