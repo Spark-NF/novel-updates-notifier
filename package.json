@@ -20,6 +20,7 @@
   "dependencies": {
     "@types/firefox-webext-browser": "^58.0.3",
     "bootstrap": "^4.1.1",
+    "rollup": "^0.60.0",
     "tslint": "^5.10.0",
     "typescript": "^2.9.1"
   }

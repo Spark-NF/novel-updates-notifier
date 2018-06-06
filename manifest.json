@@ -11,7 +11,7 @@
 	},
 
 	"background": {
-		"scripts": ["src/background/background.js"]
+		"scripts": ["src/background/bundle.js"]
 	},
 
 	"permissions": [

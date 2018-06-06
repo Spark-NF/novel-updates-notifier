@@ -4,5 +4,8 @@
 		"removeComments": true,
 		"sourceMap": false,
 		"target": "es2017"
-	}
+	},
+	"include": [
+		"**/*.ts"
+	]
 }
