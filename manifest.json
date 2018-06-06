@@ -1,0 +1,33 @@
+{
+    "manifest_version": 2,
+    "name": "Novel Updates",
+	"version": "1.0",
+
+    "description": "Adds a solid red border to all webpages matching mozilla.org.",
+	"homepage_url": "https://github.com/mdn/webextensions-examples/tree/master/beastify",
+    "icons": {
+        "48": "icons/border-48.png",
+        "96": "icons/border-96.png"
+	},
+
+	"background": {
+		"scripts": ["background/background.js"]
+	},
+
+	"permissions": [
+		"storage",
+		"cookies",
+		"https://www.novelupdates.com/*"
+	],
+
+	"browser_action": {
+		"default_icon": "icons/border-32.png",
+		"theme_icons": [{
+			"light": "icons/border-32-light.png",
+			"dark": "icons/border-32.png",
+			"size": 32
+		}],
+		"default_title": "Novel Updates",
+		"default_popup": "popup/main.html"
+	}
+}

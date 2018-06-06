@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="main.css" />
+    </head>
+    <body>
+        <div id="loader">
+            Loading...
+        </div>
+        <div id="login-form" class="hidden">
+            <form>
+				<p id="login-error" class="hidden"></p>
+                <label for="username">Username</label>
+                <input type="text" name="username" /><br/>
+                <label for="password">Password</label>
+                <input type="password" name="password" /><br/>
+                <input type="submit" value="Login" />
+            </form>
+        </div>
+        <div id="novel-list" class="hidden">
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Read</th>
+                    <th>Next</th>
+                    <th>Latest</th>
+                </tr>
+            </table>
+        </div>
+        <script src="main.js"></script>
+    </body>
+</html>
