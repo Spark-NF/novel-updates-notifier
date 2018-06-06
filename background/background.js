@@ -75,6 +75,14 @@ async function search(name) {
 	return results;
 }
 
+// List management functions
+async function putInList(id) {
+	return ajax(`https://www.novelupdates.com/updatelist.php?sid=${id}&lid=0&act=move`)
+}
+async function removeFromList(id) {
+	return ajax(`https://www.novelupdates.com/readinglist_update.php?rid=0&sid=${id}&checked=noo`);
+}
+
 // Check if we are logged in
 async function checkLoginStatus() {
 	const cookies = await browser.cookies.getAll({ url: "https://www.novelupdates.com" });

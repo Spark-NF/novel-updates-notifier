@@ -11,6 +11,12 @@ const novelsRefreshButton = document.getElementById("refresh-novel-list");
 const searchInput = document.getElementById("search").getElementsByTagName("input")[0];
 const searchResults = document.getElementById("search-results");
 
+async function removeNovel(id) {
+	await background.removeFromList(id);
+	const element = document.getElementById("novel-row-" + id);
+	element.parentElement.removeChild(element);
+}
+
 async function displayNovels() {
 	const novels = await background.getReadingList();
 
@@ -23,13 +29,19 @@ async function displayNovels() {
 	// Populate the table
 	for (const novel of novels) {
 		const row = novelsTable.insertRow();
+		row.id = "novel-row-" + novel.id;
+		if (novel.status.id != novel.latest.id) {
+			row.classList.add("table-warning");
+		}
 		const nameCell = row.insertCell();
-		nameCell.innerHTML = (novel.status.id != novel.latest.id ? "!!! " : "") + novel.name;
+		nameCell.innerHTML = novel.name;
 		const readCell = row.insertCell();
 		readCell.innerHTML = novel.status.name; //https://www.novelupdates.com/readinglist_getchp.php?rid=1580010&sid=880&nrid=4848
 		const nextCell = row.insertCell();
 		const latestCell = row.insertCell();
 		latestCell.innerHTML = novel.latest.name;
+		const actionsCell = row.insertCell();
+		actionsCell.innerHTML = `<button class="btn btn-xs btn-danger" onclick="removeNovel("${novel.id}");">X</button>`;
 	}
 
 	loaderDiv.classList.add("hidden");
@@ -46,15 +58,25 @@ novelsRefreshButton.onclick = async function() {
 };
 
 // Show search results input change
-searchInput.onchange = async function() {
-	searchResults.innerHTML = "Loading results...";
-	const results = await background.search(this.value);
-	searchResults.innerHTML = "";
-	for (var i = 0; i < 5 && i < results.length; ++i) {
-		const result = results[i];
-		var li = document.createElement('li');
-		li.innerHTML = result.name;
-		searchResults.appendChild(li);
+var latestSearch = "";
+searchInput.oninput = async function() {
+	const val = this.value.trim();
+	latestSearch = val;
+	if (val.length === 0) {
+		searchResults.innerHTML = "";
+	} else {
+		searchResults.innerHTML = "Loading results...";
+		const results = await background.search(this.value);
+		if (val !== latestSearch) {
+			return;
+		}
+		searchResults.innerHTML = "";
+		for (var i = 0; i < 5 && i < results.length; ++i) {
+			const result = results[i];
+			var li = document.createElement('li');
+			li.innerHTML = result.name;
+			searchResults.appendChild(li);
+		}
 	}
 };
 
