@@ -1,14 +1,11 @@
 import { ajax } from "../common/ajax";
+import { sleep } from "../common/sleep";
 
 // tslint:disable-next-line
-interface Window {
+interface ICustomWindow extends Window {
 	readingList: any;
 }
-
-// Async sleep helper
-function sleep(ms: number) {
-	return new Promise((resolve) => setTimeout(resolve, ms));
-}
+declare var window: ICustomWindow;
 
 // Storage methods
 /*var store = browser.storage.sync;
