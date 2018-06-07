@@ -26,6 +26,10 @@ body, #settings {
 .btn i.fa {
 	margin-right: 4px;
 }
+.btn.btn-icon i.fa {
+	margin-right: 0;
+}
+
 .btn-group-xs > .btn, .btn-xs {
     padding : 0.25rem 0.3rem;
     font-size: 0.875rem;

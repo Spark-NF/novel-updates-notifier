@@ -101,7 +101,7 @@ async function displayNovels() {
         latestCell.appendChild(makeLink(novel.latest.url, novel.latest.name));
         const actionsCell = row.insertCell();
         const removeButton = document.createElement("button");
-        removeButton.className = "btn btn-xs btn-danger";
+        removeButton.className = "btn btn-xs btn-danger btn-icon";
         removeButton.onclick = () => { removeNovel(novel.id); };
         removeButton.innerHTML = '<i class="fa fa-trash-o"></i>';
         actionsCell.appendChild(removeButton);
@@ -167,7 +167,7 @@ searchInput.oninput = async () => {
             nameCell.appendChild(makeLink(result.url, result.name));
             const actionsCell = row.insertCell();
             const addButton = document.createElement("button");
-            addButton.className = "btn btn-xs btn-success";
+            addButton.className = "btn btn-xs btn-success btn-icon";
             addButton.onclick = () => { addNovel(result.url); };
             addButton.innerHTML = '<i class="fa fa-plus"></i>';
             actionsCell.appendChild(addButton);
