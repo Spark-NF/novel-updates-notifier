@@ -12,6 +12,10 @@ const novelsTable = novelsDiv.getElementsByTagName("table")[0];
 const novelsRefreshButton = document.getElementById("refresh-novel-list");
 const searchInput = document.getElementById("search").getElementsByTagName("input")[0];
 const searchResults = document.getElementById("search-results");
+const settingsDiv = document.getElementById("settings");
+const settingsForm = settingsDiv.getElementsByTagName("form")[0];
+const settingsInterval = document.getElementsByName("interval")[0] as HTMLInputElement;
+const openSettingsButton = document.getElementById("open-settings");
 
 async function removeNovel(id: number) {
     await background.removeFromList(id);
@@ -51,6 +55,17 @@ async function displayNovels() {
     loaderDiv.classList.add("hidden");
     novelsDiv.classList.remove("hidden");
 }
+
+// Settings page
+openSettingsButton.onclick = () => {
+    settingsDiv.classList.remove("hidden");
+};
+settingsForm.onsubmit = async () => {
+    await background.setSettings({
+        interval: parseInt(settingsInterval.value, 10),
+    });
+    settingsDiv.classList.add("hidden");
+};
 
 // Button to refresh novel list
 novelsRefreshButton.onclick = async () => {

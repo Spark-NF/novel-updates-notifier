@@ -22,10 +22,21 @@
                 <div class="form-group">
                     <input type="password" class="form-control" name="password" placeholder="Password" />
                 </div>
-                <button type="submit" class="btn btn-primary">Login</button>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-sign-in"></i> Login</button>
             </form>
         </div>
         <div id="novel-list" class="hidden">
+            <div id="settings" class="hidden">
+                <form>
+                    <div class="form-group row">
+                        <label for="interval" class="col-3 col-form-label">Interval</label>
+                        <div class="col-9">
+                            <input type="number" class="form-control" name="interval" value="5" />
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-floppy-o"></i> Save</button>
+                </form>
+            </div>
             <div id="search">
                 <form>
                     <div class="form-group">
@@ -44,6 +55,7 @@
                 </tr>
             </table>
             <button id="refresh-novel-list" class="btn btn-info"><i class="fa fa-refresh"></i> Refresh</button>
+            <button id="open-settings" class="btn btn-light float-right"><i class="fa fa-cogs"></i> Settings</button>
         </div>
         <script src="bundle.js"></script>
     </body>

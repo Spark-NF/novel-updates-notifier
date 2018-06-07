@@ -8,13 +8,15 @@ interface ICustomWindow extends Window {
 declare var window: ICustomWindow;
 
 // Storage methods
-/*var store = browser.storage.sync;
-try {
-    store.get(null)
-} catch (e) {
-    store = browser.storage.local;
-}*/
-const store = browser.storage.local;
+function getStorage() {
+    try {
+        if (browser.storage.sync.get(null)) {
+            return browser.storage.sync;
+        }
+    } catch (e) { /* ignore */ }
+    return browser.storage.local;
+}
+const store = getStorage();
 function setSettings(values: { [key: string]: any }) {
     return store.set(values);
 }
