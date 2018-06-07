@@ -28,7 +28,7 @@
 		"storage",
 		"cookies",
 		"notifications",
-		"https://www.novelupdates.com/*"
+		"*://www.novelupdates.com/*"
 	],
 
 	"browser_action": {

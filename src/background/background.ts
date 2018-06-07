@@ -7,6 +7,19 @@ interface ICustomWindow extends Window {
 }
 declare var window: ICustomWindow;
 
+function fixUrl(url: string): string {
+    if (url.startsWith("chrome-extension://")) {
+        return "https:" + url.substr(17);
+    }
+    if (url.startsWith("//")) {
+        return "https:" + url;
+    }
+    if (url.startsWith("/")) {
+        return "https://www.novelupdates.com" + url;
+    }
+    return url;
+}
+
 export interface ISettings {
     username?: string;
     password?: string;
@@ -73,7 +86,7 @@ async function loadSeriesChapters(id: number) {
         results.push({
             id: parseInt(link.dataset.id, 10),
             name: span.innerHTML.trim(),
-            url: link.href,
+            url: fixUrl(link.href),
         });
     }
 
@@ -97,11 +110,13 @@ async function search(query: string) {
         const name = link.getElementsByTagName("span")[0];
         results.push({
             name: name.innerHTML.trim(),
-            url: link.href,
-            img: img.src,
+            url: fixUrl(link.href),
+            img: fixUrl(img.src),
         });
     }
 
+    //tslint:disable
+    console.log(results);
     return results;
 }
 
@@ -183,7 +198,7 @@ async function getNextChaptersByUrl(url: string, currentChapter: number, latestC
         results.push({
             id: nextId,
             name: nextLink.innerHTML,
-            url: nextLink.href,
+            url: fixUrl(nextLink.href),
         });
     }
     return results;
@@ -216,17 +231,17 @@ async function loadReadingList() {
         const novel = {
             id: parseInt(row.dataset.sid || "0", 10),
             name: row.dataset.title,
-            url: novelLink.href,
+            url: fixUrl(novelLink.href),
             status: {
                 id: parseInt(checkboxInput.value.substr(0, checkboxInput.value.indexOf(":")), 10),
                 name: statusLink.innerHTML,
-                url: statusLink.href,
+                url: fixUrl(statusLink.href),
             },
             next: [] as any[],
             latest: {
                 id: parseInt(latestIdInput.value, 10),
                 name: latestLink.innerHTML,
-                url: latestLink.href,
+                url: fixUrl(latestLink.href),
             },
         };
 

@@ -34,6 +34,15 @@ body, #settings {
 	display: none !important;
 }
 
+table .novel-icon img {
+	margin-top: -3px;
+	max-height: 26px;
+	width: auto;
+}
+table .novel-name a {
+	color: #212529;
+}
+
 #loader, #settings {
 	width: 100%;
 	height: 100%;

@@ -63,7 +63,8 @@ async function displayNovels() {
             row.classList.add("table-warning");
         }
         const nameCell = row.insertCell();
-        nameCell.innerHTML = novel.name;
+        nameCell.classList.add("novel-name");
+        nameCell.appendChild(makeLink(novel.url, novel.name));
         const readCell = row.insertCell();
         readCell.appendChild(makeLink(novel.status.url, novel.status.name));
         const nextCell = row.insertCell();
@@ -127,8 +128,16 @@ searchInput.oninput = async () => {
         for (let i = 0; i < 5 && i < results.length; ++i) {
             const result = results[i];
             const row = searchResults.insertRow();
+            const imgCell = row.insertCell();
+            imgCell.classList.add("novel-icon");
+            imgCell.style.width = "0%";
+            const img = document.createElement("img");
+            img.alt = "";
+            img.src = result.img;
+            imgCell.appendChild(img);
             const nameCell = row.insertCell();
-            nameCell.innerHTML = result.name;
+            nameCell.classList.add("novel-name");
+            nameCell.appendChild(makeLink(result.url, result.name));
             const actionsCell = row.insertCell();
             const addButton = document.createElement("button");
             addButton.className = "btn btn-xs btn-success";
