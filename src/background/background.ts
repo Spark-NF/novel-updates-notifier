@@ -22,6 +22,30 @@ function getSettings() {
     return store.get(undefined);
 }
 
+// Get all chapters for a given series
+async function loadSeriesChapters(id: number) {
+    const rq = await ajax("https://www.novelupdates.com/wp-admin/admin-ajax.php", "POST", {
+        action: "nd_getchapters",
+        mypostid: 880,
+    });
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(rq.responseText, "text/html");
+    const bullets = xml.getElementsByClassName("sp_li_chp") as HTMLCollectionOf<HTMLLIElement>;
+
+    const results = [];
+    for (const bullet of bullets) {
+        const link = bullet.getElementsByTagName("a")[1];
+        const span = link.getElementsByTagName("span")[0];
+        results.push({
+            id: parseInt(link.dataset.id, 10),
+            name: span.innerHTML.trim(),
+            url: link.href,
+        });
+    }
+
+    return results;
+}
+
 // Perform a series search
 async function search(query: string) {
     const rq = await ajax("https://www.novelupdates.com/wp-admin/admin-ajax.php", "POST", {

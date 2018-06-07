@@ -12,7 +12,7 @@
 
 	"applications": {
 		"gecko": {
-			"id": "firefox-novel-updates@nicolas-faure.fr",
+			"id": "novel-updates-firefox@nicolas-faure.fr",
 			"strict_min_version": "42.0"
 		}
 	},
