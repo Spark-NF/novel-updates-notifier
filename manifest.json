@@ -4,7 +4,7 @@
 	"version": "1.0",
 
     "description": "Add a notification icon and reading shortcuts for your Novel Updates reading list..",
-	"homepage_url": "https://github.com/Spark-NF/firefox-novel-updates",
+	"homepage_url": "https://github.com/Spark-NF/novel-updates",
     "icons": {
         "48": "icons/icon-48.png",
         "96": "icons/icon-96.png"
@@ -18,7 +18,10 @@
 	},
 
 	"background": {
-		"scripts": ["src/background/bundle.js"]
+		"scripts": [
+			"src/vendor/js/browser-polyfill.min.js",
+			"src/background/bundle.js"
+		]
 	},
 
 	"permissions": [

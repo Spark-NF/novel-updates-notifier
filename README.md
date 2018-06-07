@@ -1,7 +1,7 @@
-# Novel Updates add-on for Firefox
+# Novel Updates add-on
 
 ## About
-Add-on for Firefox that notifies you when a novel from your reading list has a new chapter available.
+Add-on that notifies you when a novel from your reading list has a new chapter available.
 
 ## Authors
 * Nicolas Faure
