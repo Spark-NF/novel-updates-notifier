@@ -43,8 +43,9 @@ async function displayNovels() {
         const latestCell = row.insertCell();
         latestCell.innerHTML = novel.latest.name;
         const actionsCell = row.insertCell();
-        const btn = `<button class="btn btn-xs btn-danger" onclick="removeNovel("${novel.id}");">X</button>`;
-        actionsCell.innerHTML = btn;
+        actionsCell.innerHTML = `<button class="btn btn-xs btn-danger" onclick="removeNovel("${novel.id}");">
+            <i class="fa fa-trash-o"></i>
+        </button>`;
     }
 
     loaderDiv.classList.add("hidden");

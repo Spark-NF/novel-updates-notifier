@@ -1,5 +1,5 @@
-# Vendor scripts
-vendor/
+# Vendor
+src/vendor/
 
 # Compiled TypeScript files
 src/**/*.js
