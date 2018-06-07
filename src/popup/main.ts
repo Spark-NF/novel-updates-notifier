@@ -58,7 +58,10 @@ async function displayNovels() {
 }
 
 // Settings page
-openSettingsButton.onclick = () => {
+openSettingsButton.onclick = async () => {
+    const settings = await background.getSettings();
+    settingsInterval.value = settings.interval;
+    settingsNotifications.checked = settings.notifications;
     settingsDiv.classList.remove("hidden");
 };
 settingsForm.onsubmit = async () => {

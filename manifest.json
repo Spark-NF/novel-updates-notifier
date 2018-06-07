@@ -27,6 +27,7 @@
 	"permissions": [
 		"storage",
 		"cookies",
+		"notifications",
 		"https://www.novelupdates.com/*"
 	],
 

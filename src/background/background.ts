@@ -7,7 +7,14 @@ interface ICustomWindow extends Window {
 }
 declare var window: ICustomWindow;
 
-// Storage methods
+export interface ISettings {
+    username?: string;
+    password?: string;
+    interval: number;
+    notifications: boolean;
+}
+
+// Sync storage with fallback on local one
 function getStorage() {
     try {
         if (browser.storage.sync.get(null)) {
@@ -17,11 +24,36 @@ function getStorage() {
     return browser.storage.local;
 }
 const store = getStorage();
-function setSettings(values: { [key: string]: any }) {
-    return store.set(values);
+
+// Settings getters
+let gSettings: ISettings;
+async function reloadSettings() {
+    let settings = await store.get(undefined);
+    if (!settings) {
+        settings = {};
+    }
+    gSettings = {
+        username: settings.username,
+        password: settings.password,
+        interval: settings.interval || 5,
+        notifications: settings.notifications === undefined ? true : settings.notifications,
+    };
 }
-function getSettings() {
-    return store.get(undefined);
+async function getSettings() {
+    if (gSettings === undefined) {
+        await reloadSettings();
+    }
+    return gSettings;
+}
+async function getSetting<K extends keyof ISettings>(key: K): Promise<ISettings[K]> {
+    const settings = await getSettings();
+    return settings[key];
+}
+
+// Settings setters
+async function setSettings(values: { [key: string]: any }) {
+    await store.set(values);
+    await reloadSettings();
 }
 
 // Get all chapters for a given series
@@ -118,6 +150,7 @@ async function tryLogin() {
 }
 
 // Get the status of novels in the user's reading list
+const lastChanges: { [novelId: number]: number } = {};
 async function loadReadingList() {
     if (!await checkLoginStatus()) {
         return;
@@ -130,6 +163,7 @@ async function loadReadingList() {
 
     const novels = [];
     let novelsWithChanges = 0;
+    const novelsWithNewChanges = [];
 
     for (const row of rows) {
         const cells = row.getElementsByTagName("td");
@@ -157,10 +191,26 @@ async function loadReadingList() {
 
         if (novel.status.id !== novel.latest.id) {
             novelsWithChanges++;
+            if (!(novel.id in lastChanges) || lastChanges[novel.id] !== novel.latest.id) {
+                novelsWithNewChanges.push(`${novel.name} (${novel.latest.name})`);
+                lastChanges[novel.id] = novel.latest.id;
+            }
         }
         novels.push(novel);
     }
 
+    // Push notification
+    const notificationsEnabled = await getSetting("notifications") || true;
+    if (notificationsEnabled && novelsWithNewChanges.length > 0) {
+        browser.notifications.create({
+            type: "basic" as any,
+            iconUrl: browser.extension.getURL("icons/icon-48.png"),
+            title: "New novel chapters available",
+            message: "- " + novelsWithNewChanges.join("\n- "),
+        });
+    }
+
+    // Badge notification
     browser.browserAction.setBadgeText({ text: novelsWithChanges > 0 ? novelsWithChanges.toString() : "" });
     browser.browserAction.setBadgeBackgroundColor({ color: "red" });
 
@@ -180,8 +230,8 @@ async function getReadingList() {
 
 // Initial load
 (async () => {
-    const settings = await getSettings() || {};
-    setInterval(reloadReadingList, (settings.interval || 5) * 60 * 1000);
+    const interval = await getSetting("interval");
+    setInterval(reloadReadingList, interval * 60 * 1000);
     if (await checkLoginStatus() || await tryLogin()) {
         reloadReadingList();
     }
