@@ -24,6 +24,13 @@ async function removeNovel(id: number) {
     element.parentElement.removeChild(element);
 }
 
+function makeLink(href: string, txt: string): HTMLAnchorElement {
+    const link = document.createElement("a");
+    link.href = href;
+    link.innerHTML = txt;
+    return link;
+}
+
 async function displayNovels() {
     const novels = await background.getReadingList();
 
@@ -43,13 +50,13 @@ async function displayNovels() {
         const nameCell = row.insertCell();
         nameCell.innerHTML = novel.name;
         const readCell = row.insertCell();
-        readCell.innerHTML = novel.status.name;
+        readCell.appendChild(makeLink(novel.status.url, novel.status.name));
         const nextCell = row.insertCell();
         if (novel.next.length > 0) {
-            nextCell.innerHTML = novel.next[0].name;
+            nextCell.appendChild(makeLink(novel.next[0].url, novel.next[0].name));
         }
         const latestCell = row.insertCell();
-        latestCell.innerHTML = novel.latest.name;
+        latestCell.appendChild(makeLink(novel.latest.url, novel.latest.name));
         const actionsCell = row.insertCell();
         const removeButton = document.createElement("button");
         removeButton.className = "btn btn-xs btn-danger";

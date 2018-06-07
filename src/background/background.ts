@@ -89,7 +89,7 @@ async function search(query: string) {
     });
     const parser = new DOMParser();
     const xml = parser.parseFromString(rq.responseText, "text/html");
-    const links = xml.getElementsByClassName("a_search") as HTMLCollectionOf<HTMLLinkElement>;
+    const links = xml.getElementsByClassName("a_search") as HTMLCollectionOf<HTMLAnchorElement>;
 
     const results = [];
     for (const link of links) {
@@ -164,7 +164,7 @@ async function getNextChaptersByUrl(url: string, currentChapter: number, latestC
     const rq = await ajax(url);
     const parser = new DOMParser();
     const xml = parser.parseFromString(rq.responseText, "text/html");
-    const nextLinks = xml.getElementsByClassName("getchps") as HTMLCollectionOf<HTMLLinkElement>;
+    const nextLinks = xml.getElementsByClassName("getchps") as HTMLCollectionOf<HTMLAnchorElement>;
 
     const results = [];
     for (let i = nextLinks.length - 1; i >= 0; --i) {
