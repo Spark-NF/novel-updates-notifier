@@ -15,6 +15,7 @@ const searchResults = document.getElementById("search-results");
 const settingsDiv = document.getElementById("settings");
 const settingsForm = settingsDiv.getElementsByTagName("form")[0];
 const settingsInterval = document.getElementsByName("interval")[0] as HTMLInputElement;
+const settingsNotifications = document.getElementsByName("notifications")[0] as HTMLInputElement;
 const openSettingsButton = document.getElementById("open-settings");
 
 async function removeNovel(id: number) {
@@ -63,6 +64,7 @@ openSettingsButton.onclick = () => {
 settingsForm.onsubmit = async () => {
     await background.setSettings({
         interval: parseInt(settingsInterval.value, 10),
+        notifications: !!settingsNotifications.checked,
     });
     settingsDiv.classList.add("hidden");
 };

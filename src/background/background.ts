@@ -177,10 +177,11 @@ async function getReadingList() {
     }
     return window.readingList;
 }
-setInterval(reloadReadingList, 5 * 60 * 1000);
 
 // Initial load
 (async () => {
+    const settings = await getSettings() || {};
+    setInterval(reloadReadingList, (settings.interval || 5) * 60 * 1000);
     if (await checkLoginStatus() || await tryLogin()) {
         reloadReadingList();
     }

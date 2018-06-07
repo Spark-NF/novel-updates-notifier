@@ -30,11 +30,20 @@
                 <form>
                     <div class="form-group row">
                         <label for="interval" class="col-3 col-form-label">Interval</label>
-                        <div class="col-9">
-                            <input type="number" class="form-control" name="interval" value="5" />
+                        <div class="col-9 input-group">
+                            <input type="number" class="form-control" name="interval" id="interval" value="5" />
+                            <div class="input-group-append">
+                                <span class="input-group-text">minutes</span>
+                            </div>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary"><i class="fa fa-floppy-o"></i> Save</button>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" name="notifications" id="notifications" value="1" />
+                            <label class="form-check-label" for="notifications">Enable notifications</label>
+                        </div>
+                    </div>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-floppy-o"></i> Save</button>
                 </form>
             </div>
             <div id="search">
