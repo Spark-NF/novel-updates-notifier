@@ -1,4 +1,4 @@
-import { ajax } from "../common/ajax";
+import { ajax, objectToParams } from "../common/ajax";
 import { sleep } from "../common/sleep";
 
 // tslint:disable-next-line
@@ -149,6 +149,39 @@ async function tryLogin() {
     return false;
 }
 
+// Get the list of next chapters
+function getNextChapters(id: number, currentChapter: number, latestChapter: number, date: string) {
+    const params = {
+        rid: latestChapter,
+        sid: id,
+        date,
+        nrid: currentChapter,
+    };
+    const url = `https://www.novelupdates.com/readinglist_getchp.php?${objectToParams(params)}`;
+    return getNextChaptersByUrl(url, currentChapter, latestChapter);
+}
+async function getNextChaptersByUrl(url: string, currentChapter: number, latestChapter: number) {
+    const rq = await ajax(url);
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(rq.responseText, "text/html");
+    const nextLinks = xml.getElementsByClassName("getchps") as HTMLCollectionOf<HTMLLinkElement>;
+
+    const results = [];
+    for (let i = nextLinks.length - 1; i >= 0; --i) {
+        const nextLink = nextLinks[i];
+        const nextId = parseInt(nextLink.id.match(/^mycurrent(\d+)$/)[1], 10);
+        if (nextId === currentChapter || nextId === latestChapter) {
+            continue;
+        }
+        results.push({
+            id: nextId,
+            name: nextLink.innerHTML,
+            url: nextLink.href,
+        });
+    }
+    return results;
+}
+
 // Get the status of novels in the user's reading list
 const lastChanges: { [novelId: number]: number } = {};
 async function loadReadingList() {
@@ -182,6 +215,7 @@ async function loadReadingList() {
                 name: statusLink.innerHTML,
                 url: statusLink.href,
             },
+            next: [] as any[],
             latest: {
                 id: parseInt(latestIdInput.value, 10),
                 name: latestLink.innerHTML,
@@ -190,6 +224,10 @@ async function loadReadingList() {
         };
 
         if (novel.status.id !== novel.latest.id) {
+            const nextChapterSpan = cells[3].getElementsByClassName("show-pop")[0] as HTMLSpanElement;
+            const nextChaptersUrl = nextChapterSpan.dataset.url;
+            novel.next = await getNextChaptersByUrl(nextChaptersUrl, novel.status.id, novel.latest.id);
+
             novelsWithChanges++;
             if (!(novel.id in lastChanges) || lastChanges[novel.id] !== novel.latest.id) {
                 novelsWithNewChanges.push(`${novel.name} (${novel.latest.name})`);

@@ -45,6 +45,9 @@ async function displayNovels() {
         const readCell = row.insertCell();
         readCell.innerHTML = novel.status.name;
         const nextCell = row.insertCell();
+        if (novel.next.length > 0) {
+            nextCell.innerHTML = novel.next[0].name;
+        }
         const latestCell = row.insertCell();
         latestCell.innerHTML = novel.latest.name;
         const actionsCell = row.insertCell();

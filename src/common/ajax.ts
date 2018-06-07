@@ -1,4 +1,4 @@
-function objectToParams(obj: { [key: string]: string }) {
+export function objectToParams(obj: any): string {
     let str = "";
     for (const key in obj) {
         if (str !== "") {
@@ -9,7 +9,7 @@ function objectToParams(obj: { [key: string]: string }) {
     return str;
 }
 
-export function ajax(url: string, method?: "GET" | "POST", data?: any, contentType?: string) {
+export function ajax(url: string, method?: "GET" | "POST", data?: any, contentType?: string): Promise<XMLHttpRequest> {
     return new Promise<XMLHttpRequest>((resolve, reject) => {
         const xhr = new XMLHttpRequest();
         xhr.onload = function() {
