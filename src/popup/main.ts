@@ -28,6 +28,7 @@ function makeLink(href: string, txt: string): HTMLAnchorElement {
     const link = document.createElement("a");
     link.href = href;
     link.innerHTML = txt;
+    link.target = "_blank";
     return link;
 }
 
