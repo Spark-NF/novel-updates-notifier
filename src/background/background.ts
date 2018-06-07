@@ -106,11 +106,18 @@ async function search(query: string) {
 }
 
 // List management functions
-async function putInList(id: number) {
-    return ajax(`https://www.novelupdates.com/updatelist.php?sid=${id}&lid=0&act=move`);
+async function putInList(id: number, listId: number) {
+    return ajax(`https://www.novelupdates.com/updatelist.php?sid=${id}&lid=${listId}&act=move`);
 }
 async function removeFromList(id: number) {
     return ajax(`https://www.novelupdates.com/readinglist_update.php?rid=0&sid=${id}&checked=noo`);
+}
+async function getIdFromUrl(url: string) {
+    const rq = await ajax(url);
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(rq.responseText, "text/html");
+    const input = xml.getElementById("mypostid") as HTMLInputElement;
+    return parseInt(input.value, 10);
 }
 
 // Check if we are logged in

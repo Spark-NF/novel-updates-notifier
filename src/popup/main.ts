@@ -8,10 +8,10 @@ const loginFormError = document.getElementById("login-error");
 const loginUsername = document.getElementsByName("username")[0] as HTMLInputElement;
 const loginPassword = document.getElementsByName("password")[0] as HTMLInputElement;
 const novelsDiv = document.getElementById("novel-list");
-const novelsTable = novelsDiv.getElementsByTagName("table")[0];
+const novelsTable = document.getElementById("novel-table") as HTMLTableElement;
 const novelsRefreshButton = document.getElementById("refresh-novel-list");
 const searchInput = document.getElementById("search").getElementsByTagName("input")[0];
-const searchResults = document.getElementById("search-results");
+const searchResults = document.getElementById("search-results") as HTMLTableElement;
 const settingsDiv = document.getElementById("settings");
 const settingsForm = settingsDiv.getElementsByTagName("form")[0];
 const settingsInterval = document.getElementsByName("interval")[0] as HTMLInputElement;
@@ -22,6 +22,20 @@ async function removeNovel(id: number) {
     await background.removeFromList(id);
     const element = document.getElementById("novel-row-" + id);
     element.parentElement.removeChild(element);
+}
+async function addNovel(url: string) {
+    loaderText.innerHTML = "Getting novel ID...";
+    loaderDiv.classList.remove("hidden");
+    searchInput.value = "";
+    searchResults.classList.add("hidden");
+    const id = await background.getIdFromUrl(url);
+
+    loaderText.innerHTML = "Adding novel...";
+    await background.putInList(id, 0);
+
+    loaderText.innerHTML = "Refreshing novels...";
+    await background.reloadReadingList();
+    await displayNovels();
 }
 
 function makeLink(href: string, txt: string): HTMLAnchorElement {
@@ -64,6 +78,7 @@ async function displayNovels() {
         removeButton.onclick = () => { removeNovel(novel.id); };
         removeButton.innerHTML = '<i class="fa fa-trash-o"></i>';
         actionsCell.appendChild(removeButton);
+        actionsCell.style.width = "0%";
     }
 
     loaderDiv.classList.add("hidden");
@@ -100,8 +115,9 @@ searchInput.oninput = async () => {
     const val = searchInput.value.trim();
     latestSearch = val;
     if (val.length === 0) {
-        searchResults.innerHTML = "";
+        searchResults.classList.add("hidden");
     } else {
+        searchResults.classList.remove("hidden");
         searchResults.innerHTML = "Loading results...";
         const results = await background.search(val);
         if (val !== latestSearch) {
@@ -110,9 +126,16 @@ searchInput.oninput = async () => {
         searchResults.innerHTML = "";
         for (let i = 0; i < 5 && i < results.length; ++i) {
             const result = results[i];
-            const li = document.createElement("li");
-            li.innerHTML = result.name;
-            searchResults.appendChild(li);
+            const row = searchResults.insertRow();
+            const nameCell = row.insertCell();
+            nameCell.innerHTML = result.name;
+            const actionsCell = row.insertCell();
+            const addButton = document.createElement("button");
+            addButton.className = "btn btn-xs btn-success";
+            addButton.onclick = () => { addNovel(result.url); };
+            addButton.innerHTML = '<i class="fa fa-plus"></i>';
+            actionsCell.appendChild(addButton);
+            actionsCell.style.width = "0%";
         }
     }
 };
