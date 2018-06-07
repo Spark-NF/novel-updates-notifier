@@ -3,8 +3,24 @@ html, body {
 	min-height: 160px;
 }
 
-body {
+body, #settings {
 	padding: 15px;
+}
+
+.block-body {
+	margin: -15px;
+	padding: 15px;
+	padding-bottom: 70px;
+}
+.block-footer {
+	position: absolute;
+	width: 100%;
+	bottom: 0;
+	left: 0;
+	padding: 15px;
+	height: 70px;
+	background-color: rgba(0,0,0,.03);
+	border-top: 1px solid rgba(0,0,0,.125);
 }
 
 .btn-group-xs > .btn, .btn-xs {
@@ -28,10 +44,11 @@ body {
 }
 
 #settings {
-	padding: 15px;
+	z-index: 1;
 }
 
 #loader {
+	z-index: 50;
 	text-align: center;
 	display: flex;
 	justify-content: center;

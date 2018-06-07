@@ -15,56 +15,68 @@
         </div>
         <div id="login-form" class="hidden">
             <form>
-                <p id="login-error" class="hidden text-danger"></p>
-                <div class="form-group">
-                    <input type="text" class="form-control" name="username" placeholder="Username" />
+                <div class="block-body">
+                    <p id="login-error" class="hidden text-danger"></p>
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="username" placeholder="Username" />
+                    </div>
+                    <div class="form-group">
+                        <input type="password" class="form-control" name="password" placeholder="Password" />
+                    </div>
                 </div>
-                <div class="form-group">
-                    <input type="password" class="form-control" name="password" placeholder="Password" />
+                <div class="block-footer">
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-sign-in"></i> Login</button>
                 </div>
-                <button type="submit" class="btn btn-primary"><i class="fa fa-sign-in"></i> Login</button>
             </form>
         </div>
         <div id="novel-list" class="hidden">
             <div id="settings" class="hidden">
                 <form>
-                    <div class="form-group row">
-                        <label for="interval" class="col-4 col-form-label">Interval</label>
-                        <div class="col-8 input-group">
-                            <input type="number" class="form-control" name="interval" id="interval" value="5" />
-                            <div class="input-group-append">
-                                <span class="input-group-text">minutes</span>
+                    <div class="block-body">
+                        <div class="form-group row">
+                            <label for="interval" class="col-4 col-form-label">Interval</label>
+                            <div class="col-8 input-group">
+                                <input type="number" class="form-control" name="interval" id="interval" value="5" />
+                                <div class="input-group-append">
+                                    <span class="input-group-text">minutes</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" name="notifications" id="notifications" value="1" />
+                                <label class="form-check-label" for="notifications">Enable notifications</label>
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" name="notifications" id="notifications" value="1" />
-                            <label class="form-check-label" for="notifications">Enable notifications</label>
+                    <div class="block-footer">
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-floppy-o"></i> Save</button>
+                    </div>
+                </form>
+            </div>
+            <div class="block-body">
+                <div id="search">
+                    <form>
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="search" placeholder="Search..." />
                         </div>
-                    </div>
-                <button type="submit" class="btn btn-primary"><i class="fa fa-floppy-o"></i> Save</button>
-                </form>
+                    </form>
+                    <ul id="search-results"></ul>
+                </div>
+                <table class="table table-sm">
+                    <tr>
+                        <th>Name</th>
+                        <th>Read</th>
+                        <th>Next</th>
+                        <th>Latest</th>
+                        <th></th>
+                    </tr>
+                </table>
             </div>
-            <div id="search">
-                <form>
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="search" placeholder="Search..." />
-                    </div>
-                </form>
-                <ul id="search-results"></ul>
+            <div class="block-footer">
+                <button id="refresh-novel-list" class="btn btn-info"><i class="fa fa-refresh"></i> Refresh</button>
+                <button id="open-settings" class="btn btn-secondary float-right"><i class="fa fa-cogs"></i> Settings</button>
             </div>
-            <table class="table table-sm">
-                <tr>
-                    <th>Name</th>
-                    <th>Read</th>
-                    <th>Next</th>
-                    <th>Latest</th>
-                    <th></th>
-                </tr>
-            </table>
-            <button id="refresh-novel-list" class="btn btn-info"><i class="fa fa-refresh"></i> Refresh</button>
-            <button id="open-settings" class="btn btn-light float-right"><i class="fa fa-cogs"></i> Settings</button>
         </div>
         <script src="../vendor/js/browser-polyfill.min.js"></script>
         <script src="bundle.js"></script>
