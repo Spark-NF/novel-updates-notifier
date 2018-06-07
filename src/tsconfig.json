@@ -1,7 +1,8 @@
 {
 	"compilerOptions": {
-		"noImplicitAny": true,
-		"removeComments": true,
+		"strict": true,
+		"strictNullChecks": false,
+		"removeComments": false,
 		"sourceMap": false,
 		"target": "es2017"
 	},

@@ -6,7 +6,8 @@
     "postinstall": "bash scripts/postinstall.sh",
     "build": "bash scripts/build.sh",
     "watch": "npm-watch build",
-    "check": "bash scripts/check.sh"
+    "check": "bash scripts/check.sh",
+    "package": "bash scripts/package.sh"
   },
   "watch": {
     "build": {

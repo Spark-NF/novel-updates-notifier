@@ -19,7 +19,7 @@ function setSettings(values: { [key: string]: any }) {
     return store.set(values);
 }
 function getSettings() {
-    return store.get(null);
+    return store.get(undefined);
 }
 
 // Perform a series search
@@ -114,7 +114,7 @@ async function loadReadingList() {
         const latestLink = cells[3].getElementsByTagName("a")[0];
 
         const novel = {
-            id: parseInt(row.dataset.sid, 10),
+            id: parseInt(row.dataset.sid || "0", 10),
             name: row.dataset.title,
             url: novelLink.href,
             status: {
