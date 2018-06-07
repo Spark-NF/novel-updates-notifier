@@ -17,6 +17,7 @@ const settingsForm = settingsDiv.getElementsByTagName("form")[0];
 const settingsInterval = document.getElementsByName("interval")[0] as HTMLInputElement;
 const settingsNotifications = document.getElementsByName("notifications")[0] as HTMLInputElement;
 const openSettingsButton = document.getElementById("open-settings");
+const nextRefreshLabel = document.getElementById("next-refresh");
 
 async function removeNovel(id: number) {
     await background.removeFromList(id);
@@ -45,6 +46,31 @@ function makeLink(href: string, txt: string): HTMLAnchorElement {
     link.target = "_blank";
     return link;
 }
+
+// Show next refresh timer
+async function updateRefreshLabel() {
+    if (!background.nextListRefresh) {
+        return;
+    }
+
+    const interval = await background.getSetting("interval");
+
+    const secs = Math.max(0, Math.round((background.nextListRefresh.getTime() - new Date().getTime()) / 1000));
+    const mins = Math.floor(secs / 60);
+    const hours = Math.floor(mins / 60);
+
+    if (interval > 60) {
+        const strHours = hours.toString();
+        const strMins = (mins % 60).toString().padStart(2, "0");
+        const strSecs = (secs % 60).toString().padStart(2, "0");
+        nextRefreshLabel.innerHTML = `${strHours}:${strMins}:${strSecs}`;
+    } else {
+        const strMins = mins.toString();
+        const strSecs = (secs % 60).toString().padStart(2, "0");
+        nextRefreshLabel.innerHTML = `${strMins}:${strSecs}`;
+    }
+}
+setInterval(updateRefreshLabel, 1000);
 
 async function displayNovels() {
     const novels = await background.getReadingList();
@@ -82,6 +108,7 @@ async function displayNovels() {
         actionsCell.style.width = "0%";
     }
 
+    updateRefreshLabel();
     loaderDiv.classList.add("hidden");
     novelsDiv.classList.remove("hidden");
 }

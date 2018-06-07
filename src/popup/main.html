@@ -74,8 +74,11 @@
                 </table>
             </div>
             <div class="block-footer">
-                <button id="refresh-novel-list" class="btn btn-info"><i class="fa fa-refresh"></i> Refresh</button>
                 <button id="open-settings" class="btn btn-secondary float-right"><i class="fa fa-cogs"></i> Settings</button>
+                <div class="d-flex align-items-center">
+                    <button id="refresh-novel-list" class="btn btn-info"><i class="fa fa-refresh"></i> Refresh</button>
+                    <span class="ml-3 text-muted">Next refresh in <span id="next-refresh"></span></span>
+                </div>
             </div>
         </div>
         <script src="../vendor/js/browser-polyfill.min.js"></script>

@@ -4,6 +4,8 @@ import { sleep } from "../common/sleep";
 // tslint:disable-next-line
 interface ICustomWindow extends Window {
     readingList: any;
+    listRefreshIntervalId: number;
+    nextListRefresh: Date;
 }
 declare var window: ICustomWindow;
 
@@ -280,6 +282,17 @@ async function loadReadingList() {
 // Reading list accessor
 async function reloadReadingList() {
     window.readingList = await loadReadingList();
+
+    // Clear previous timeout if this call was triggered manually
+    if (window.listRefreshIntervalId) {
+        window.clearTimeout(window.listRefreshIntervalId);
+    }
+
+    // Plan a reload after the next interval
+    const interval = await getSetting("interval");
+    const intervalMs = interval * 60 * 1000;
+    window.listRefreshIntervalId = window.setTimeout(reloadReadingList, intervalMs)
+    window.nextListRefresh = new Date(new Date().getTime() + intervalMs);
 }
 async function getReadingList() {
     if (window.readingList === undefined) {
@@ -291,7 +304,6 @@ async function getReadingList() {
 // Initial load
 (async () => {
     const interval = await getSetting("interval");
-    setInterval(reloadReadingList, interval * 60 * 1000);
     if (await checkLoginStatus() || await tryLogin()) {
         reloadReadingList();
     }
