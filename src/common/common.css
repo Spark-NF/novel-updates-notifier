@@ -1,26 +1,5 @@
-html, body {
-	width: 600px;
-	min-height: 160px;
-}
-
-body, #settings {
+body {
 	padding: 15px;
-}
-
-.block-body {
-	margin: -15px;
-	padding: 15px;
-	padding-bottom: 70px;
-}
-.block-footer {
-	position: absolute;
-	width: 100%;
-	bottom: 0;
-	left: 0;
-	padding: 15px;
-	height: 70px;
-	background-color: rgba(0,0,0,.03);
-	border-top: 1px solid rgba(0,0,0,.125);
 }
 
 .btn i.fa {
@@ -41,25 +20,13 @@ body, #settings {
 	display: none !important;
 }
 
-table .novel-icon img {
-	margin-top: -3px;
-	max-height: 26px;
-	width: auto;
-}
-table .novel-name a {
-	color: #212529;
-}
-
-#loader, #settings {
+.overlay {
 	width: 100%;
 	height: 100%;
 	position: absolute;
 	top: 0;
 	left: 0;
 	background-color: #fff;
-}
-
-#settings {
 	z-index: 1;
 }
 
@@ -72,8 +39,4 @@ table .novel-name a {
 }
 #loader img {
 	margin-bottom: 10px;
-}
-
-#search .search_hl {
-    font-weight: bold;
 }

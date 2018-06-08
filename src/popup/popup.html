@@ -4,12 +4,13 @@
         <meta charset="utf-8">
         <link rel="stylesheet" href="../vendor/css/bootstrap.min.css" />
         <link rel="stylesheet" href="../vendor/css/font-awesome.min.css" />
-        <link rel="stylesheet" href="main.css" />
+        <link rel="stylesheet" href="../common/common.css" />
+        <link rel="stylesheet" href="popup.css" />
     </head>
     <body>
-        <div id="loader">
+        <div id="loader" class="overlay">
             <div>
-                <img src="loading.gif" alt="" /><br/>
+                <img src="../common/loading.gif" alt="" /><br/>
                 <span>Loading...</span>
             </div>
         </div>
@@ -30,7 +31,7 @@
             </form>
         </div>
         <div id="novel-list" class="hidden">
-            <div id="settings" class="hidden">
+            <div id="settings" class="overlay hidden">
                 <form>
                     <div class="block-body">
                         <div class="form-group row">

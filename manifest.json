@@ -51,6 +51,16 @@
 			"size": 64
 		}],
 		"default_title": "Novel Updates",
-		"default_popup": "src/popup/main.html"
+		"default_popup": "src/popup/popup.html"
+	},
+
+	"sidebar_action": {
+		"default_icon": {
+			"16": "icons/action-16.png",
+			"32": "icons/action-32.png",
+			"64": "icons/action-64.png"
+		},
+		"default_title": "Novel Updates",
+		"default_panel": "src/sidebar/sidebar.html"
 	}
 }
