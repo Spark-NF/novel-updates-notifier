@@ -1,11 +1,11 @@
-import { ajax, objectToParams } from "../common/ajax";
+import { ajax } from "../common/ajax";
 import { notify } from "../common/notifications";
 import { sleep } from "../common/sleep";
+import { Storage } from "../common/Storage";
 
-// tslint:disable-next-line
 interface ICustomWindow extends Window {
     readingList: any;
-    listRefreshIntervalId: number;
+    storage: Storage;
     nextListRefresh: Date;
 }
 declare var window: ICustomWindow;
@@ -23,56 +23,7 @@ function fixUrl(url: string): string {
     return url;
 }
 
-export interface ISettings {
-    username?: string;
-    password?: string;
-    interval: number;
-    notifications: boolean;
-    readInSidebar: boolean;
-}
-
-// Sync storage with fallback on local one
-function getStorage() {
-    try {
-        if (browser.storage.sync.get(null)) {
-            return browser.storage.sync;
-        }
-    } catch (e) { /* ignore */ }
-    return browser.storage.local;
-}
-const store = getStorage();
-
-// Settings getters
-let gSettings: ISettings;
-async function reloadSettings() {
-    let settings = await store.get(undefined);
-    if (!settings) {
-        settings = {};
-    }
-    gSettings = {
-        username: settings.username,
-        password: settings.password,
-        interval: settings.interval || 5,
-        notifications: settings.notifications === undefined ? true : settings.notifications,
-        readInSidebar: settings.readInSidebar === undefined ? false : settings.readInSidebar,
-    };
-}
-async function getSettings() {
-    if (gSettings === undefined) {
-        await reloadSettings();
-    }
-    return gSettings;
-}
-async function getSetting<K extends keyof ISettings>(key: K): Promise<ISettings[K]> {
-    const settings = await getSettings();
-    return settings[key];
-}
-
-// Settings setters
-async function setSettings(values: { [key: string]: any }) {
-    await store.set(values);
-    await reloadSettings();
-}
+window.storage = new Storage();
 
 // Get all chapters for a given series
 async function loadSeriesChapters(id: number) {
@@ -162,7 +113,7 @@ function login(username: string, password: string) {
     });
 }
 async function tryLogin() {
-    const settings = await getSettings();
+    const settings = await window.storage.getSettings();
     if (!settings || !settings.username || !settings.password) {
         return false;
     }
@@ -260,7 +211,7 @@ async function loadReadingList() {
     }
 
     // Push notification
-    const notificationsEnabled = await getSetting("notifications") || true;
+    const notificationsEnabled = await window.storage.getSetting("notifications") || true;
     if (notificationsEnabled && novelsWithNewChanges.length > 0) {
         notify("New novel chapters available",  "- " + novelsWithNewChanges.join("\n- "));
     }
@@ -273,18 +224,19 @@ async function loadReadingList() {
 }
 
 // Reading list accessor
+let listRefreshIntervalId: number;
 async function reloadReadingList() {
     window.readingList = await loadReadingList();
 
     // Clear previous timeout if this call was triggered manually
-    if (window.listRefreshIntervalId) {
-        window.clearTimeout(window.listRefreshIntervalId);
+    if (listRefreshIntervalId) {
+        window.clearTimeout(listRefreshIntervalId);
     }
 
     // Plan a reload after the next interval
-    const interval = await getSetting("interval");
+    const interval = await window.storage.getSetting("interval");
     const intervalMs = interval * 60 * 1000;
-    window.listRefreshIntervalId = window.setTimeout(reloadReadingList, intervalMs)
+    listRefreshIntervalId = window.setTimeout(reloadReadingList, intervalMs)
     window.nextListRefresh = new Date(new Date().getTime() + intervalMs);
 }
 async function getReadingList() {
@@ -296,8 +248,12 @@ async function getReadingList() {
 
 // Initial load
 (async () => {
-    // Close sidebar
-    await browser.sidebarAction.close();
+    await window.storage.init();
+
+    // Close sidebar if possible
+    if (browser.sidebarAction) {
+        await browser.sidebarAction.close();
+    }
 
     // Start reloading the reading list
     if (await checkLoginStatus() || await tryLogin()) {

@@ -1,6 +1,22 @@
 import { sleep } from "../common/sleep";
+import { Storage } from "../common/Storage";
 
-const background = browser.extension.getBackgroundPage() as any;
+interface IBackground extends Window {
+    storage: Storage;
+
+    getReadingList: any;
+    removeFromList: any;
+    getIdFromUrl: any;
+    putInList: any;
+    reloadReadingList: any;
+    search: any;
+    tryLogin: any;
+    checkLoginStatus: any;
+
+    nextListRefresh?: Date;
+}
+
+const background = browser.extension.getBackgroundPage() as IBackground;
 
 const loaderDiv = document.getElementById("loader");
 const loaderText = loaderDiv.getElementsByTagName("span")[0];
@@ -57,7 +73,8 @@ function makeChapterLink(href: string, txt: string): HTMLAnchorElement {
         }
 
         e.preventDefault();
-        const readInSidebar = await background.getSetting("readInSidebar");
+        const canSidebar = browser.sidebarAction !== undefined;
+        const readInSidebar = await background.storage.getSetting("readInSidebar") && canSidebar;
         const middleClick = e.button === 1;
 
         // Open in a new tab
@@ -91,7 +108,7 @@ async function updateRefreshLabel() {
         return;
     }
 
-    const interval = await background.getSetting("interval");
+    const interval = await background.storage.getSetting("interval");
 
     const secs = Math.max(0, Math.round((background.nextListRefresh.getTime() - new Date().getTime()) / 1000));
     const mins = Math.floor(secs / 60);
@@ -153,23 +170,28 @@ async function displayNovels() {
 
 // Settings page
 openSettingsButton.onclick = async () => {
-    const settings = await background.getSettings();
+    // tslint:disable
+    console.log("open settings");
+    const settings = await background.storage.getSettings();
+    console.log("settings", settings);
 
     // Populate the form with the user settings
-    settingsInterval.value = settings.interval;
+    settingsInterval.value = settings.interval.toString();
     settingsNotifications.checked = settings.notifications;
 
+    console.log("s", settings);
     // Only show the sidebar settings if the API is available
     if (browser.sidebarAction) {
         settingsReadInSidebar.checked = settings.readInSidebar;
     } else if (!settingsReadInSidebar.classList.contains("hidden")) {
         settingsReadInSidebar.classList.add("hidden");
     }
+    console.log("g", settings);
 
     settingsDiv.classList.remove("hidden");
 };
 settingsForm.onsubmit = async () => {
-    await background.setSettings({
+    await background.storage.setSettings({
         interval: parseInt(settingsInterval.value, 10),
         notifications: !!settingsNotifications.checked,
         readInSidebar: !!settingsReadInSidebar.checked,
@@ -232,7 +254,7 @@ loginForm.onsubmit = async (e) => {
     loaderText.innerHTML = "Logging in...";
     loaderDiv.classList.remove("hidden");
 
-    await background.setSettings({
+    await background.storage.setSettings({
         username: loginUsername.value,
         password: loginPassword.value,
     });
