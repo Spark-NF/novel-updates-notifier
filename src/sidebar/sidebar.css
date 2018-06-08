@@ -1,0 +1,12 @@
+html, body, #reader, #iframe {
+    height: 100%;
+    width: 100%;
+}
+
+#iframe {
+    border: none;
+}
+
+#reader {
+	padding: 15px;
+}

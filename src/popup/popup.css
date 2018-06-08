@@ -3,6 +3,10 @@ html, body {
     min-height: 160px;
 }
 
+body {
+	padding: 15px;
+}
+
 #settings {
 	padding: 15px;
 }

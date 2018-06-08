@@ -11,6 +11,9 @@ interface ICustomWindow extends Window {
 declare var window: ICustomWindow;
 
 function fixUrl(url: string): string {
+    if (url.startsWith("moz-extension://")) {
+        return "https:" + url.substr(14);
+    }
     if (url.startsWith("chrome-extension://")) {
         return "https:" + url.substr(17);
     }
