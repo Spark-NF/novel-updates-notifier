@@ -1,4 +1,5 @@
 import { ajax, objectToParams } from "../common/ajax";
+import { notify } from "../common/notifications";
 import { sleep } from "../common/sleep";
 
 // tslint:disable-next-line
@@ -27,6 +28,7 @@ export interface ISettings {
     password?: string;
     interval: number;
     notifications: boolean;
+    readInSidebar: boolean;
 }
 
 // Sync storage with fallback on local one
@@ -52,6 +54,7 @@ async function reloadSettings() {
         password: settings.password,
         interval: settings.interval || 5,
         notifications: settings.notifications === undefined ? true : settings.notifications,
+        readInSidebar: settings.readInSidebar === undefined ? false : settings.readInSidebar,
     };
 }
 async function getSettings() {
@@ -264,12 +267,7 @@ async function loadReadingList() {
     // Push notification
     const notificationsEnabled = await getSetting("notifications") || true;
     if (notificationsEnabled && novelsWithNewChanges.length > 0) {
-        browser.notifications.create({
-            type: "basic" as any,
-            iconUrl: browser.extension.getURL("icons/icon-48.png"),
-            title: "New novel chapters available",
-            message: "- " + novelsWithNewChanges.join("\n- "),
-        });
+        notify("New novel chapters available",  "- " + novelsWithNewChanges.join("\n- "));
     }
 
     // Badge notification
@@ -303,7 +301,10 @@ async function getReadingList() {
 
 // Initial load
 (async () => {
-    const interval = await getSetting("interval");
+    // Close sidebar
+    await browser.sidebarAction.close();
+
+    // Start reloading the reading list
     if (await checkLoginStatus() || await tryLogin()) {
         reloadReadingList();
     }

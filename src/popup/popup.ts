@@ -1,3 +1,5 @@
+import { sleep } from "../common/sleep";
+
 const background = browser.extension.getBackgroundPage() as any;
 
 const loaderDiv = document.getElementById("loader");
@@ -16,6 +18,7 @@ const settingsDiv = document.getElementById("settings");
 const settingsForm = settingsDiv.getElementsByTagName("form")[0];
 const settingsInterval = document.getElementsByName("interval")[0] as HTMLInputElement;
 const settingsNotifications = document.getElementsByName("notifications")[0] as HTMLInputElement;
+const settingsReadInSidebar = document.getElementsByName("read-in-sidebar")[0] as HTMLInputElement;
 const openSettingsButton = document.getElementById("open-settings");
 const nextRefreshLabel = document.getElementById("next-refresh");
 
@@ -44,6 +47,41 @@ function makeLink(href: string, txt: string): HTMLAnchorElement {
     link.href = href;
     link.innerHTML = txt;
     link.target = "_blank";
+    return link;
+}
+function makeChapterLink(href: string, txt: string): HTMLAnchorElement {
+    const link = makeLink(href, txt);
+    link.onclick = async (e) => {
+        if (e.button !== 0 && e.button !== 1) {
+            return;
+        }
+
+        e.preventDefault();
+        const readInSidebar = await background.getSetting("readInSidebar");
+        const middleClick = e.button === 1;
+
+        // Open in a new tab
+        if (middleClick || !readInSidebar) {
+            await browser.tabs.create({
+                active: !middleClick,
+                url: href,
+            });
+            return false;
+        }
+
+        // Open in sidebar
+        await browser.sidebarAction.open();
+        await sleep(200); // Give some time for the views to update
+        const sidebarUrl = await browser.sidebarAction.getPanel({});
+        const views = await browser.extension.getViews({});
+        const sidebar = views.find((w) => w.location.href === sidebarUrl) as any;
+        if (!sidebar) {
+            return;
+        }
+        sidebar.loadChapter(href);
+
+        return false;
+    };
     return link;
 }
 
@@ -92,13 +130,13 @@ async function displayNovels() {
         nameCell.classList.add("novel-name");
         nameCell.appendChild(makeLink(novel.url, novel.name));
         const readCell = row.insertCell();
-        readCell.appendChild(makeLink(novel.status.url, novel.status.name));
+        readCell.appendChild(makeChapterLink(novel.status.url, novel.status.name));
         const nextCell = row.insertCell();
         if (novel.next.length > 0) {
-            nextCell.appendChild(makeLink(novel.next[0].url, novel.next[0].name));
+            nextCell.appendChild(makeChapterLink(novel.next[0].url, novel.next[0].name));
         }
         const latestCell = row.insertCell();
-        latestCell.appendChild(makeLink(novel.latest.url, novel.latest.name));
+        latestCell.appendChild(makeChapterLink(novel.latest.url, novel.latest.name));
         const actionsCell = row.insertCell();
         const removeButton = document.createElement("button");
         removeButton.className = "btn btn-xs btn-danger btn-icon";
@@ -116,14 +154,25 @@ async function displayNovels() {
 // Settings page
 openSettingsButton.onclick = async () => {
     const settings = await background.getSettings();
+
+    // Populate the form with the user settings
     settingsInterval.value = settings.interval;
     settingsNotifications.checked = settings.notifications;
+
+    // Only show the sidebar settings if the API is available
+    if (browser.sidebarAction) {
+        settingsReadInSidebar.checked = settings.readInSidebar;
+    } else if (!settingsReadInSidebar.classList.contains("hidden")) {
+        settingsReadInSidebar.classList.add("hidden");
+    }
+
     settingsDiv.classList.remove("hidden");
 };
 settingsForm.onsubmit = async () => {
     await background.setSettings({
         interval: parseInt(settingsInterval.value, 10),
         notifications: !!settingsNotifications.checked,
+        readInSidebar: !!settingsReadInSidebar.checked,
     });
     settingsDiv.classList.add("hidden");
 };
