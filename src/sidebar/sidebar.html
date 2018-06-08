@@ -8,13 +8,19 @@
         <link rel="stylesheet" href="sidebar.css" />
     </head>
     <body>
-        <div id="loader" class="overlay">
+        <div id="loader" class="overlay hidden">
             <div>
                 <img src="../common/loading.gif" alt="" /><br/>
                 <span>Loading...</span>
             </div>
         </div>
-        <div id="reader">
+        <div id="error" class="overlay">
+            <div>
+                <img src="../common/error.png" alt="Error" /><br/>
+                <span>No chapter selected</span>
+            </div>
+        </div>
+        <div id="reader" class="hidden">
             <h1 id="chapter-name"></h1>
             <div id="chapter-content"></div>
         </div>

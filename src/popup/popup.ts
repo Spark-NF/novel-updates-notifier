@@ -179,14 +179,10 @@ openSettingsButton.onclick = async () => {
     settingsInterval.value = settings.interval.toString();
     settingsNotifications.checked = settings.notifications;
 
-    console.log("s", settings);
     // Only show the sidebar settings if the API is available
     if (browser.sidebarAction) {
         settingsReadInSidebar.checked = settings.readInSidebar;
-    } else if (!settingsReadInSidebar.classList.contains("hidden")) {
-        settingsReadInSidebar.classList.add("hidden");
     }
-    console.log("g", settings);
 
     settingsDiv.classList.remove("hidden");
 };
@@ -277,6 +273,10 @@ loginForm.onsubmit = async (e) => {
 
 // Show novels or login form on popup load
 (async () => {
+    if (!browser.sidebarAction) {
+        settingsReadInSidebar.parentElement.parentElement.remove();
+    }
+
     if (await background.checkLoginStatus()) {
         loaderText.innerHTML = "Loading reading list...";
         await displayNovels();

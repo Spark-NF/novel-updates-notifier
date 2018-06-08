@@ -30,13 +30,15 @@ body {
 	z-index: 1;
 }
 
-#loader {
+#loader, #error {
 	z-index: 50;
-	text-align: center;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
-#loader img {
+#loader div, #error div {
+	text-align: center;
+}
+#loader img, #error img {
 	margin-bottom: 10px;
 }
