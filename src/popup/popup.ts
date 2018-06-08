@@ -1,17 +1,15 @@
+import { NovelUpdatesClient } from "../common/NovelUpdatesClient";
 import { sleep } from "../common/sleep";
 import { Storage } from "../common/Storage";
 
 interface IBackground extends Window {
     storage: Storage;
+    client: NovelUpdatesClient;
 
-    getReadingList: any;
-    removeFromList: any;
-    getIdFromUrl: any;
-    putInList: any;
-    reloadReadingList: any;
-    search: any;
-    tryLogin: any;
     checkLoginStatus: any;
+    getReadingList: any;
+    reloadReadingList: any;
+    tryLogin: any;
 
     nextListRefresh?: Date;
 }
@@ -39,7 +37,7 @@ const openSettingsButton = document.getElementById("open-settings");
 const nextRefreshLabel = document.getElementById("next-refresh");
 
 async function removeNovel(id: number) {
-    await background.removeFromList(id);
+    await background.client.removeFromList(id);
     const element = document.getElementById("novel-row-" + id);
     element.parentElement.removeChild(element);
 }
@@ -48,10 +46,10 @@ async function addNovel(url: string) {
     loaderDiv.classList.remove("hidden");
     searchInput.value = "";
     searchResults.classList.add("hidden");
-    const id = await background.getIdFromUrl(url);
+    const id = await background.client.getIdFromUrl(url);
 
     loaderText.innerHTML = "Adding novel...";
-    await background.putInList(id, 0);
+    await background.client.putInList(id, 0);
 
     loaderText.innerHTML = "Refreshing novels...";
     await background.reloadReadingList();
@@ -214,7 +212,7 @@ searchInput.oninput = async () => {
     } else {
         searchResults.classList.remove("hidden");
         searchResults.innerHTML = "Loading results...";
-        const results = await background.search(val);
+        const results = await background.client.search(val);
         if (val !== latestSearch) {
             return;
         }
