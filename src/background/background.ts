@@ -177,36 +177,31 @@ async function tryLogin() {
 }
 
 // Get the list of next chapters
-function getNextChapters(id: number, currentChapter: number, latestChapter: number, date: string) {
-    const params = {
-        rid: latestChapter,
-        sid: id,
-        date,
-        nrid: currentChapter,
-    };
-    const url = `https://www.novelupdates.com/readinglist_getchp.php?${objectToParams(params)}`;
-    return getNextChaptersByUrl(url, currentChapter, latestChapter);
-}
+var nextChaptersCache: { [url: string]: any } = {};
 async function getNextChaptersByUrl(url: string, currentChapter: number, latestChapter: number) {
-    const rq = await ajax(url);
-    const parser = new DOMParser();
-    const xml = parser.parseFromString(rq.responseText, "text/html");
-    const nextLinks = xml.getElementsByClassName("getchps") as HTMLCollectionOf<HTMLAnchorElement>;
+    if (!(url in nextChaptersCache)) {
+        const rq = await ajax(url);
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(rq.responseText, "text/html");
+        const nextLinks = xml.getElementsByClassName("getchps") as HTMLCollectionOf<HTMLAnchorElement>;
 
-    const results = [];
-    for (let i = nextLinks.length - 1; i >= 0; --i) {
-        const nextLink = nextLinks[i];
-        const nextId = parseInt(nextLink.id.match(/^mycurrent(\d+)$/)[1], 10);
-        if (nextId === currentChapter || nextId === latestChapter) {
-            continue;
+        const results = [];
+        for (let i = nextLinks.length - 1; i >= 0; --i) {
+            const nextLink = nextLinks[i];
+            const nextId = parseInt(nextLink.id.match(/^mycurrent(\d+)$/)[1], 10);
+            if (nextId === currentChapter || nextId === latestChapter) {
+                continue;
+            }
+            results.push({
+                id: nextId,
+                name: nextLink.innerHTML,
+                url: fixUrl(nextLink.href),
+            });
         }
-        results.push({
-            id: nextId,
-            name: nextLink.innerHTML,
-            url: fixUrl(nextLink.href),
-        });
+        nextChaptersCache[url] = results;
     }
-    return results;
+
+    return nextChaptersCache[url];
 }
 
 // Get the status of novels in the user's reading list
