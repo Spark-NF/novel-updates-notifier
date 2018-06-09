@@ -18,11 +18,17 @@
             <form>
                 <div class="block-body">
                     <p id="login-error" class="hidden text-danger"></p>
-                    <div class="form-group">
-                        <input type="text" class="form-control" name="username" placeholder="Username" />
+                    <div class="form-group row">
+                        <label for="username" class="col-4 col-form-label">Username</label>
+                        <div class="col-8">
+                            <input type="text" class="form-control" name="username" id="username" />
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <input type="password" class="form-control" name="password" placeholder="Password" />
+                    <div class="form-group row">
+                        <label for="password" class="col-4 col-form-label">Password</label>
+                        <div class="col-8">
+                            <input type="password" class="form-control" name="password" id="password" />
+                        </div>
                     </div>
                 </div>
                 <div class="block-footer">
