@@ -61,7 +61,7 @@ async function loadReadingList() {
     }
 
     // Push notification
-    const notificationsEnabled = await storage.getSetting("notifications") || true;
+    const notificationsEnabled = await storage.getSetting("notifications");
     if (notificationsEnabled && novelsWithNewChanges.length > 0) {
         notify("New novel chapters available",  "- " + novelsWithNewChanges.join("\n- "));
     }
