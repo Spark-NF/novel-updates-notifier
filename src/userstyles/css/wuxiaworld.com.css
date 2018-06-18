@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
+.header,
+.navbar,
+.top-bar-area,
+.caption img,
+.font-resize,
+#bookmark-chapter,
+#comments,
+#widget_41,
+#widget_69,
+#widget_72,
+#widget_1,
+.footer,
+.fr-view > p:first-child > strong {
+    display: none;
+}
+
+.panel-default {
+    background-color: #fff;
+}
+
+.section .caption {
+    margin-top: 0;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px dotted #333;
+}
+
+.section .caption h4 {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+    text-align: left;
+    margin: 0;
+    padding: 0;
+}
+
+.fr-view p {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+    line-height: 22px;
+    padding: 0;
+    margin: 0 0 20px 0;
+    text-align: justify;
+    color: #000;
+}
