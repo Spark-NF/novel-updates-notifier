@@ -86,14 +86,7 @@ function makeChapterLink(href: string, txt: string): HTMLAnchorElement {
 
         // Open in sidebar
         await browser.sidebarAction.open();
-        await sleep(200); // Give some time for the views to update
-        const sidebarUrl = await browser.sidebarAction.getPanel({});
-        const views = await browser.extension.getViews({});
-        const sidebar = views.find((w) => w.location.href === sidebarUrl) as any;
-        if (!sidebar) {
-            return;
-        }
-        sidebar.loadChapter(href);
+        await browser.sidebarAction.setPanel({ panel: href });
 
         return false;
     };

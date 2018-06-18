@@ -4,6 +4,7 @@ export interface ISettings {
     interval: number;
     notifications: boolean;
     readInSidebar: boolean;
+    customCss: boolean;
 }
 
 export class Storage {
@@ -33,6 +34,7 @@ export class Storage {
             interval: settings.interval || 5,
             notifications: settings.notifications === undefined ? true : settings.notifications,
             readInSidebar: settings.readInSidebar === undefined ? false : settings.readInSidebar,
+            customCss: settings.customCss === undefined ? true : settings.customCss,
         };
     }
 

@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
+.cha-hd,
+.g_header,
+.g_ss_tip,
+#readLoadPrev,
+.get-app,
+.cha-rate,
+.cha-score,
+.cha-iso-link,
+.cha-bts {
+    display: none;
+}
+
+body {
+    padding: 0 !important;
+}
+
+.cha-tit {
+    margin-top: 0;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px dotted #333;
+}
+.cha-tit p {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: normal;
+}
+.cha-tit ._hr {
+    display: block;
+    visibility: hidden;
+    height: 0;
+}
+.cha-tit h2,
+.cha-tit h3 {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+    text-align: left;
+}
+
+.cha-wrap,
+.cha-page-in {
+    padding: 15px;
+}
+
+.cha-txt p,
+.cha-words p {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px;
+    line-height: 22px;
+    padding: 0;
+    margin: 0 0 20px 0;
+    text-align: justify;
+    color: #000;
+}
