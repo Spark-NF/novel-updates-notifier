@@ -96,6 +96,35 @@ async function getReadingList() {
     return window.readingList;
 }
 
+// Check when a chapter has been finished
+browser.webNavigation.onCommitted.addListener(async (data) => {
+    // Ignore iframe navigation
+    if (data.frameId !== 0) {
+        return;
+    }
+
+    const tabId: string = "tabUrl_" + data.tabId.toString();
+
+    const autoMarkAsRead: boolean = await storage.getSetting("autoMarkAsRead");
+    if (autoMarkAsRead) {
+        if (tabId in window.sessionStorage) {
+            const oldUrl = window.sessionStorage[tabId];
+            const readingList = await getReadingList();
+            for (const novel of readingList) {
+                if (novel.next.length >= 2
+                    && novel.next[0].url === oldUrl
+                    && novel.next[1].url === data.url
+                ) {
+                    await client.markChapterRead(novel.id, novel.next[0].id);
+                    await reloadReadingList();
+                }
+            }
+        }
+    }
+
+    window.sessionStorage[tabId] = data.url;
+});
+
 // Fill window object for popup and sidebar
 window.storage = storage;
 window.client = client;

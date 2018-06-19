@@ -5,6 +5,7 @@ export interface ISettings {
     notifications: boolean;
     readInSidebar: boolean;
     customCss: boolean;
+    autoMarkAsRead: boolean;
 }
 
 export class Storage {
@@ -35,6 +36,7 @@ export class Storage {
             notifications: settings.notifications === undefined ? true : settings.notifications,
             readInSidebar: settings.readInSidebar === undefined ? false : settings.readInSidebar,
             customCss: settings.customCss === undefined ? true : settings.customCss,
+            autoMarkAsRead: settings.autoMarkAsRead === undefined ? true : settings.autoMarkAsRead,
         };
     }
 

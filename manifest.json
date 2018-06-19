@@ -28,6 +28,7 @@
 		"storage",
 		"cookies",
 		"notifications",
+		"webNavigation",
 		"*://www.novelupdates.com/*"
 	],
 

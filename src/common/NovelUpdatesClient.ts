@@ -78,6 +78,13 @@ export class NovelUpdatesClient {
         return parseInt(input.value, 10);
     }
 
+    // Update a chapter "read" status
+    public async markChapterRead(seriesId: number, releaseId: number): Promise<boolean> {
+        const baseUrl = "https://www.novelupdates.com";
+        const rq = await ajax(baseUrl + `/readinglist_update.php?rid=${releaseId}&sid=${seriesId}&checked=yes`);
+        return rq.status === 200;
+    }
+
     // Get all chapters for a given series
     public async loadSeriesChapters(id: number) {
         const rq = await ajax("https://www.novelupdates.com/wp-admin/admin-ajax.php", "POST", {
