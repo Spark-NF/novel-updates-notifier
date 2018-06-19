@@ -5,6 +5,7 @@
 .top-bar-area,
 .caption img,
 .font-resize,
+.well,
 #bookmark-chapter,
 #comments,
 #widget_41,
@@ -16,8 +17,16 @@
     display: none;
 }
 
+body,
+body.pp,
+.main .container,
 .panel-default {
     background-color: #fff;
+}
+
+.section {
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
 
 .section .caption {
@@ -44,4 +53,47 @@
     margin: 0 0 20px 0;
     text-align: justify;
     color: #000;
+}
+
+.nav-bar-area {
+    margin: 0 0 10px 0 !important;
+    padding: 15px 15px 0 15px;
+    border-top: 1px dotted #333;
+}
+
+.nav-bar-area .prev, 
+.nav-bar-area .next {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: normal;
+    font-size: 16px;
+    text-align: center;
+    padding: 6px 11px;
+    background-color: #218838;
+    border: 1px solid #1e7e34;
+    border-radius: 4px;
+    cursor: pointer;
+    float: none !important;
+    width: calc(50% - 2px);
+    height: 40px;
+}
+.pp .nav-bar-area .btn-link {
+    color: #fff;
+    background: none;
+    padding: 0;
+}
+.pp .nav-bar-area .next .btn-link::after {
+    content: "Next";
+}
+.pp .nav-bar-area .prev .btn-link::after {
+    content: "Previous";
+}
+.pp .nav-bar-area .btn-link:hover {
+    text-decoration: none;
+}
+.pp .nav-bar-area .btn-link img {
+    display: none;
+}
+
+.nav-bar-area .caption {
+    display: none;
 }

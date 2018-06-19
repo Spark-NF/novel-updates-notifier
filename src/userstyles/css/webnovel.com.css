@@ -2,6 +2,7 @@
 
 .cha-hd,
 .g_header,
+.cha-fly,
 .g_ss_tip,
 #readLoadPrev,
 .get-app,
@@ -44,6 +45,11 @@ body {
     padding: 15px;
 }
 
+.cha-txt {
+    margin-bottom: 15px;
+    border-bottom: 1px dotted #333;
+}
+
 .cha-txt p,
 .cha-words p {
     font-family: 'Open Sans', sans-serif;
@@ -53,4 +59,19 @@ body {
     margin: 0 0 20px 0;
     text-align: justify;
     color: #000;
+}
+
+.swipe-up {
+    width: calc(100% - 30px);
+    margin: 15px auto;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: normal;
+    font-size: 16px;
+    text-align: center;
+    padding: 6px 11px;
+    color: #fff;
+    background-color: #218838;
+    border: 1px solid #1e7e34;
+    border-radius: 4px;
+    cursor: pointer;
 }
