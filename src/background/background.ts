@@ -125,6 +125,13 @@ browser.webNavigation.onCommitted.addListener(async (data) => {
     window.sessionStorage[tabId] = data.url;
 });
 
+// Sidebar checker
+browser.runtime.onMessage.addListener(async (msg, sender) => {
+    if ("type" in msg && msg.type === "check-is-sidebar") {
+        return !sender.tab || !sender.tab.id;
+    }
+});
+
 // Fill window object for popup and sidebar
 window.storage = storage;
 window.client = client;
