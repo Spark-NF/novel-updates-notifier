@@ -1,5 +1,4 @@
 import { NovelUpdatesClient } from "../common/NovelUpdatesClient";
-import { sleep } from "../common/sleep";
 import { Storage } from "../common/Storage";
 
 interface IBackground extends Window {
@@ -33,6 +32,8 @@ const settingsForm = settingsDiv.getElementsByTagName("form")[0];
 const settingsInterval = document.getElementsByName("interval")[0] as HTMLInputElement;
 const settingsNotifications = document.getElementsByName("notifications")[0] as HTMLInputElement;
 const settingsReadInSidebar = document.getElementsByName("read-in-sidebar")[0] as HTMLInputElement;
+const settingsCustomCss = document.getElementsByName("custom-css")[0] as HTMLInputElement;
+const settingsAutoMarkAsRead = document.getElementsByName("auto-mark-as-read")[0] as HTMLInputElement;
 const openSettingsButton = document.getElementById("open-settings");
 const nextRefreshLabel = document.getElementById("next-refresh");
 
@@ -161,18 +162,17 @@ async function displayNovels() {
 
 // Settings page
 openSettingsButton.onclick = async () => {
-    // tslint:disable
-    console.log("open settings");
     const settings = await background.storage.getSettings();
-    console.log("settings", settings);
 
     // Populate the form with the user settings
     settingsInterval.value = settings.interval.toString();
     settingsNotifications.checked = settings.notifications;
+    settingsAutoMarkAsRead.checked = settings.autoMarkAsRead;
 
     // Only show the sidebar settings if the API is available
     if (browser.sidebarAction) {
         settingsReadInSidebar.checked = settings.readInSidebar;
+        settingsCustomCss.checked = settings.customCss;
     }
 
     settingsDiv.classList.remove("hidden");
@@ -182,6 +182,8 @@ settingsForm.onsubmit = async () => {
         interval: parseInt(settingsInterval.value, 10),
         notifications: !!settingsNotifications.checked,
         readInSidebar: !!settingsReadInSidebar.checked,
+        customCss: !!settingsCustomCss.checked,
+        autoMarkAsRead: !!settingsAutoMarkAsRead.checked,
     });
     settingsDiv.classList.add("hidden");
 };
@@ -266,6 +268,7 @@ loginForm.onsubmit = async (e) => {
 (async () => {
     if (!browser.sidebarAction) {
         settingsReadInSidebar.parentElement.parentElement.remove();
+        settingsCustomCss.parentElement.parentElement.remove();
     }
 
     if (await background.checkLoginStatus()) {
