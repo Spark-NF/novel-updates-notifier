@@ -135,17 +135,24 @@ async function displayNovels() {
         if (novel.status.id !== novel.latest.id) {
             row.classList.add("table-warning");
         }
+
         const nameCell = row.insertCell();
         nameCell.classList.add("novel-name");
         nameCell.appendChild(makeLink(novel.url, novel.name));
         const readCell = row.insertCell();
-        readCell.appendChild(makeChapterLink(novel.status.url, novel.status.name));
+        readCell.classList.add("novel-chapter");
+        readCell.appendChild(makeChapterLink(novel.status.url, novel.status.html));
+
         const nextCell = row.insertCell();
+        nextCell.classList.add("novel-chapter");
         if (novel.next.length > 0) {
-            nextCell.appendChild(makeChapterLink(novel.next[0].url, novel.next[0].name));
+            nextCell.appendChild(makeChapterLink(novel.next[0].url, novel.next[0].html));
         }
+
         const latestCell = row.insertCell();
-        latestCell.appendChild(makeChapterLink(novel.latest.url, novel.latest.name));
+        latestCell.classList.add("novel-chapter");
+        latestCell.appendChild(makeChapterLink(novel.latest.url, novel.latest.html));
+
         const actionsCell = row.insertCell();
         const removeButton = document.createElement("button");
         removeButton.className = "btn btn-xs btn-danger btn-icon";

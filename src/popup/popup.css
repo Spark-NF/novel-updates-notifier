@@ -35,6 +35,9 @@ table .novel-icon img {
 table .novel-name a {
 	color: #212529;
 }
+table .novel-chapter i.fa {
+	margin-left: 5px;
+}
 
 #search .search_hl {
     font-weight: bold;

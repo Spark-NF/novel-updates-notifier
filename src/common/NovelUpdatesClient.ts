@@ -8,7 +8,9 @@ export interface ISearchResult {
 
 export interface IReadingListResultChapter {
     id: number;
+    number: number;
     name: string;
+    html: string;
     url: string;
 }
 
@@ -110,7 +112,7 @@ export class NovelUpdatesClient {
     }
 
     // Get the list of next chapters
-    private nextChaptersCache: { [url: string]: any } = {};
+    private nextChaptersCache: { [url: string]: IReadingListResultChapter[] } = {};
     public async getNextChaptersByUrl(url: string, currentChapter: number, latestChapter: number) {
         if (!(url in this.nextChaptersCache)) {
             const rq = await ajax(url);
@@ -118,7 +120,7 @@ export class NovelUpdatesClient {
             const xml = parser.parseFromString(rq.responseText, "text/html");
             const nextLinks = xml.getElementsByClassName("getchps") as HTMLCollectionOf<HTMLAnchorElement>;
 
-            const results = [];
+            const results: IReadingListResultChapter[] = [];
             for (let i = nextLinks.length - 1; i >= 0; --i) {
                 const nextLink = nextLinks[i];
                 const nextId = parseInt(nextLink.id.match(/^mycurrent(\d+)$/)[1], 10);
@@ -127,7 +129,9 @@ export class NovelUpdatesClient {
                 }
                 results.push({
                     id: nextId,
-                    name: nextLink.innerHTML,
+                    number: parseInt(nextLink.innerText.substring(1), 10),
+                    name: nextLink.innerText,
+                    html: nextLink.innerHTML,
                     url: fixUrl(nextLink.href),
                 });
             }
@@ -176,19 +180,23 @@ export class NovelUpdatesClient {
             const latestIdInput = cells[2].getElementsByTagName("input")[0];
             const latestLink = cells[3].getElementsByTagName("a")[0];
 
-            const novel = {
+            const novel: IReadingListResult = {
                 id: parseInt(row.dataset.sid || "0", 10),
                 name: row.dataset.title,
                 url: fixUrl(novelLink.href),
                 status: {
                     id: parseInt(checkboxInput.value.substr(0, checkboxInput.value.indexOf(":")), 10),
-                    name: statusLink.innerHTML,
+                    number: parseInt(statusLink.innerText.substring(1), 10),
+                    name: statusLink.innerText,
+                    html: statusLink.innerHTML,
                     url: fixUrl(statusLink.href),
                 },
-                next: [] as any[],
+                next: [] as IReadingListResultChapter[],
                 latest: {
                     id: parseInt(latestIdInput.value, 10),
-                    name: latestLink.innerHTML,
+                    number: parseInt(latestLink.innerText.substring(1), 10),
+                    name: latestLink.innerText,
+                    html: latestLink.innerHTML,
                     url: fixUrl(latestLink.href),
                 },
             };
