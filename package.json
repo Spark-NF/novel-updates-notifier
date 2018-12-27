@@ -20,14 +20,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Spark-NF/novel-updates.git"
+    "url": "git+https://github.com/Spark-NF/novel-updates-notifier.git"
   },
   "author": "Spark-NF",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/Spark-NF/novel-updates/issues"
+    "url": "https://github.com/Spark-NF/novel-updates-notifier/issues"
   },
-  "homepage": "https://github.com/Spark-NF/novel-updates#readme",
+  "homepage": "https://github.com/Spark-NF/novel-updates-notifier#readme",
   "dependencies": {
     "@types/firefox-webext-browser": "64.0.0",
     "bootstrap": "4.2.1",
