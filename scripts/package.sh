@@ -4,7 +4,11 @@ set -e
 
 VERSION=`jq -r '.version' manifest.json`
 TARGET="$1"
-ZIPFILE="packages/novel-updates-notifier-$VERSION-$TARGET.zip"
+EXT="zip"
+if [ $TARGET == "firefox" ]; then
+    EXT="xpi"
+fi
+ZIPFILE="packages/novel-updates-notifier-$VERSION-$TARGET.$EXT"
 
 echo "Packaging version $VERSION for $TARGET in '$ZIPFILE'"
 
@@ -16,7 +20,7 @@ zip -r -q $ZIPFILE . -x "src/**/*.ts" "src/**/*.js" "src/common/" -i "LICENSE" "
 zip -r -q $ZIPFILE . -i "src/vendor/**/*.js" "src/**/bundle.js"
 
 # Generate and add manifest file
-if [ $TARGET = "chrome" ]; then
+if [ $TARGET == "chrome" ]; then
     jq "del(.applications)" "manifest.json" > "packages/manifest.json"
 else
     cp "manifest.json" "packages/manifest.json"

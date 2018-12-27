@@ -1,4 +1,6 @@
-# Novel Updates Notifier add-on
+<p align="center"><img src="icons/icon-96.png" alt="" /></p>
+
+<h1 align="center">Novel Updates Notifier add-on</h1>
 
 ## About
 Add-on that notifies you when a novel from your reading list has a new chapter available.
@@ -25,4 +27,4 @@ npm run build
 npm run package
 ```
 
-You'll find the built package in the `packages` directory.
+You'll find the built packages in the `packages` directory.
