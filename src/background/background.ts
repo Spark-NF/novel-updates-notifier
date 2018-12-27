@@ -1,4 +1,3 @@
-import { ajax } from "../common/ajax";
 import { notify } from "../common/notifications";
 import { NovelUpdatesClient } from "../common/NovelUpdatesClient";
 import { sleep } from "../common/sleep";
@@ -16,9 +15,15 @@ const storage = new Storage();
 const client = new NovelUpdatesClient();
 
 // Check if we are logged in
-async function checkLoginStatus(): Promise<boolean> {
+async function checkLoginStatus(login: boolean = false): Promise<boolean> {
     const status = await client.checkLoginStatus();
     if (!status) {
+        if (login) {
+            const loginResult = await tryLogin();
+            if (loginResult) {
+                return loginResult;
+            }
+        }
         await browser.browserAction.setBadgeText({ text: "OFF" });
         await browser.browserAction.setBadgeBackgroundColor({ color: "orange" });
     }
@@ -150,7 +155,7 @@ window.client = client;
     }
 
     // Start reloading the reading list
-    if (await client.checkLoginStatus() || await tryLogin()) {
+    if (await checkLoginStatus(true)) {
         reloadReadingList();
     }
 })();

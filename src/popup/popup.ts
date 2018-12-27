@@ -288,7 +288,7 @@ loginForm.onsubmit = async (e) => {
         settingsCustomCss.parentElement.parentElement.remove();
     }
 
-    if (await background.checkLoginStatus()) {
+    if (await background.checkLoginStatus(true)) {
         loaderText.innerHTML = "Loading reading list...";
         await displayNovels();
     } else {
