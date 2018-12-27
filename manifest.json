@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Novel Updates",
-	"version": "1.0",
+	"version": "1.0.0",
 
     "description": "Add a notification icon and reading shortcuts for your Novel Updates reading list..",
 	"homepage_url": "https://github.com/Spark-NF/novel-updates",

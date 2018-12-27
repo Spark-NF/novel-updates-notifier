@@ -7,7 +7,7 @@
     "build": "bash scripts/build.sh",
     "watch": "npm-watch build",
     "check": "bash scripts/check.sh",
-    "package": "bash scripts/package.sh"
+    "package": "bash scripts/package.sh chrome && bash scripts/package.sh firefox"
   },
   "watch": {
     "build": {
