@@ -7,7 +7,8 @@
     "build": "bash scripts/build.sh",
     "watch": "npm-watch build",
     "check": "bash scripts/check.sh",
-    "package": "bash scripts/package.sh chrome && bash scripts/package.sh firefox"
+    "package": "bash scripts/package.sh chrome && bash scripts/package.sh firefox",
+    "check-package": "bash scripts/check-package.sh"
   },
   "watch": {
     "build": {
@@ -37,6 +38,7 @@
     "webextension-polyfill": "0.3.1"
   },
   "devDependencies": {
+    "addons-linter": "1.5.0",
     "event-stream": "3.3.4",
     "npm-watch": "0.5.0",
     "tslint": "5.12.0"
