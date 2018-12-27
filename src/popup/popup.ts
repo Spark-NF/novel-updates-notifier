@@ -43,16 +43,16 @@ async function removeNovel(id: number) {
     element.parentElement.removeChild(element);
 }
 async function addNovel(url: string) {
-    loaderText.innerHTML = "Getting novel ID...";
+    loaderText.textContent = "Getting novel ID...";
     loaderDiv.classList.remove("hidden");
     searchInput.value = "";
     searchResults.classList.add("hidden");
     const id = await background.client.getIdFromUrl(url);
 
-    loaderText.innerHTML = "Adding novel...";
+    loaderText.textContent = "Adding novel...";
     await background.client.putInList(id, 0);
 
-    loaderText.innerHTML = "Refreshing novels...";
+    loaderText.textContent = "Refreshing novels...";
     await background.reloadReadingList();
     await displayNovels();
 }
@@ -60,7 +60,7 @@ async function addNovel(url: string) {
 function makeLink(href: string, txt: string): HTMLAnchorElement {
     const link = document.createElement("a");
     link.href = href;
-    link.innerHTML = txt;
+    link.textContent = txt;
     link.target = "_blank";
     return link;
 }
@@ -110,11 +110,11 @@ async function updateRefreshLabel() {
         const strHours = hours.toString();
         const strMins = (mins % 60).toString().padStart(2, "0");
         const strSecs = (secs % 60).toString().padStart(2, "0");
-        nextRefreshLabel.innerHTML = `${strHours}:${strMins}:${strSecs}`;
+        nextRefreshLabel.textContent = `${strHours}:${strMins}:${strSecs}`;
     } else {
         const strMins = mins.toString();
         const strSecs = (secs % 60).toString().padStart(2, "0");
-        nextRefreshLabel.innerHTML = `${strMins}:${strSecs}`;
+        nextRefreshLabel.textContent = `${strMins}:${strSecs}`;
     }
 }
 setInterval(updateRefreshLabel, 1000);
@@ -145,7 +145,7 @@ async function displayNovels() {
             const counter = document.createElement("span");
             counter.classList.add("badge");
             counter.classList.add("badge-primary");
-            counter.innerHTML = unreadLabel;
+            counter.textContent = unreadLabel;
             nameCell.appendChild(counter);
         }
 
@@ -167,7 +167,10 @@ async function displayNovels() {
         const removeButton = document.createElement("button");
         removeButton.className = "btn btn-xs btn-danger btn-icon";
         removeButton.onclick = () => { removeNovel(novel.id); };
-        removeButton.innerHTML = '<i class="fa fa-trash-o"></i>';
+        const trashIcon = document.createElement("i");
+        trashIcon.classList.add("fa");
+        trashIcon.classList.add("fa-trash-o");
+        removeButton.appendChild(trashIcon);
         actionsCell.appendChild(removeButton);
         actionsCell.style.width = "0%";
     }
@@ -207,7 +210,7 @@ settingsForm.onsubmit = async () => {
 
 // Button to refresh novel list
 novelsRefreshButton.onclick = async () => {
-    loaderText.innerHTML = "Refreshing novels...";
+    loaderText.textContent = "Refreshing novels...";
     loaderDiv.classList.remove("hidden");
 
     await background.reloadReadingList();
@@ -223,12 +226,12 @@ searchInput.oninput = async () => {
         searchResults.classList.add("hidden");
     } else {
         searchResults.classList.remove("hidden");
-        searchResults.innerHTML = "Loading results...";
+        searchResults.textContent = "Loading results...";
         const results = await background.client.search(val);
         if (val !== latestSearch) {
             return;
         }
-        searchResults.innerHTML = "";
+        searchResults.textContent = "";
         for (let i = 0; i < 5 && i < results.length; ++i) {
             const result = results[i];
             const row = searchResults.insertRow();
@@ -246,7 +249,10 @@ searchInput.oninput = async () => {
             const addButton = document.createElement("button");
             addButton.className = "btn btn-xs btn-success btn-icon";
             addButton.onclick = () => { addNovel(result.url); };
-            addButton.innerHTML = '<i class="fa fa-plus"></i>';
+            const plusIcon = document.createElement("i");
+            plusIcon.classList.add("fa");
+            plusIcon.classList.add("fa-plus");
+            addButton.appendChild(plusIcon);
             actionsCell.appendChild(addButton);
             actionsCell.style.width = "0%";
         }
@@ -257,7 +263,7 @@ searchInput.oninput = async () => {
 loginForm.onsubmit = async (e) => {
     e.preventDefault();
 
-    loaderText.innerHTML = "Logging in...";
+    loaderText.textContent = "Logging in...";
     loaderDiv.classList.remove("hidden");
 
     await background.storage.setSettings({
@@ -272,7 +278,7 @@ loginForm.onsubmit = async (e) => {
         await background.reloadReadingList();
         await displayNovels();
     } else {
-        loginFormError.innerHTML = "Login failure";
+        loginFormError.textContent = "Login failure";
         loginFormError.classList.remove("hidden");
 
         loaderDiv.classList.add("hidden");
@@ -289,7 +295,7 @@ loginForm.onsubmit = async (e) => {
     }
 
     if (await background.checkLoginStatus(true)) {
-        loaderText.innerHTML = "Loading reading list...";
+        loaderText.textContent = "Loading reading list...";
         await displayNovels();
     } else {
         loaderDiv.classList.add("hidden");
