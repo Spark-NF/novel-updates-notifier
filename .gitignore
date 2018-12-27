@@ -7,6 +7,10 @@ src/vendor/
 # Compiled TypeScript files
 src/**/*.js
 
+# Random
+*.lnk
+*.pdn
+
 # Logs
 logs
 *.log
