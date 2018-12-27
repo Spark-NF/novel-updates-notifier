@@ -6,8 +6,10 @@ src/vendor/
 
 # Compiled TypeScript files
 src/**/*.js
+src/**/*.js.map
 
 # Random
+coverage/
 *.lnk
 *.pdn
 

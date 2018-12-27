@@ -3,7 +3,7 @@
 		"strict": true,
 		"strictNullChecks": false,
 		"removeComments": false,
-		"sourceMap": false,
+		"sourceMap": true,
 		"target": "es2017"
 	},
 	"include": [

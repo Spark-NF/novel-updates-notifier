@@ -1,11 +1,13 @@
 export function objectToParams(obj: any): string {
     let str = "";
-    for (const key in obj) {
-        if (obj.hasOwnProperty(key) && obj[key] !== undefined) {
-            if (str !== "") {
-                str += "&";
+    if (typeof obj === "object") {
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key) && obj[key] !== undefined && typeof obj[key] !== "object") {
+                if (str !== "") {
+                    str += "&";
+                }
+                str += key + "=" + encodeURIComponent(obj[key]);
             }
-            str += key + "=" + encodeURIComponent(obj[key]);
         }
     }
     return str;
