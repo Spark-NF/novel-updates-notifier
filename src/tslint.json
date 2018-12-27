@@ -1,7 +1,6 @@
 {
 	"extends": "tslint:latest",
 	"rules": {
-		"forin": false,
 		"member-ordering": false,
 		"object-literal-sort-keys": false
 	}

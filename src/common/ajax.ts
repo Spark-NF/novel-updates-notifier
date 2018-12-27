@@ -1,10 +1,12 @@
 export function objectToParams(obj: any): string {
     let str = "";
     for (const key in obj) {
-        if (str !== "") {
-            str += "&";
+        if (obj.hasOwnProperty(key)) {
+            if (str !== "") {
+                str += "&";
+            }
+            str += key + "=" + encodeURIComponent(obj[key]);
         }
-        str += key + "=" + encodeURIComponent(obj[key]);
     }
     return str;
 }
