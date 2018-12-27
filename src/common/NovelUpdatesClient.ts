@@ -153,10 +153,11 @@ export class NovelUpdatesClient {
     }
 
     // Send login request
-    public async login(username: string, password: string): Promise<XMLHttpRequest> {
+    public async login(username: string, password: string, rememberMe: boolean = true): Promise<XMLHttpRequest> {
         return ajax("https://www.novelupdates.com/login/", "POST", {
             log: username,
             pwd: password,
+            rememberme: rememberMe ? "forever" : undefined,
         });
     }
 

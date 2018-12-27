@@ -1,7 +1,7 @@
 export function objectToParams(obj: any): string {
     let str = "";
     for (const key in obj) {
-        if (obj.hasOwnProperty(key)) {
+        if (obj.hasOwnProperty(key) && obj[key] !== undefined) {
             if (str !== "") {
                 str += "&";
             }
