@@ -139,6 +139,16 @@ async function displayNovels() {
         const nameCell = row.insertCell();
         nameCell.classList.add("novel-name");
         nameCell.appendChild(makeLink(novel.url, novel.name));
+        const unreadCount = novel.latest.number - novel.status.number;
+        const unreadLabel = unreadCount > 0 ? String(unreadCount) : (novel.status.id !== novel.latest.id ? "!" : "");
+        if (unreadLabel) {
+            const counter = document.createElement("span");
+            counter.classList.add("badge");
+            counter.classList.add("badge-primary");
+            counter.innerHTML = unreadLabel;
+            nameCell.appendChild(counter);
+        }
+
         const readCell = row.insertCell();
         readCell.classList.add("novel-chapter");
         readCell.appendChild(makeChapterLink(novel.status.url, novel.status.html));
