@@ -21,6 +21,8 @@ As a WebExtension, it is compatible with both Chrome and Firefox.
 The script is licensed under the [Apache License 2.0](http://www.apache.org/licenses/LICENSE-2.0).
 
 ## Building
+Note: you need to have [NodeJS](https://nodejs.org/) and [JQ](https://stedolan.github.io/jq/) installed to build the add-on.
+
 ```
 npm install
 npm run build
