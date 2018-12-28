@@ -2,6 +2,7 @@ import { ajax } from "./ajax";
 
 export interface ISearchResult {
     name: string;
+    html: string;
     url: string;
     img: string;
 }
@@ -56,7 +57,8 @@ export class NovelUpdatesClient {
             const img = link.getElementsByTagName("img")[0];
             const name = link.getElementsByTagName("span")[0];
             results.push({
-                name: name.innerHTML.trim(),
+                name: name.innerText.trim(),
+                html: name.innerHTML.trim(),
                 url: fixUrl(link.href),
                 img: fixUrl(img.src),
             });

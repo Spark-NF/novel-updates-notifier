@@ -60,7 +60,7 @@ async function addNovel(url: string) {
 function makeLink(href: string, txt: string): HTMLAnchorElement {
     const link = document.createElement("a");
     link.href = href;
-    link.textContent = txt;
+    link.innerHTML = txt;
     link.target = "_blank";
     return link;
 }
@@ -151,17 +151,17 @@ async function displayNovels() {
 
         const readCell = row.insertCell();
         readCell.classList.add("novel-chapter");
-        readCell.appendChild(makeChapterLink(novel.status.url, novel.status.name));
+        readCell.appendChild(makeChapterLink(novel.status.url, novel.status.html));
 
         const nextCell = row.insertCell();
         nextCell.classList.add("novel-chapter");
         if (novel.next.length > 0) {
-            nextCell.appendChild(makeChapterLink(novel.next[0].url, novel.next[0].name));
+            nextCell.appendChild(makeChapterLink(novel.next[0].url, novel.next[0].html));
         }
 
         const latestCell = row.insertCell();
         latestCell.classList.add("novel-chapter");
-        latestCell.appendChild(makeChapterLink(novel.latest.url, novel.latest.name));
+        latestCell.appendChild(makeChapterLink(novel.latest.url, novel.latest.html));
 
         const actionsCell = row.insertCell();
         const removeButton = document.createElement("button");
@@ -235,6 +235,7 @@ searchInput.oninput = async () => {
         for (let i = 0; i < 5 && i < results.length; ++i) {
             const result = results[i];
             const row = searchResults.insertRow();
+
             const imgCell = row.insertCell();
             imgCell.classList.add("novel-icon");
             imgCell.style.width = "0%";
@@ -242,9 +243,11 @@ searchInput.oninput = async () => {
             img.alt = "";
             img.src = result.img;
             imgCell.appendChild(img);
+
             const nameCell = row.insertCell();
             nameCell.classList.add("novel-name");
-            nameCell.appendChild(makeLink(result.url, result.name));
+            nameCell.appendChild(makeLink(result.url, result.html));
+
             const actionsCell = row.insertCell();
             const addButton = document.createElement("button");
             addButton.className = "btn btn-xs btn-success btn-icon";
