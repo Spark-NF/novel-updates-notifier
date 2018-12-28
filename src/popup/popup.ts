@@ -201,6 +201,7 @@ async function displayNovels() {
             readLink.classList.add("hidden");
             editReadButton.classList.add("hidden");
             readSelect.classList.remove("hidden");
+            readSelect.focus();
         };
         const editReadIcon = document.createElement("i");
         editReadIcon.classList.add("fa");
