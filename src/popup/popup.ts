@@ -172,7 +172,7 @@ async function displayNovels() {
         trashIcon.classList.add("fa-trash-o");
         removeButton.appendChild(trashIcon);
         actionsCell.appendChild(removeButton);
-        actionsCell.style.width = "0%";
+        actionsCell.style.width = "1px";
     }
 
     updateRefreshLabel();
