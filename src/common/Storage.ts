@@ -35,8 +35,8 @@ export class Storage {
             interval: settings.interval || 5,
             notifications: settings.notifications === undefined ? true : settings.notifications,
             readInSidebar: settings.readInSidebar === undefined ? false : settings.readInSidebar,
-            customCss: settings.customCss === undefined ? true : settings.customCss,
-            autoMarkAsRead: settings.autoMarkAsRead === undefined ? true : settings.autoMarkAsRead,
+            customCss: settings.customCss === undefined ? false : settings.customCss,
+            autoMarkAsRead: settings.autoMarkAsRead === undefined ? false : settings.autoMarkAsRead,
         };
     }
 
