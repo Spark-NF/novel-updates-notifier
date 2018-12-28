@@ -19,6 +19,7 @@ export interface IReadingListResult {
     id: number;
     name: string;
     url: string;
+    chapters: IReadingListResultChapter[];
     status: IReadingListResultChapter;
     next: IReadingListResultChapter[];
     latest: IReadingListResultChapter;
@@ -198,6 +199,7 @@ export class NovelUpdatesClient {
                 id: parseInt(row.dataset.sid || "0", 10),
                 name: row.dataset.title,
                 url: fixUrl(novelLink.href),
+                chapters: [] as IReadingListResultChapter[],
                 status: chapterFromLink(
                     parseInt(checkboxInput.value.substr(0, checkboxInput.value.indexOf(":")), 10),
                     statusLink,
@@ -216,6 +218,7 @@ export class NovelUpdatesClient {
                 chapters = await this.loadSeriesChapters(novel.id);
                 await this.storage.setCache(cacheKey, chapters, 24 * 60 * 60);
             }
+            novel.chapters = chapters;
 
             // Build the "next" object
             const compareOpts = { numeric: true, sensitivity: "base" };

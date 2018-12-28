@@ -49,6 +49,18 @@ table .novel-chapter i.fa {
 	margin-left: 5px;
 }
 
+table .novel-actions {
+	width: 1px;
+	white-space: nowrap;
+	text-align: right;
+}
+table .novel-actions .btn {
+	margin-right: 5px;
+}
+table .novel-actions .btn:last-child {
+	margin-right: 0;
+}
+
 #search .search_hl {
     font-weight: bold;
 }

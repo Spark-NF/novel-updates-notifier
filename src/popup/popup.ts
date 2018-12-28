@@ -149,7 +149,39 @@ async function displayNovels() {
 
         const readCell = row.insertCell();
         readCell.classList.add("novel-chapter");
-        readCell.appendChild(makeChapterLink(novel.status.url, novel.status.html));
+        const readLink = makeChapterLink(novel.status.url, novel.status.html);
+        readCell.appendChild(readLink);
+        const readSelect = document.createElement("select");
+        readSelect.classList.add("hidden");
+        for (const chapter of novel.chapters) {
+            const opt = document.createElement("option");
+            opt.value = chapter.id.toString();
+            opt.innerText = chapter.name;
+            if (chapter.id === novel.status.id) {
+                opt.selected = true;
+            }
+            readSelect.appendChild(opt);
+        }
+        readSelect.onchange = readSelect.onblur = async () => {
+            const newId = parseInt(readSelect.value, 10);
+            if (newId !== novel.status.id) {
+                loaderText.textContent = "Applying change...";
+                loaderDiv.classList.remove("hidden");
+
+                readLink.innerText = readSelect.selectedOptions[0].innerText;
+                await background.client.markChapterRead(novel.id, newId);
+            }
+
+            readSelect.classList.add("hidden");
+            readLink.classList.remove("hidden");
+            editReadButton.classList.remove("hidden");
+
+            if (newId !== novel.status.id) {
+                await background.reloadReadingList();
+                await displayNovels();
+            }
+        };
+        readCell.appendChild(readSelect);
 
         const nextCell = row.insertCell();
         nextCell.classList.add("novel-chapter");
@@ -162,6 +194,19 @@ async function displayNovels() {
         latestCell.appendChild(makeChapterLink(novel.latest.url, novel.latest.html));
 
         const actionsCell = row.insertCell();
+        actionsCell.classList.add("novel-actions");
+        const editReadButton = document.createElement("button");
+        editReadButton.className = "btn btn-xs btn-success btn-icon";
+        editReadButton.onclick = async () => {
+            readLink.classList.add("hidden");
+            editReadButton.classList.add("hidden");
+            readSelect.classList.remove("hidden");
+        };
+        const editReadIcon = document.createElement("i");
+        editReadIcon.classList.add("fa");
+        editReadIcon.classList.add("fa-pencil");
+        editReadButton.appendChild(editReadIcon);
+        actionsCell.appendChild(editReadButton);
         const removeButton = document.createElement("button");
         removeButton.className = "btn btn-xs btn-danger btn-icon";
         removeButton.onclick = () => { removeNovel(novel.id); };
@@ -170,7 +215,6 @@ async function displayNovels() {
         trashIcon.classList.add("fa-trash-o");
         removeButton.appendChild(trashIcon);
         actionsCell.appendChild(removeButton);
-        actionsCell.style.width = "1px";
     }
 
     updateRefreshLabel();
