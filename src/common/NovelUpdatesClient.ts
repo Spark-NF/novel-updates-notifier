@@ -134,7 +134,11 @@ export class NovelUpdatesClient {
 
     // Get the list of next chapters
     private nextChaptersCache: { [url: string]: IReadingListResultChapter[] } = {};
-    private async getNextChaptersByUrl(url: string, currentChapter: number, latestChapter: number) {
+    private async getNextChaptersByUrl(
+        url: string,
+        currentChapter: number,
+        latestChapter: number,
+    ): Promise<IReadingListResultChapter[]> {
         if (!(url in this.nextChaptersCache)) {
             const rq = await ajax(url);
             const parser = new DOMParser();
@@ -221,10 +225,25 @@ export class NovelUpdatesClient {
             }
             novel.chapters = chapters;
 
-            // Build the "next" object
-            const index = chapters.map((c) => c.id).indexOf(novel.status.id);
-            for (let i = index + 1; i < chapters.length; ++i) {
-                novel.next.push(chapters[i]);
+            // Load and build next chapters if necessary
+            if (novel.status.id !== novel.latest.id) {
+
+                // Load the next three chapters with correct URLs
+                const nextChapterSpan = cells[3].getElementsByClassName("show-pop")[0] as HTMLSpanElement;
+                const nextChaptersUrl = nextChapterSpan.dataset.url;
+                const next = await this.getNextChaptersByUrl(nextChaptersUrl, novel.status.id, novel.latest.id);
+                const fullNext: { [key: number]: IReadingListResultChapter } = {};
+                for (const chapter of next) {
+                    fullNext[chapter.id] = chapter;
+                }
+
+                // Build the "next" object
+                const index = chapters.map((c) => c.id).indexOf(novel.status.id);
+                for (let i = index + 1; i < chapters.length; ++i) {
+                    const chapter = chapters[i];
+                    const fullChapter = chapter.id in fullNext ? fullNext[chapter.id] : chapter;
+                    novel.next.push(fullChapter);
+                }
             }
 
             novels.push(novel);
