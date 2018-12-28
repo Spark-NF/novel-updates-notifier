@@ -1,3 +1,5 @@
+type StorageArea = browser.storage.StorageArea;
+
 export interface ISettings {
     interval: number;
     notifications: boolean;
@@ -12,16 +14,18 @@ interface ICacheData {
 }
 
 export class Storage {
-    private storage: browser.storage.StorageArea;
+    private sync: StorageArea;
+    private local: StorageArea;
     private settings: ISettings;
 
     public async init(): Promise<void> {
-        this.storage = await this.getStorage();
+        this.sync = await this.getStorage();
+        this.local = browser.storage.local;
         await this.reloadSettings();
     }
 
     // Return the sync storage with fallback on local one
-    private async getStorage(): Promise<browser.storage.StorageArea> {
+    private async getStorage(): Promise<StorageArea> {
         try {
             if (await browser.storage.sync.get(null)) {
                 return browser.storage.sync;
@@ -30,13 +34,13 @@ export class Storage {
         return browser.storage.local;
     }
 
-    private async get(key: string): Promise<any> {
-        const raw = await this.storage.get(key) || {};
+    private async get(storage: StorageArea, key: string): Promise<any> {
+        const raw = await storage.get(key) || {};
         return key in raw ? raw[key] : undefined;
     }
 
     private async reloadSettings(): Promise<void> {
-        const settings = await this.get("settings") || {};
+        const settings = await this.get(this.sync, "settings") || {};
         this.settings = {
             interval: settings.interval || 5,
             notifications: settings.notifications === undefined ? true : settings.notifications,
@@ -61,7 +65,7 @@ export class Storage {
                 (this.settings as any)[key] = values[key];
             }
         }
-        await this.storage.set({ settings: this.settings });
+        await this.sync.set({ settings: this.settings });
         await this.reloadSettings();
     }
 
@@ -71,11 +75,11 @@ export class Storage {
             value,
             expiration: new Date().getTime() + duration,
         };
-        await this.storage.set(values);
+        await this.local.set(values);
     }
 
     public async getCache(key: string): Promise<any> {
-        const data: ICacheData = await this.get("cache_" + key);
+        const data: ICacheData = await this.get(this.local, "cache_" + key);
         if (data && data.expiration > new Date().getTime()) {
             return data.value;
         }
