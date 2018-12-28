@@ -195,9 +195,10 @@ export class NovelUpdatesClient {
             const cells = row.getElementsByTagName("td");
             const checkboxInput = cells[0].getElementsByTagName("input")[0];
             const novelLink = cells[1].getElementsByTagName("a")[0];
-            const statusLink = cells[2].getElementsByTagName("a")[0];
-            const latestIdInput = cells[2].getElementsByTagName("input")[0];
-            const latestLink = cells[3].getElementsByTagName("a")[0];
+            const chapterLinks = row.getElementsByClassName("chp-release");
+            const statusLink = chapterLinks[0] as HTMLAnchorElement;
+            const latestLink = chapterLinks[1] as HTMLAnchorElement;
+            const latestIdInput = Array.from(row.getElementsByTagName("input")).filter(i => i.type == "hidden")[0];
 
             // Construct the novel object
             const novel: IReadingListResult = {
@@ -229,7 +230,7 @@ export class NovelUpdatesClient {
             if (novel.status.id !== novel.latest.id) {
 
                 // Load the next three chapters with correct URLs
-                const nextChapterSpan = cells[3].getElementsByClassName("show-pop")[0] as HTMLSpanElement;
+                const nextChapterSpan = row.getElementsByClassName("show-pop")[0] as HTMLSpanElement;
                 const nextChaptersUrl = nextChapterSpan.dataset.url;
                 const next = await this.getNextChaptersByUrl(nextChaptersUrl, novel.status.id, novel.latest.id);
                 const fullNext: { [key: number]: IReadingListResultChapter } = {};
