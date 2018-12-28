@@ -1,14 +1,14 @@
-import { NovelUpdatesClient } from "../common/NovelUpdatesClient";
+import { IReadingListResult, NovelUpdatesClient } from "../common/NovelUpdatesClient";
 import { Storage } from "../common/Storage";
 
 interface IBackground extends Window {
     storage: Storage;
     client: NovelUpdatesClient;
 
-    checkLoginStatus: any;
-    getReadingList: any;
-    reloadReadingList: any;
-    tryLogin: any;
+    checkLoginStatus: (login?: boolean) => Promise<boolean>;
+    getReadingList: () => Promise<IReadingListResult[]>;
+    reloadReadingList: () => Promise<void>;
+    tryLogin: () => Promise<boolean>;
 
     nextListRefresh?: Date;
 }

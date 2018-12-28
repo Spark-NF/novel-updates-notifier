@@ -24,7 +24,7 @@ export interface IReadingListResult {
     latest: IReadingListResultChapter;
 }
 
-export function fixUrl(url: string): string {
+function fixUrl(url: string): string {
     if (url.startsWith("moz-extension://")) {
         return "https:" + url.substr(14);
     }
@@ -115,7 +115,7 @@ export class NovelUpdatesClient {
 
     // Get the list of next chapters
     private nextChaptersCache: { [url: string]: IReadingListResultChapter[] } = {};
-    public async getNextChaptersByUrl(url: string, currentChapter: number, latestChapter: number) {
+    private async getNextChaptersByUrl(url: string, currentChapter: number, latestChapter: number) {
         if (!(url in this.nextChaptersCache)) {
             const rq = await ajax(url);
             const parser = new DOMParser();

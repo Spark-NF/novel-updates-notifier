@@ -1,5 +1,5 @@
 import { notify } from "../common/notifications";
-import { NovelUpdatesClient } from "../common/NovelUpdatesClient";
+import { IReadingListResult, NovelUpdatesClient } from "../common/NovelUpdatesClient";
 import { sleep } from "../common/sleep";
 import { Storage } from "../common/Storage";
 
@@ -29,7 +29,7 @@ async function checkLoginStatus(login: boolean = false): Promise<boolean> {
     }
     return status;
 }
-async function tryLogin() {
+async function tryLogin(): Promise<boolean> {
     const settings = await storage.getSettings();
     if (!settings || !settings.username || !settings.password) {
         return false;
@@ -46,7 +46,7 @@ async function tryLogin() {
 
 // Get the status of novels in the user's reading list
 const lastChanges: { [novelId: number]: number } = {};
-async function loadReadingList() {
+async function loadReadingList(): Promise<IReadingListResult[]> {
     const novels = await client.getReadingList();
     if (!novels) {
         return undefined;
@@ -80,7 +80,7 @@ async function loadReadingList() {
 
 // Reading list accessor
 let listRefreshIntervalId: number;
-async function reloadReadingList() {
+async function reloadReadingList(): Promise<void> {
     window.readingList = await loadReadingList();
 
     // Clear previous timeout if this call was triggered manually
@@ -94,7 +94,7 @@ async function reloadReadingList() {
     listRefreshIntervalId = window.setTimeout(reloadReadingList, intervalMs);
     window.nextListRefresh = new Date(new Date().getTime() + intervalMs);
 }
-async function getReadingList() {
+async function getReadingList(): Promise<IReadingListResult[]> {
     if (window.readingList === undefined) {
         await reloadReadingList();
     }
