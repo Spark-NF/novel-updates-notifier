@@ -2,6 +2,8 @@
 
 <h1 align="center">Novel Updates Notifier add-on</h1>
 
+[![Firefox add-on version](https://img.shields.io/amo/v/novel-updates-notifier.svg)](https://addons.mozilla.org/en-US/firefox/addon/novel-updates-notifier/)
+
 ## About
 Add-on that notifies you when a novel from your reading list has a new chapter available.
 
