@@ -16,25 +16,18 @@ const storage = new Storage();
 const client = new NovelUpdatesClient();
 
 // Check if we are logged in
-async function checkLoginStatus(login: boolean = false): Promise<boolean> {
+async function checkLoginStatus(): Promise<boolean> {
     const status = await client.checkLoginStatus();
     if (!status) {
-        if (login) {
-            const loginResult = await tryLogin();
-            if (loginResult) {
-                return loginResult;
-            }
-        }
         await setBadge("OFF", "orange", "white");
     }
     return status;
 }
-async function tryLogin(): Promise<boolean> {
-    const settings = await storage.getSettings();
-    if (!settings || !settings.username || !settings.password) {
+async function tryLogin(username: string, password: string): Promise<boolean> {
+    if (!username || !password) {
         return false;
     }
-    client.login(settings.username, settings.password);
+    client.login(username, password);
     for (let i = 0; i < 30; ++i) {
         if (await client.checkLoginStatus()) {
             return true;
@@ -148,7 +141,7 @@ window.client = client;
     await setBadge("...", "gray", "white");
 
     // Start reloading the reading list
-    if (await checkLoginStatus(true)) {
+    if (await checkLoginStatus()) {
         reloadReadingList();
     }
 })();

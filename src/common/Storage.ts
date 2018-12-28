@@ -1,6 +1,4 @@
 export interface ISettings {
-    username?: string;
-    password?: string;
     interval: number;
     notifications: boolean;
     readInSidebar: boolean;
@@ -30,8 +28,6 @@ export class Storage {
     private async reloadSettings(): Promise<void> {
         const settings = await this.storage.get(undefined) || {};
         this.settings = {
-            username: settings.username,
-            password: settings.password,
             interval: settings.interval || 5,
             notifications: settings.notifications === undefined ? true : settings.notifications,
             readInSidebar: settings.readInSidebar === undefined ? false : settings.readInSidebar,

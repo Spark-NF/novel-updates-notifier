@@ -8,7 +8,7 @@ interface IBackground extends Window {
     checkLoginStatus: (login?: boolean) => Promise<boolean>;
     getReadingList: () => Promise<IReadingListResult[]>;
     reloadReadingList: () => Promise<void>;
-    tryLogin: () => Promise<boolean>;
+    tryLogin: (username: string, password: string) => Promise<boolean>;
 
     nextListRefresh?: Date;
 }
@@ -269,12 +269,7 @@ loginForm.onsubmit = async (e) => {
     loaderText.textContent = "Logging in...";
     loaderDiv.classList.remove("hidden");
 
-    await background.storage.setSettings({
-        username: loginUsername.value,
-        password: loginPassword.value,
-    });
-
-    if (await background.tryLogin()) {
+    if (await background.tryLogin(loginUsername.value, loginPassword.value)) {
         loginFormError.classList.add("hidden");
         loginDiv.classList.add("hidden");
 
@@ -297,7 +292,7 @@ loginForm.onsubmit = async (e) => {
         settingsCustomCss.parentElement.parentElement.remove();
     }
 
-    if (await background.checkLoginStatus(true)) {
+    if (await background.checkLoginStatus()) {
         loaderText.textContent = "Loading reading list...";
         await displayNovels();
     } else {
