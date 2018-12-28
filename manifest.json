@@ -64,7 +64,8 @@
 			"64": "icons/action-64.png"
 		},
 		"default_title": "Novel Updates",
-		"default_panel": "src/sidebar/sidebar.html"
+		"default_panel": "src/sidebar/sidebar.html",
+		"open_at_install": false
 	},
 
 	"content_scripts": [{

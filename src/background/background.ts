@@ -149,11 +149,6 @@ window.client = client;
     await browser.browserAction.setBadgeText({ text: "..." });
     await browser.browserAction.setBadgeBackgroundColor({ color: "gray" });
 
-    // Close sidebar if possible
-    if (browser.sidebarAction) {
-        await browser.sidebarAction.close();
-    }
-
     // Start reloading the reading list
     if (await checkLoginStatus(true)) {
         reloadReadingList();
