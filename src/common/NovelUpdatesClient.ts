@@ -41,7 +41,7 @@ function fixUrl(url: string): string {
 }
 
 function chapterFromLink(id: number, link: HTMLAnchorElement): IReadingListResultChapter {
-    const chapterNumber = link.innerText.trim().match(/^c(\d+)$/);
+    const chapterNumber = link.innerText.trim().match(/^c(\d+)(?:$| )/);
     return {
         id,
         number: chapterNumber ? parseInt(chapterNumber[1], 10) : undefined,

@@ -1,3 +1,4 @@
+import { setBadge } from "../common/badge";
 import { notify } from "../common/notifications";
 import { IReadingListResult, NovelUpdatesClient } from "../common/NovelUpdatesClient";
 import { sleep } from "../common/sleep";
@@ -24,8 +25,7 @@ async function checkLoginStatus(login: boolean = false): Promise<boolean> {
                 return loginResult;
             }
         }
-        await browser.browserAction.setBadgeText({ text: "OFF" });
-        await browser.browserAction.setBadgeBackgroundColor({ color: "orange" });
+        await setBadge("OFF", "orange", "white");
     }
     return status;
 }
@@ -72,8 +72,7 @@ async function loadReadingList(): Promise<IReadingListResult[]> {
     }
 
     // Badge notification
-    browser.browserAction.setBadgeText({ text: novelsWithChanges > 0 ? novelsWithChanges.toString() : "" });
-    browser.browserAction.setBadgeBackgroundColor({ color: "red" });
+    setBadge(novelsWithChanges > 0 ? novelsWithChanges.toString() : "", "red", "white");
 
     return novels;
 }
@@ -146,8 +145,7 @@ window.client = client;
     await storage.init();
 
     // Show "loading" notification
-    await browser.browserAction.setBadgeText({ text: "..." });
-    await browser.browserAction.setBadgeBackgroundColor({ color: "gray" });
+    await setBadge("...", "gray", "white");
 
     // Start reloading the reading list
     if (await checkLoginStatus(true)) {
