@@ -40,6 +40,17 @@ function fixUrl(url: string): string {
     return url;
 }
 
+function chapterFromLink(id: number, link: HTMLAnchorElement): IReadingListResultChapter {
+    const chapterNumber = link.innerText.trim().match(/^c(\d+)$/);
+    return {
+        id,
+        number: chapterNumber ? parseInt(chapterNumber[1], 10) : undefined,
+        name: link.innerText.trim(),
+        html: link.innerHTML.trim(),
+        url: fixUrl(link.href),
+    };
+}
+
 export class NovelUpdatesClient {
     // Perform a series search
     public async search(query: string): Promise<ISearchResult[]> {
@@ -125,17 +136,10 @@ export class NovelUpdatesClient {
             const results: IReadingListResultChapter[] = [];
             for (let i = nextLinks.length - 1; i >= 0; --i) {
                 const nextLink = nextLinks[i];
-                const nextId = parseInt(nextLink.id.match(/^mycurrent(\d+)$/)[1], 10);
-                if (nextId === currentChapter || nextId === latestChapter) {
-                    continue;
+                const id = parseInt(nextLink.id.match(/^mycurrent(\d+)$/)[1], 10);
+                if (id !== currentChapter && id !== latestChapter) {
+                    results.push(chapterFromLink(id, nextLink));
                 }
-                results.push({
-                    id: nextId,
-                    number: parseInt(nextLink.innerText.substring(1), 10),
-                    name: nextLink.innerText,
-                    html: nextLink.innerHTML,
-                    url: fixUrl(nextLink.href),
-                });
             }
             this.nextChaptersCache[url] = results;
         }
@@ -187,21 +191,15 @@ export class NovelUpdatesClient {
                 id: parseInt(row.dataset.sid || "0", 10),
                 name: row.dataset.title,
                 url: fixUrl(novelLink.href),
-                status: {
-                    id: parseInt(checkboxInput.value.substr(0, checkboxInput.value.indexOf(":")), 10),
-                    number: parseInt(statusLink.innerText.substring(1), 10),
-                    name: statusLink.innerText,
-                    html: statusLink.innerHTML,
-                    url: fixUrl(statusLink.href),
-                },
+                status: chapterFromLink(
+                    parseInt(checkboxInput.value.substr(0, checkboxInput.value.indexOf(":")), 10),
+                    statusLink,
+                ),
                 next: [] as IReadingListResultChapter[],
-                latest: {
-                    id: parseInt(latestIdInput.value, 10),
-                    number: parseInt(latestLink.innerText.substring(1), 10),
-                    name: latestLink.innerText,
-                    html: latestLink.innerHTML,
-                    url: fixUrl(latestLink.href),
-                },
+                latest: chapterFromLink(
+                    parseInt(latestIdInput.value, 10),
+                    latestLink,
+                ),
             };
 
             if (novel.status.id !== novel.latest.id) {

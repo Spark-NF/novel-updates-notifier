@@ -140,7 +140,7 @@ async function displayNovels() {
         nameCell.classList.add("novel-name");
         nameCell.appendChild(makeLink(novel.url, novel.name));
         const unreadCount = novel.latest.number - novel.status.number;
-        const unreadLabel = unreadCount > 0 ? String(unreadCount) : (novel.status.id !== novel.latest.id ? "!" : "");
+        const unreadLabel = unreadCount > 0 ? String(unreadCount) : "";
         if (unreadLabel) {
             const counter = document.createElement("span");
             counter.classList.add("badge");
