@@ -126,11 +126,10 @@ export class NovelUpdatesClient {
             });
         }
 
-        // Sort chapters by name
-        const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
-        return results.sort((a: IReadingListResultChapter, b: IReadingListResultChapter) => {
-            return collator.compare(a.name, b.name);
-        });
+        // Elements are returned "new to old", but we want "old to new"
+        results.reverse();
+
+        return results;
     }
 
     // Get the list of next chapters
@@ -223,11 +222,9 @@ export class NovelUpdatesClient {
             novel.chapters = chapters;
 
             // Build the "next" object
-            const compareOpts = { numeric: true, sensitivity: "base" };
-            for (const chapter of chapters) {
-                if (chapter.name.localeCompare(novel.status.name, undefined, compareOpts) > 0) {
-                    novel.next.push(chapter);
-                }
+            const index = chapters.map((c) => c.id).indexOf(novel.status.id);
+            for (let i = index + 1; i < chapters.length; ++i) {
+                novel.next.push(chapters[i]);
             }
 
             novels.push(novel);
