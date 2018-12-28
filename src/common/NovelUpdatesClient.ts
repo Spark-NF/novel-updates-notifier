@@ -12,7 +12,7 @@ export interface IReadingListResultChapter {
     id: number;
     name: string;
     html: string;
-    url: string;
+    url?: string;
 }
 
 export interface IReadingListResult {
@@ -42,11 +42,12 @@ function fixUrl(url: string): string {
 }
 
 function chapterFromLink(id: number, link: HTMLAnchorElement): IReadingListResultChapter {
+    const url = fixUrl(link.href);
     return {
         id,
         name: link.innerText.trim(),
         html: link.innerHTML.trim(),
-        url: fixUrl(link.href),
+        url: !url.includes("novelupdates.com/extnu/") ? url : undefined,
     };
 }
 
@@ -116,11 +117,12 @@ export class NovelUpdatesClient {
         for (const bullet of bullets) {
             const link = bullet.getElementsByTagName("a")[1];
             const span = link.getElementsByTagName("span")[0];
+            const url = fixUrl(link.href);
             results.push({
                 id: parseInt(link.dataset.id, 10),
                 name: span.innerText.trim(),
                 html: span.innerHTML.trim(),
-                url: fixUrl(link.href),
+                url: !url.includes("novelupdates.com/extnu/") ? url : undefined,
             });
         }
 
