@@ -94,6 +94,15 @@ async function getReadingList(): Promise<IReadingListResult[]> {
 }
 
 // Check when a chapter has been finished
+function removeProtocol(url: string): string {
+    if (url.startsWith("http:")) {
+        return url.substring(5);
+    }
+    if (url.startsWith("https:")) {
+        return url.substring(6);
+    }
+    return url;
+}
 browser.webNavigation.onCommitted.addListener(async (data) => {
     // Ignore iframe navigation
     if (data.frameId !== 0) {
@@ -109,8 +118,8 @@ browser.webNavigation.onCommitted.addListener(async (data) => {
             const readingList = await getReadingList();
             for (const novel of readingList) {
                 if (novel.next.length >= 2
-                    && novel.next[0].url === oldUrl
-                    && novel.next[1].url === data.url
+                    && removeProtocol(novel.next[0].url) === removeProtocol(oldUrl)
+                    && removeProtocol(novel.next[1].url) === removeProtocol(data.url)
                 ) {
                     await client.markChapterRead(novel.id, novel.next[0].id);
                     await reloadReadingList();
