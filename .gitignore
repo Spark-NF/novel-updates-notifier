@@ -9,6 +9,7 @@ src/**/*.js
 src/**/*.js.map
 
 # Random
+.vscode/
 coverage/
 *.lnk
 *.pdn
