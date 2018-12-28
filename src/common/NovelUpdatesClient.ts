@@ -1,4 +1,5 @@
 import { ajax } from "./ajax";
+import { Storage } from "./Storage";
 
 export interface ISearchResult {
     name: string;
@@ -9,7 +10,6 @@ export interface ISearchResult {
 
 export interface IReadingListResultChapter {
     id: number;
-    number: number;
     name: string;
     html: string;
     url: string;
@@ -41,10 +41,8 @@ function fixUrl(url: string): string {
 }
 
 function chapterFromLink(id: number, link: HTMLAnchorElement): IReadingListResultChapter {
-    const chapterNumber = link.innerText.trim().match(/^c(\d+)(?:$| )/);
     return {
         id,
-        number: chapterNumber ? parseInt(chapterNumber[1], 10) : undefined,
         name: link.innerText.trim(),
         html: link.innerHTML.trim(),
         url: fixUrl(link.href),
@@ -52,6 +50,8 @@ function chapterFromLink(id: number, link: HTMLAnchorElement): IReadingListResul
 }
 
 export class NovelUpdatesClient {
+    constructor(private storage: Storage) {}
+
     // Perform a series search
     public async search(query: string): Promise<ISearchResult[]> {
         const rq = await ajax("https://www.novelupdates.com/wp-admin/admin-ajax.php", "POST", {
@@ -101,27 +101,33 @@ export class NovelUpdatesClient {
     }
 
     // Get all chapters for a given series
-    public async loadSeriesChapters(id: number) {
+    public async loadSeriesChapters(id: number): Promise<IReadingListResultChapter[]> {
         const rq = await ajax("https://www.novelupdates.com/wp-admin/admin-ajax.php", "POST", {
             action: "nd_getchapters",
-            mypostid: 880,
+            mypostid: id,
         });
         const parser = new DOMParser();
         const xml = parser.parseFromString(rq.responseText, "text/html");
         const bullets = xml.getElementsByClassName("sp_li_chp") as HTMLCollectionOf<HTMLLIElement>;
 
-        const results = [];
+        // Parse chapters
+        const results: IReadingListResultChapter[] = [];
         for (const bullet of bullets) {
             const link = bullet.getElementsByTagName("a")[1];
             const span = link.getElementsByTagName("span")[0];
             results.push({
                 id: parseInt(link.dataset.id, 10),
-                name: span.innerHTML.trim(),
+                name: span.innerText.trim(),
+                html: span.innerHTML.trim(),
                 url: fixUrl(link.href),
             });
         }
 
-        return results;
+        // Sort chapters by name
+        const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
+        return results.sort((a: IReadingListResultChapter, b: IReadingListResultChapter) => {
+            return collator.compare(a.name, b.name);
+        });
     }
 
     // Get the list of next chapters
@@ -187,6 +193,7 @@ export class NovelUpdatesClient {
             const latestIdInput = cells[2].getElementsByTagName("input")[0];
             const latestLink = cells[3].getElementsByTagName("a")[0];
 
+            // Construct the novel object
             const novel: IReadingListResult = {
                 id: parseInt(row.dataset.sid || "0", 10),
                 name: row.dataset.title,
@@ -202,10 +209,20 @@ export class NovelUpdatesClient {
                 ),
             };
 
-            if (novel.status.id !== novel.latest.id) {
-                const nextChapterSpan = cells[3].getElementsByClassName("show-pop")[0] as HTMLSpanElement;
-                const nextChaptersUrl = nextChapterSpan.dataset.url;
-                novel.next = await this.getNextChaptersByUrl(nextChaptersUrl, novel.status.id, novel.latest.id);
+            // Load the chapters
+            const cacheKey = "chapters_" + novel.id;
+            let chapters: IReadingListResultChapter[] = await this.storage.getCache(cacheKey);
+            if (!chapters || chapters[chapters.length - 1].id !== novel.latest.id) {
+                chapters = await this.loadSeriesChapters(novel.id);
+                await this.storage.setCache(cacheKey, chapters, 24 * 60 * 60);
+            }
+
+            // Build the "next" object
+            const compareOpts = { numeric: true, sensitivity: "base" };
+            for (const chapter of chapters) {
+                if (chapter.name.localeCompare(novel.status.name, undefined, compareOpts) > 0) {
+                    novel.next.push(chapter);
+                }
             }
 
             novels.push(novel);

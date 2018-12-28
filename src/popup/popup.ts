@@ -139,13 +139,11 @@ async function displayNovels() {
         const nameCell = row.insertCell();
         nameCell.classList.add("novel-name");
         nameCell.appendChild(makeLink(novel.url, novel.name));
-        const unreadCount = novel.latest.number - novel.status.number;
-        const unreadLabel = unreadCount > 0 ? String(unreadCount) : "";
-        if (unreadLabel) {
+        if (novel.next.length > 0) {
             const counter = document.createElement("span");
             counter.classList.add("badge");
             counter.classList.add("badge-primary");
-            counter.textContent = unreadLabel;
+            counter.textContent = novel.next.length.toString();
             nameCell.appendChild(counter);
         }
 

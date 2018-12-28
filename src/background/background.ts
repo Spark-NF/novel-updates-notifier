@@ -13,7 +13,7 @@ interface ICustomWindow extends Window {
 declare var window: ICustomWindow;
 
 const storage = new Storage();
-const client = new NovelUpdatesClient();
+const client = new NovelUpdatesClient(storage);
 
 // Check if we are logged in
 async function checkLoginStatus(): Promise<boolean> {
