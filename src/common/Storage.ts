@@ -6,6 +6,11 @@ export interface ISettings {
     autoMarkAsRead: boolean;
 }
 
+interface ICacheData {
+    value: any;
+    expiration: number;
+}
+
 export class Storage {
     private storage: browser.storage.StorageArea;
     private settings: ISettings;
@@ -25,8 +30,13 @@ export class Storage {
         return browser.storage.local;
     }
 
+    private async get(key: string): Promise<any> {
+        const raw = await this.storage.get(key) || {};
+        return key in raw ? raw[key] : undefined;
+    }
+
     private async reloadSettings(): Promise<void> {
-        const settings = await this.storage.get(undefined) || {};
+        const settings = await this.get("settings") || {};
         this.settings = {
             interval: settings.interval || 5,
             notifications: settings.notifications === undefined ? true : settings.notifications,
@@ -46,7 +56,29 @@ export class Storage {
     }
 
     public async setSettings(values: { [key: string]: any }): Promise<void> {
-        await this.storage.set(values);
+        for (const key in values) {
+            if (values.hasOwnProperty(key)) {
+                (this.settings as any)[key] = values[key];
+            }
+        }
+        await this.storage.set({ settings: this.settings });
         await this.reloadSettings();
+    }
+
+    public async setCache(key: string, value: any, duration: number): Promise<void> {
+        const values: { [key: string]: ICacheData } = {};
+        values["cache_" + key] = {
+            value,
+            expiration: new Date().getTime() + duration,
+        };
+        await this.storage.set(values);
+    }
+
+    public async getCache(key: string): Promise<any> {
+        const data: ICacheData = await this.get("cache_" + key);
+        if (data && data.expiration > new Date().getTime()) {
+            return data.value;
+        }
+        return undefined;
     }
 }
