@@ -151,17 +151,17 @@ async function displayNovels() {
 
         const readCell = row.insertCell();
         readCell.classList.add("novel-chapter");
-        readCell.appendChild(makeChapterLink(novel.status.url, novel.status.html));
+        readCell.appendChild(makeChapterLink(novel.status.url, novel.status.name));
 
         const nextCell = row.insertCell();
         nextCell.classList.add("novel-chapter");
         if (novel.next.length > 0) {
-            nextCell.appendChild(makeChapterLink(novel.next[0].url, novel.next[0].html));
+            nextCell.appendChild(makeChapterLink(novel.next[0].url, novel.next[0].name));
         }
 
         const latestCell = row.insertCell();
         latestCell.classList.add("novel-chapter");
-        latestCell.appendChild(makeChapterLink(novel.latest.url, novel.latest.html));
+        latestCell.appendChild(makeChapterLink(novel.latest.url, novel.latest.name));
 
         const actionsCell = row.insertCell();
         const removeButton = document.createElement("button");
