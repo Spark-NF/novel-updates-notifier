@@ -103,7 +103,7 @@ function removeProtocol(url: string): string {
     }
     return url;
 }
-browser.webNavigation.onCommitted.addListener(async (data) => {
+async function onNavigation(data: any) {
     // Ignore iframe navigation
     if (data.frameId !== 0) {
         return;
@@ -129,7 +129,7 @@ browser.webNavigation.onCommitted.addListener(async (data) => {
     }
 
     window.sessionStorage[tabId] = data.url;
-});
+}
 
 // Sidebar checker
 browser.runtime.onMessage.addListener(async (msg, sender) => {
@@ -137,6 +137,25 @@ browser.runtime.onMessage.addListener(async (msg, sender) => {
         return !sender.tab || !sender.tab.id;
     }
 });
+
+async function waitForPermission(permission: string, cb: () => void) {
+    const perms: any = {
+        permissions: [permission],
+    };
+
+    // If we already have the permission, there is nothing to do
+    if (await browser.permissions.contains(perms)) {
+        cb();
+        return;
+    }
+
+    // Otherwise, we wait for the permission to be granted
+    browser.permissions.onAdded.addListener(async () => {
+        if (await browser.permissions.contains(perms)) {
+            cb();
+        }
+    });
+}
 
 // Fill window object for popup and sidebar
 window.storage = storage;
@@ -148,6 +167,9 @@ window.client = client;
 
     // Show "loading" notification
     await setBadge("...", "gray", "white");
+
+    // Listen for navigation if we have the permissions
+    waitForPermission("webNavigation", () => browser.webNavigation.onCommitted.addListener(onNavigation));
 
     // Start reloading the reading list
     if (await checkLoginStatus()) {

@@ -240,6 +240,17 @@ openSettingsButton.onclick = async () => {
 
     settingsDiv.classList.remove("hidden");
 };
+settingsAutoMarkAsRead.onchange = async (ev: Event) => {
+    const checkbox = ev.target as HTMLInputElement;
+    if (checkbox.checked) {
+        const perms: any = {
+            permissions: ["webNavigation"],
+        };
+        if (!await browser.permissions.contains(perms)) {
+            checkbox.checked = await browser.permissions.request(perms);
+        }
+    }
+};
 settingsForm.onsubmit = async () => {
     await background.storage.setSettings({
         interval: parseInt(settingsInterval.value, 10),

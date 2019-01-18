@@ -35,8 +35,10 @@
 		"storage",
 		"cookies",
 		"notifications",
-		"webNavigation",
 		"*://www.novelupdates.com/*"
+	],
+	"optional_permissions": [
+		"webNavigation"
 	],
 
 	"browser_action": {
