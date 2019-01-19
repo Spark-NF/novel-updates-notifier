@@ -9,6 +9,7 @@ interface IBackground extends Window {
     getReadingList: () => Promise<IReadingListResult[]>;
     reloadReadingList: () => Promise<void>;
     tryLogin: (username: string, password: string) => Promise<boolean>;
+    enableCustomCss: () => Promise<boolean>;
 
     nextListRefresh?: Date;
 }
@@ -242,14 +243,23 @@ openSettingsButton.onclick = async () => {
 };
 settingsAutoMarkAsRead.onchange = async (ev: Event) => {
     const checkbox = ev.target as HTMLInputElement;
-    if (checkbox.checked) {
-        const perms: any = {
-            permissions: ["webNavigation"],
-        };
-        if (!await browser.permissions.contains(perms)) {
-            checkbox.checked = await browser.permissions.request(perms);
-        }
+    if (!checkbox.checked) {
+        return;
     }
+
+    const perms: any = {
+        permissions: ["webNavigation"],
+    };
+    if (!await browser.permissions.contains(perms)) {
+        checkbox.checked = await browser.permissions.request(perms);
+    }
+};
+settingsCustomCss.onchange = async (ev: Event) => {
+    const checkbox = ev.target as HTMLInputElement;
+    if (!checkbox.checked) {
+        return;
+    }
+    checkbox.checked = await background.enableCustomCss();
 };
 settingsForm.onsubmit = async () => {
     await background.storage.setSettings({

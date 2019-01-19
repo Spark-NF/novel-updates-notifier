@@ -4,6 +4,8 @@ import { IReadingListResult, NovelUpdatesClient } from "../common/NovelUpdatesCl
 import { sleep } from "../common/sleep";
 import { Storage } from "../common/Storage";
 
+declare var chrome: any;
+
 interface ICustomWindow extends Window {
     readingList: any;
     storage: Storage;
@@ -138,23 +140,82 @@ browser.runtime.onMessage.addListener(async (msg, sender) => {
     }
 });
 
+// Permission helpers
 async function waitForPermission(permission: string, cb: () => void) {
-    const perms: any = {
+    return waitForPermissions({
         permissions: [permission],
-    };
-
+    }, cb);
+}
+async function waitForPermissions(permissions: any, cb: () => void) {
     // If we already have the permission, there is nothing to do
-    if (await browser.permissions.contains(perms)) {
+    if (await browser.permissions.contains(permissions)) {
         cb();
         return;
     }
 
     // Otherwise, we wait for the permission to be granted
     browser.permissions.onAdded.addListener(async () => {
-        if (await browser.permissions.contains(perms)) {
+        if (await browser.permissions.contains(permissions)) {
             cb();
         }
     });
+}
+
+// Ensure a function is called only once
+function singleCall(cb: () => void): () => void {
+    let called = false;
+    return () => {
+        if (called) {
+            return;
+        }
+        called = true;
+        cb();
+    };
+}
+
+// Custom CSS
+const domains = [
+    "www.webnovel.com",
+    "m.webnovel.com",
+    "www.wuxiaworld.com",
+];
+const origins = domains.map((d: string) => "*://" + d + "/*");
+async function enableCustomCss(): Promise<boolean> {
+    return browser.permissions.request({ origins });
+}
+async function addCustomCssContentScripts() {
+    // Firefox
+    if (browser.contentScripts && browser.contentScripts.register) {
+        await browser.contentScripts.register({
+            matches: origins,
+            allFrames: true,
+            runAt: "document_start",
+            js: [{
+                file: "src/userstyles/bundle.js",
+            }],
+        });
+        return;
+    }
+
+    // Chrome (disabled because custom CSS is a sidebar feature)
+    if (false && chrome.declarativeContent && chrome.declarativeContent.onPageChanged) {
+        chrome.declarativeContent.onPageChanged.removeRules(undefined, () => {
+            chrome.declarativeContent.onPageChanged.addRules([{
+                conditions: domains.map((d: string) => {
+                    return new chrome.declarativeContent.PageStateMatcher({
+                        pageUrl: {
+                            hostEquals: d,
+                        },
+                    });
+                }),
+                actions: [
+                    new chrome.declarativeContent.RequestContentScript({
+                        js: ["src/userstyles/bundle.js"],
+                    }),
+                ],
+            }]);
+        });
+    }
 }
 
 // Fill window object for popup and sidebar
@@ -168,8 +229,9 @@ window.client = client;
     // Show "loading" notification
     await setBadge("...", "gray", "white");
 
-    // Listen for navigation if we have the permissions
-    waitForPermission("webNavigation", () => browser.webNavigation.onCommitted.addListener(onNavigation));
+    // Listen for permissions
+    waitForPermission("webNavigation", singleCall(() => browser.webNavigation.onCommitted.addListener(onNavigation)));
+    waitForPermissions({ origins }, singleCall(addCustomCssContentScripts));
 
     // Start reloading the reading list
     if (await checkLoginStatus()) {

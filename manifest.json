@@ -75,17 +75,6 @@
 		"open_at_install": false
 	},
 
-	"content_scripts": [{
-		"matches": [
-			"*://www.webnovel.com/*",
-			"*://m.webnovel.com/*",
-			"*://www.wuxiaworld.com/*"
-		],
-		"all_frames": true,
-		"run_at": "document_start",
-		"js": ["src/userstyles/bundle.js"]
-	}],
-
 	"web_accessible_resources": [
 		"src/userstyles/css/*.css"
 	]
