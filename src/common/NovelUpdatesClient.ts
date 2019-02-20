@@ -238,7 +238,7 @@ export class NovelUpdatesClient {
             const chapterLinks = row.getElementsByClassName("chp-release");
             const statusLink = chapterLinks[0] as HTMLAnchorElement;
             const latestLink = chapterLinks[1] as HTMLAnchorElement;
-            const latestIdInput = Array.from(row.getElementsByTagName("input")).filter(i => i.type == "hidden")[0];
+            const latestIdInput = Array.from(row.getElementsByTagName("input")).filter((i) => i.type === "hidden")[0];
 
             // Construct the novel object
             const novel: IReadingListResult = {
