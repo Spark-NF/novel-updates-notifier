@@ -1,4 +1,4 @@
-import { objectToParams } from "./ajax";
+import { ajax, objectToParams } from "./ajax";
 
 describe("objectToParams", () => {
     it("Returns an empty string for non-objects", () => {
@@ -14,5 +14,14 @@ describe("objectToParams", () => {
 
     it("Works properly on normal objects", () => {
         expect(objectToParams({ a: 1, b: 2, c: "test" })).toBe("a=1&b=2&c=test");
+    });
+});
+
+describe("ajax", () => {
+    it("Returns the response of a GET request", (done) => {
+        ajax("https://raw.githubusercontent.com/Spark-NF/novel-updates-notifier/master/README.md", "GET").then((rq) => {
+            expect(rq.responseText).toContain("Novel Updates Notifier");
+            done();
+        }).catch(fail);
     });
 });
