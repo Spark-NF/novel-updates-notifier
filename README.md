@@ -5,6 +5,7 @@
 [![Firefox add-on version](https://img.shields.io/amo/v/novel-updates-notifier.svg)](https://addons.mozilla.org/en-US/firefox/addon/novel-updates-notifier/)
 [![Chrome add-on version](https://img.shields.io/chrome-web-store/v/plhhbkakiaffbinchcacleepogbjlban.svg)](https://chrome.google.com/webstore/detail/novel-updates-notifier/plhhbkakiaffbinchcacleepogbjlban)
 [![Build Status](https://travis-ci.org/Spark-NF/novel-updates-notifier.svg?branch=master)](https://travis-ci.org/Spark-NF/novel-updates-notifier)
+[![Code Coverage](https://img.shields.io/codecov/c/github/Spark-NF/novel-updates-notifier.svg)](https://codecov.io/gh/Spark-NF/novel-updates-notifier)
 
 ## About
 Add-on that notifies you when a novel from your reading list has a new chapter available.
