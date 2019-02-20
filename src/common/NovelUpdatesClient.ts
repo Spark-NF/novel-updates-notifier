@@ -25,6 +25,14 @@ export interface IReadingListResult {
     latest: IReadingListResultChapter;
 }
 
+export interface IReadingList {
+    id: number;
+    name: string;
+    description: string;
+    iconUrl: string;
+    novels?: IReadingListResult[];
+}
+
 function fixUrl(url: string): string {
     if (url.startsWith("moz-extension://")) {
         return "https:" + url.substr(14);
@@ -179,12 +187,44 @@ export class NovelUpdatesClient {
         });
     }
 
-    public async getReadingList(): Promise<IReadingListResult[]> {
+    public async getReadingLists(): Promise<IReadingList[]> {
         if (!await this.checkLoginStatus()) {
             return undefined;
         }
 
-        const rq = await ajax("https://www.novelupdates.com/reading-list/");
+        const rq = await ajax("https://www.novelupdates.com/sort-reading-list/");
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(rq.responseText, "text/html");
+        const rows = xml.getElementById("myTable read_rl_sort").getElementsByTagName("tr");
+
+        const lists: IReadingList[] = [];
+
+        let id = 0;
+        for (const row of rows) {
+            const cells = row.getElementsByTagName("td");
+            if (cells.length !== 4) {
+                continue;
+            }
+
+            const readingList: IReadingList = {
+                id: id++,
+                name: cells[1].innerText.replace(/ \(Disabled\)$/, ""),
+                description: cells[2].innerText,
+                iconUrl: fixUrl(cells[3].getElementsByTagName("img")[0].src),
+            };
+
+            lists.push(readingList);
+        }
+
+        return lists;
+    }
+
+    public async getReadingListNovels(id: number): Promise<IReadingListResult[]> {
+        if (!await this.checkLoginStatus()) {
+            return undefined;
+        }
+
+        const rq = await ajax(`https://www.novelupdates.com/reading-list/?list=${id}`);
         const parser = new DOMParser();
         const xml = parser.parseFromString(rq.responseText, "text/html");
         const rows = xml.getElementsByClassName("rl_links") as HTMLCollectionOf<HTMLTableRowElement>;
