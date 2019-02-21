@@ -11,6 +11,7 @@ src/**/*.js.map
 # Random
 .vscode/
 coverage/
+dist/
 *.lnk
 *.pdn
 

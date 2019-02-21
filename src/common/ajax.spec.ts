@@ -18,10 +18,8 @@ describe("objectToParams", () => {
 });
 
 describe("ajax", () => {
-    it("Returns the response of a GET request", (done) => {
-        ajax("https://raw.githubusercontent.com/Spark-NF/novel-updates-notifier/master/README.md", "GET").then((rq) => {
-            expect(rq.responseText).toContain("Novel Updates Notifier");
-            done();
-        }).catch(fail);
+    it("Returns the response of a GET request", async () => {
+        const rq = await ajax("https://raw.githubusercontent.com/Spark-NF/novel-updates-notifier/master/README.md");
+        expect(rq.responseText).toContain("Novel Updates Notifier");
     });
 });

@@ -3,8 +3,9 @@
 		"strict": true,
 		"strictNullChecks": false,
 		"removeComments": false,
-		"sourceMap": true,
-		"target": "es2017"
+		"sourceMap": false,
+		"target": "es2017",
+		"outDir": "../dist/",
 	},
 	"include": [
 		"**/*.ts"
