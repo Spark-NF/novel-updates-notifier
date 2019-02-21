@@ -20,6 +20,11 @@ export interface IReadingListResult {
     id: number;
     name: string;
     url: string;
+    notes: {
+        hasNotes: boolean;
+        tags: string[];
+        notes?: string;
+    };
     chapters: IReadingListResultChapter[];
     status: IReadingListResultChapter;
     next: IReadingListResultChapter[];
@@ -255,6 +260,10 @@ export class NovelUpdatesClient {
                 id: parseInt(row.dataset.sid || "0", 10),
                 name: row.dataset.title,
                 url: fixUrl(novelLink.href),
+                notes: {
+                    hasNotes: row.dataset.notes === "yes",
+                    tags: row.dataset.tags.split(",").filter((t) => t.length > 0),
+                },
                 chapters: [] as IReadingListResultChapter[],
                 status: chapterFromLink(
                     parseInt(checkboxInput.value.substr(0, checkboxInput.value.indexOf(":")), 10),
