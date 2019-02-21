@@ -67,7 +67,7 @@ function chapterFromLink(id: number, link: HTMLAnchorElement): IReadingListResul
     }
     return {
         id,
-        name: link.innerText.trim(),
+        name: (link.textContent || link.innerText).trim(),
         html: link.innerHTML.trim(),
         url: !url.includes("novelupdates.com/extnu/") ? url : undefined,
         date,
@@ -93,7 +93,7 @@ export class NovelUpdatesClient {
             const img = link.getElementsByTagName("img")[0];
             const name = link.getElementsByTagName("span")[0];
             results.push({
-                name: name.innerText.trim(),
+                name: (name.textContent || name.innerText).trim(),
                 html: name.innerHTML.trim(),
                 url: fixUrl(link.href),
                 img: fixUrl(img.src),
@@ -143,7 +143,7 @@ export class NovelUpdatesClient {
             const url = fixUrl(link.href);
             results.push({
                 id: parseInt(link.dataset.id, 10),
-                name: span.innerText.trim(),
+                name: (span.textContent || span.innerText).trim(),
                 html: span.innerHTML.trim(),
                 url: !url.includes("novelupdates.com/extnu/") ? url : undefined,
             });
@@ -222,8 +222,8 @@ export class NovelUpdatesClient {
 
             const readingList: IReadingList = {
                 id: id++,
-                name: cells[1].innerText.replace(/ \(Disabled\)$/, ""),
-                description: cells[2].innerText,
+                name: (cells[1].textContent || cells[1].innerText).replace(/ \(Disabled\)$/, "").trim(),
+                description: (cells[2].textContent || cells[2].innerText).trim(),
                 iconUrl: fixUrl(cells[3].getElementsByTagName("img")[0].src),
             };
 
