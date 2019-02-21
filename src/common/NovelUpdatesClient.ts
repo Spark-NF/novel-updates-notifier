@@ -160,7 +160,6 @@ export class NovelUpdatesClient {
     private async getNextChaptersByUrl(
         url: string,
         currentChapter: number,
-        latestChapter: number,
     ): Promise<IReadingListResultChapter[]> {
         if (!(url in this.nextChaptersCache)) {
             const rq = await ajax(url);
@@ -172,7 +171,7 @@ export class NovelUpdatesClient {
             for (let i = nextLinks.length - 1; i >= 0; --i) {
                 const nextLink = nextLinks[i];
                 const id = parseInt(nextLink.id.match(/^mycurrent(\d+)$/)[1], 10);
-                if (id !== currentChapter && id !== latestChapter) {
+                if (id !== currentChapter) {
                     results.push(chapterFromLink(id, nextLink));
                 }
             }
@@ -291,7 +290,7 @@ export class NovelUpdatesClient {
                 // Load the next three chapters with correct URLs
                 const nextChapterSpan = row.getElementsByClassName("show-pop")[0] as HTMLSpanElement;
                 const nextChaptersUrl = nextChapterSpan.dataset.url;
-                const next = await this.getNextChaptersByUrl(nextChaptersUrl, novel.status.id, novel.latest.id);
+                const next = await this.getNextChaptersByUrl(nextChaptersUrl, novel.status.id);
                 const fullNext: { [key: number]: IReadingListResultChapter } = {};
                 for (const chapter of next) {
                     fullNext[chapter.id] = chapter;
