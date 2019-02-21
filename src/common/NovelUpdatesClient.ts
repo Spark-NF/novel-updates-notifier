@@ -13,6 +13,7 @@ export interface IReadingListResultChapter {
     name: string;
     html: string;
     url?: string;
+    date?: Date;
 }
 
 export interface IReadingListResult {
@@ -51,11 +52,20 @@ function fixUrl(url: string): string {
 
 function chapterFromLink(id: number, link: HTMLAnchorElement): IReadingListResultChapter {
     const url = fixUrl(link.href);
+    let date: Date;
+    if (link.hasAttribute("onmousedown")) {
+        const event = link.getAttribute("onmousedown");
+        const match = event.match(/latestchp\((?:[^,]+,){4}'(\d{4}-\d{2}-\d{2})/);
+        if (match && match.length >= 2) {
+            date = new Date(match[1]);
+        }
+    }
     return {
         id,
         name: link.innerText.trim(),
         html: link.innerHTML.trim(),
         url: !url.includes("novelupdates.com/extnu/") ? url : undefined,
+        date,
     };
 }
 
