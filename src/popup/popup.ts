@@ -1,4 +1,4 @@
-import { IReadingListResult, NovelUpdatesClient } from "../common/NovelUpdatesClient";
+import { IReadingListResult, IReadingListResultChapter, NovelUpdatesClient } from "../common/NovelUpdatesClient";
 import { Storage } from "../common/Storage";
 
 interface IBackground extends Window {
@@ -65,8 +65,8 @@ function makeLink(href: string, txt: string): HTMLAnchorElement {
     link.target = "_blank";
     return link;
 }
-function makeChapterLink(href: string, txt: string): HTMLAnchorElement {
-    const link = makeLink(href, txt);
+function makeChapterLink(chapter: IReadingListResultChapter): HTMLAnchorElement {
+    const link = makeLink(chapter.url, chapter.html);
     link.onclick = async (e) => {
         if (e.button !== 0 && e.button !== 1) {
             return;
@@ -81,14 +81,14 @@ function makeChapterLink(href: string, txt: string): HTMLAnchorElement {
         if (middleClick || !readInSidebar) {
             await browser.tabs.create({
                 active: !middleClick,
-                url: href,
+                url: chapter.url,
             });
             return false;
         }
 
         // Open in sidebar
         await browser.sidebarAction.open();
-        await browser.sidebarAction.setPanel({ panel: href });
+        await browser.sidebarAction.setPanel({ panel: chapter.url });
 
         return false;
     };
@@ -150,7 +150,7 @@ async function displayNovels() {
 
         const readCell = row.insertCell();
         readCell.classList.add("novel-chapter");
-        const readLink = makeChapterLink(novel.status.url, novel.status.html);
+        const readLink = makeChapterLink(novel.status);
         readCell.appendChild(readLink);
         const readSelect = document.createElement("select");
         readSelect.classList.add("hidden");
@@ -187,12 +187,12 @@ async function displayNovels() {
         const nextCell = row.insertCell();
         nextCell.classList.add("novel-chapter");
         if (novel.next.length > 0) {
-            nextCell.appendChild(makeChapterLink(novel.next[0].url, novel.next[0].html));
+            nextCell.appendChild(makeChapterLink(novel.next[0]));
         }
 
         const latestCell = row.insertCell();
         latestCell.classList.add("novel-chapter");
-        latestCell.appendChild(makeChapterLink(novel.latest.url, novel.latest.html));
+        latestCell.appendChild(makeChapterLink(novel.latest));
 
         const actionsCell = row.insertCell();
         actionsCell.classList.add("novel-actions");
