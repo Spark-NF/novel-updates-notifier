@@ -18,9 +18,9 @@ export class Storage {
     private local: StorageArea;
     private settings: ISettings;
 
-    public async init(): Promise<void> {
-        this.sync = await this.getStorage();
-        this.local = browser.storage.local;
+    public async init(sync?: StorageArea, local?: StorageArea): Promise<void> {
+        this.sync = sync || await this.getStorage();
+        this.local = local || browser.storage.local;
         await this.reloadSettings();
     }
 
