@@ -6,6 +6,9 @@ module.exports = {
         "**/?(*.)+(spec|test).ts"
     ],
 
+    coveragePathIgnorePatterns: [
+        "/Fake*",
+    ],
     coverageReporters: [
         "lcovonly",
         "html",

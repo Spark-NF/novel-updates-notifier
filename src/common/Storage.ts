@@ -1,13 +1,5 @@
 type StorageArea = browser.storage.StorageArea;
 
-export interface ISettings {
-    interval: number;
-    notifications: boolean;
-    readInSidebar: boolean;
-    customCss: boolean;
-    autoMarkAsRead: boolean;
-}
-
 interface ICacheData {
     value: any;
     expiration: number;
@@ -16,12 +8,10 @@ interface ICacheData {
 export class Storage {
     private sync: StorageArea;
     private local: StorageArea;
-    private settings: ISettings;
 
     public async init(sync?: StorageArea, local?: StorageArea): Promise<void> {
         this.sync = sync || await this.getStorage();
         this.local = local || browser.storage.local;
-        await this.reloadSettings();
     }
 
     // Return the sync storage with fallback on local one
@@ -39,34 +29,12 @@ export class Storage {
         return key in raw ? raw[key] : undefined;
     }
 
-    private async reloadSettings(): Promise<void> {
-        const settings = await this.get(this.sync, "settings") || {};
-        this.settings = {
-            interval: settings.interval || 5,
-            notifications: settings.notifications === undefined ? true : settings.notifications,
-            readInSidebar: settings.readInSidebar === undefined ? false : settings.readInSidebar,
-            customCss: settings.customCss === undefined ? false : settings.customCss,
-            autoMarkAsRead: settings.autoMarkAsRead === undefined ? false : settings.autoMarkAsRead,
-        };
+    public async getSync(key: string): Promise<any> {
+        return this.get(this.sync, key);
     }
 
-    public async getSettings(): Promise<ISettings> {
-        return this.settings;
-    }
-
-    public async getSetting<K extends keyof ISettings>(key: K): Promise<ISettings[K]> {
-        const settings = await this.getSettings();
-        return settings[key];
-    }
-
-    public async setSettings(values: { [key: string]: any }): Promise<void> {
-        for (const key in values) {
-            if (values.hasOwnProperty(key)) {
-                (this.settings as any)[key] = values[key];
-            }
-        }
-        await this.sync.set({ settings: this.settings });
-        await this.reloadSettings();
+    public async setSync(items: any): Promise<any> {
+        return this.sync.set(items);
     }
 
     public async setCache(key: string, value: any, duration: number): Promise<void> {

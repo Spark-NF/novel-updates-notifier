@@ -1,8 +1,8 @@
 import { IReadingListResult, IReadingListResultChapter, NovelUpdatesClient } from "../common/NovelUpdatesClient";
-import { Storage } from "../common/Storage";
+import { Settings } from "../common/Settings";
 
 interface IBackground extends Window {
-    storage: Storage;
+    settings: Settings;
     client: NovelUpdatesClient;
 
     checkLoginStatus: (login?: boolean) => Promise<boolean>;
@@ -74,7 +74,7 @@ function makeChapterLink(chapter: IReadingListResultChapter): HTMLAnchorElement 
 
         e.preventDefault();
         const canSidebar = browser.sidebarAction !== undefined;
-        const readInSidebar = await background.storage.getSetting("readInSidebar") && canSidebar;
+        const readInSidebar = await background.settings.get("readInSidebar") && canSidebar;
         const middleClick = e.button === 1;
 
         // Open in a new tab
@@ -101,7 +101,7 @@ async function updateRefreshLabel() {
         return;
     }
 
-    const interval = await background.storage.getSetting("interval");
+    const interval = await background.settings.get("interval");
 
     const secs = Math.max(0, Math.round((background.nextListRefresh.getTime() - new Date().getTime()) / 1000));
     const mins = Math.floor(secs / 60);
@@ -226,7 +226,7 @@ async function displayNovels() {
 
 // Settings page
 openSettingsButton.onclick = async () => {
-    const settings = await background.storage.getSettings();
+    const settings = await background.settings.getSettings();
 
     // Populate the form with the user settings
     settingsInterval.value = settings.interval.toString();
@@ -262,13 +262,14 @@ settingsCustomCss.onchange = async (ev: Event) => {
     checkbox.checked = await background.enableCustomCss();
 };
 settingsForm.onsubmit = async () => {
-    await background.storage.setSettings({
+    await background.settings.setSettings({
         interval: parseInt(settingsInterval.value, 10),
         notifications: !!settingsNotifications.checked,
         readInSidebar: !!settingsReadInSidebar.checked,
         customCss: !!settingsCustomCss.checked,
         autoMarkAsRead: !!settingsAutoMarkAsRead.checked,
     });
+    await background.settings.sync();
     settingsDiv.classList.add("hidden");
 };
 

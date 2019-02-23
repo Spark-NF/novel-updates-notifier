@@ -1,6 +1,7 @@
 import { setBadge } from "../common/badge";
 import { notify } from "../common/notifications";
 import { IReadingListResult, NovelUpdatesClient } from "../common/NovelUpdatesClient";
+import { Settings } from "../common/Settings";
 import { sleep } from "../common/sleep";
 import { Storage } from "../common/Storage";
 
@@ -8,13 +9,14 @@ declare var chrome: any;
 
 interface ICustomWindow extends Window {
     readingList: any;
-    storage: Storage;
+    settings: Settings;
     client: NovelUpdatesClient;
     nextListRefresh: Date;
 }
 declare var window: ICustomWindow;
 
 const storage = new Storage();
+const settings = new Settings(storage);
 const client = new NovelUpdatesClient(storage);
 
 // Check if we are logged in
@@ -69,7 +71,7 @@ async function loadReadingList(): Promise<IReadingListResult[]> {
     }
 
     // Push notification
-    const notificationsEnabled = await storage.getSetting("notifications");
+    const notificationsEnabled = await settings.get("notifications");
     if (notificationsEnabled && novelsWithNewChanges.length > 0) {
         notify("New novel chapters available",  "- " + novelsWithNewChanges.join("\n- "));
     }
@@ -91,7 +93,7 @@ async function reloadReadingList(): Promise<void> {
     }
 
     // Plan a reload after the next interval
-    const interval = await storage.getSetting("interval");
+    const interval = await settings.get("interval");
     const intervalMs = interval * 60 * 1000;
     listRefreshIntervalId = window.setTimeout(reloadReadingList, intervalMs);
     window.nextListRefresh = new Date(new Date().getTime() + intervalMs);
@@ -121,7 +123,7 @@ async function onNavigation(data: any) {
 
     const tabId: string = "tabUrl_" + data.tabId.toString();
 
-    const autoMarkAsRead: boolean = await storage.getSetting("autoMarkAsRead");
+    const autoMarkAsRead: boolean = await settings.get("autoMarkAsRead");
     if (autoMarkAsRead) {
         if (tabId in window.sessionStorage) {
             const oldUrl = window.sessionStorage[tabId];
@@ -227,12 +229,13 @@ async function addCustomCssContentScripts() {
 }
 
 // Fill window object for popup and sidebar
-window.storage = storage;
+window.settings = settings;
 window.client = client;
 
 // Initial load
 (async () => {
     await storage.init();
+    await settings.reload();
 
     // Show "loading" notification
     await setBadge("...", "gray", "white");
