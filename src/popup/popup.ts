@@ -197,7 +197,7 @@ async function displayNovels() {
         const actionsCell = row.insertCell();
         actionsCell.classList.add("novel-actions");
 
-        const editReadButton = createIconButton("success", "pencil");
+        const editReadButton = createIconButton("success", "pencil", "Edit last read chapter manually");
         editReadButton.onclick = async () => {
             readLink.classList.add("hidden");
             editReadButton.classList.add("hidden");
@@ -205,7 +205,7 @@ async function displayNovels() {
             readSelect.focus();
         };
         actionsCell.appendChild(editReadButton);
-        const removeButton = createIconButton("danger", "trash-o");
+        const removeButton = createIconButton("danger", "trash-o", "Remove novel from reading list");
         removeButton.onclick = () => { removeNovel(novel.id); };
         actionsCell.appendChild(removeButton);
     }
@@ -214,9 +214,10 @@ async function displayNovels() {
     loaderDiv.classList.add("hidden");
     novelsDiv.classList.remove("hidden");
 }
-function createIconButton(btnClass: string, iconClass: string): HTMLButtonElement {
+function createIconButton(btnClass: string, iconClass: string, title: string): HTMLButtonElement {
     const button = document.createElement("button");
     button.className = "btn btn-xs btn-icon btn-" + btnClass;
+    button.title = title;
 
     const icon = document.createElement("i");
     icon.classList.add("fa");
