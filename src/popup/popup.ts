@@ -154,7 +154,7 @@ async function displayNovels() {
         readCell.appendChild(readLink);
         const readSelect = document.createElement("select");
         readSelect.classList.add("hidden");
-        for (const chapter of novel.chapters) {
+        for (const chapter of [novel.status].concat(novel.next)) {
             const opt = document.createElement("option");
             opt.value = chapter.id.toString();
             opt.innerText = chapter.name;
