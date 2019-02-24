@@ -197,7 +197,22 @@ async function displayNovels() {
         const actionsCell = row.insertCell();
         actionsCell.classList.add("novel-actions");
 
-        const editReadButton = createIconButton("success", "pencil", "Edit last read chapter manually");
+        if (novel.status.id !== novel.latest.id) {
+            const lastChapter = novel.chapters[novel.chapters.length - 1];
+            const readLastButton = createIconButton("success", "check", "Mark last chapter as read");
+            readLastButton.onclick = async () => {
+                loaderText.textContent = "Applying change...";
+                loaderDiv.classList.remove("hidden");
+
+                readLink.innerText = lastChapter.html;
+                await background.client.markChapterRead(novel.id, lastChapter.id);
+
+                await background.reloadReadingList();
+                await displayNovels();
+            };
+            actionsCell.appendChild(readLastButton);
+        }
+        const editReadButton = createIconButton("warning", "pencil", "Edit last read chapter manually");
         editReadButton.onclick = async () => {
             readLink.classList.add("hidden");
             editReadButton.classList.add("hidden");
