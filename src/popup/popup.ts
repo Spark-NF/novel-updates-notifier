@@ -131,9 +131,11 @@ async function displayNovels() {
 
     // Populate the table
     for (const novel of novels) {
+        const hasNew = novel.status.id !== novel.latest.id;
+
         const row = novelsTable.insertRow();
         row.id = "novel-row-" + novel.id;
-        if (novel.status.id !== novel.latest.id) {
+        if (hasNew) {
             row.classList.add("table-warning");
         }
 
@@ -154,7 +156,8 @@ async function displayNovels() {
         readCell.appendChild(readLink);
         const readSelect = document.createElement("select");
         readSelect.classList.add("hidden");
-        for (const chapter of [novel.status].concat(novel.next)) {
+        const optChapters = hasNew ? [novel.status].concat(novel.next) : novel.chapters;
+        for (const chapter of optChapters) {
             const opt = document.createElement("option");
             opt.value = chapter.id.toString();
             opt.innerText = chapter.name;
@@ -197,7 +200,7 @@ async function displayNovels() {
         const actionsCell = row.insertCell();
         actionsCell.classList.add("novel-actions");
 
-        if (novel.status.id !== novel.latest.id) {
+        if (hasNew) {
             const lastChapter = novel.chapters[novel.chapters.length - 1];
             const readLastButton = createIconButton("success", "check", "Mark last chapter as read");
             readLastButton.onclick = async () => {
