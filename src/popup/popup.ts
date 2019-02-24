@@ -196,32 +196,34 @@ async function displayNovels() {
 
         const actionsCell = row.insertCell();
         actionsCell.classList.add("novel-actions");
-        const editReadButton = document.createElement("button");
-        editReadButton.className = "btn btn-xs btn-success btn-icon";
+
+        const editReadButton = createIconButton("success", "pencil");
         editReadButton.onclick = async () => {
             readLink.classList.add("hidden");
             editReadButton.classList.add("hidden");
             readSelect.classList.remove("hidden");
             readSelect.focus();
         };
-        const editReadIcon = document.createElement("i");
-        editReadIcon.classList.add("fa");
-        editReadIcon.classList.add("fa-pencil");
-        editReadButton.appendChild(editReadIcon);
         actionsCell.appendChild(editReadButton);
-        const removeButton = document.createElement("button");
-        removeButton.className = "btn btn-xs btn-danger btn-icon";
+        const removeButton = createIconButton("danger", "trash-o");
         removeButton.onclick = () => { removeNovel(novel.id); };
-        const trashIcon = document.createElement("i");
-        trashIcon.classList.add("fa");
-        trashIcon.classList.add("fa-trash-o");
-        removeButton.appendChild(trashIcon);
         actionsCell.appendChild(removeButton);
     }
 
     updateRefreshLabel();
     loaderDiv.classList.add("hidden");
     novelsDiv.classList.remove("hidden");
+}
+function createIconButton(btnClass: string, iconClass: string): HTMLButtonElement {
+    const button = document.createElement("button");
+    button.className = "btn btn-xs btn-icon btn-" + btnClass;
+
+    const icon = document.createElement("i");
+    icon.classList.add("fa");
+    icon.classList.add("fa-" + iconClass);
+    button.appendChild(icon);
+
+    return button;
 }
 
 // Settings page
