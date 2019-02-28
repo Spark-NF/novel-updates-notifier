@@ -38,7 +38,10 @@
 		"*://www.novelupdates.com/*"
 	],
 	"optional_permissions": [
-		"webNavigation"
+		"webNavigation",
+		"*://www.webnovel.com/*",
+		"*://m.webnovel.com/*",
+		"*://www.wuxiaworld.com/*"
 	],
 
 	"browser_action": {
