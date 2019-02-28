@@ -5,20 +5,11 @@
   "scripts": {
     "postinstall": "bash scripts/postinstall.sh",
     "build": "bash scripts/build.sh",
-    "watch": "npm-watch build",
+    "watch": "bash scripts/watch.sh",
     "check": "bash scripts/check.sh",
     "test": "bash scripts/test.sh",
     "package": "bash scripts/package.sh chrome && bash scripts/package.sh firefox",
     "check-package": "bash scripts/check-package.sh"
-  },
-  "watch": {
-    "build": {
-      "patterns": [
-        "src"
-      ],
-      "extensions": "ts,html,css",
-      "quiet": false
-    }
   },
   "repository": {
     "type": "git",
@@ -43,7 +34,6 @@
     "addons-linter": "1.6.1",
     "event-stream": "4.0.1",
     "jest": "24.1.0",
-    "npm-watch": "0.6.0",
     "ts-jest": "24.0.0",
     "tslint": "5.13.0"
   }
