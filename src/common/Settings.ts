@@ -55,6 +55,9 @@ export class Settings {
 
     public async set<K extends keyof ISettings>(key: K, value: ISettings[K]): Promise<void> {
         const settings = await this.getSettings();
-        settings[key] = value;
+        if (settings[key] !== value) {
+            settings[key] = value;
+            await this.sync();
+        }
     }
 }

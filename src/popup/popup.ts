@@ -29,7 +29,7 @@ const novelsRefreshButton = document.getElementById("refresh-novel-list");
 const searchInput = document.getElementById("search").getElementsByTagName("input")[0];
 const searchResults = document.getElementById("search-results") as HTMLTableElement;
 const settingsDiv = document.getElementById("settings");
-const settingsForm = settingsDiv.getElementsByTagName("form")[0];
+const settingsBack = document.getElementById("settings-back") as HTMLButtonElement;
 const settingsInterval = document.getElementsByName("interval")[0] as HTMLInputElement;
 const settingsNotifications = document.getElementsByName("notifications")[0] as HTMLInputElement;
 const settingsReadInSidebar = document.getElementsByName("read-in-sidebar")[0] as HTMLInputElement;
@@ -262,35 +262,33 @@ openSettingsButton.onclick = async () => {
 
     settingsDiv.classList.remove("hidden");
 };
-settingsAutoMarkAsRead.onchange = async (ev: Event) => {
-    const checkbox = ev.target as HTMLInputElement;
-    if (!checkbox.checked) {
-        return;
-    }
-
-    const perms: any = {
-        permissions: ["webNavigation"],
-    };
-    if (!await browser.permissions.contains(perms)) {
-        checkbox.checked = await browser.permissions.request(perms);
-    }
+settingsInterval.onchange = async () => {
+    await background.settings.set("interval", parseInt(settingsInterval.value, 10));
 };
-settingsCustomCss.onchange = async (ev: Event) => {
-    const checkbox = ev.target as HTMLInputElement;
-    if (!checkbox.checked) {
-        return;
-    }
-    checkbox.checked = await background.enableCustomCss();
+settingsNotifications.onchange = async () => {
+    await background.settings.set("notifications", settingsNotifications.checked);
 };
-settingsForm.onsubmit = async () => {
-    await background.settings.setSettings({
-        interval: parseInt(settingsInterval.value, 10),
-        notifications: !!settingsNotifications.checked,
-        readInSidebar: !!settingsReadInSidebar.checked,
-        customCss: !!settingsCustomCss.checked,
-        autoMarkAsRead: !!settingsAutoMarkAsRead.checked,
-    });
-    await background.settings.sync();
+settingsReadInSidebar.onchange = async () => {
+    await background.settings.set("readInSidebar", settingsReadInSidebar.checked);
+};
+settingsAutoMarkAsRead.onchange = async () => {
+    if (settingsAutoMarkAsRead.checked) {
+        const perms: any = {
+            permissions: ["webNavigation"],
+        };
+        if (!await browser.permissions.contains(perms)) {
+            settingsAutoMarkAsRead.checked = await browser.permissions.request(perms);
+        }
+    }
+    await background.settings.set("autoMarkAsRead", settingsAutoMarkAsRead.checked);
+};
+settingsCustomCss.onchange = async () => {
+    if (settingsCustomCss.checked) {
+        settingsCustomCss.checked = await background.enableCustomCss();
+    }
+    await background.settings.set("customCss", settingsCustomCss.checked);
+};
+settingsBack.onclick = () => {
     settingsDiv.classList.add("hidden");
 };
 
