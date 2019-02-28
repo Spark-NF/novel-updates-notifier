@@ -1,11 +1,14 @@
+import { Permissions } from "../common/Permissions";
 import { Settings } from "../common/Settings";
 
 interface IBackground extends Window {
     settings: Settings;
+    permissions: Permissions;
     enableCustomCss: () => Promise<boolean>;
 }
 
 const background = browser.extension.getBackgroundPage() as IBackground;
+const permissions = new Permissions();
 
 const settingsInterval = document.getElementsByName("interval")[0] as HTMLInputElement;
 const settingsNotifications = document.getElementsByName("notifications")[0] as HTMLInputElement;
@@ -24,23 +27,20 @@ settingsReadInSidebar.onchange = async () => {
 };
 settingsAutoMarkAsRead.onchange = async () => {
     if (settingsAutoMarkAsRead.checked) {
-        const perms: any = {
-            permissions: ["webNavigation"],
-        };
-        if (!await browser.permissions.contains(perms)) {
-            settingsAutoMarkAsRead.checked = await browser.permissions.request(perms);
-        }
+        settingsAutoMarkAsRead.checked = await permissions.webNavigation.request();
     }
     await background.settings.autoMarkAsRead.set(settingsAutoMarkAsRead.checked);
 };
 settingsCustomCss.onchange = async () => {
     if (settingsCustomCss.checked) {
-        settingsCustomCss.checked = await background.enableCustomCss();
+        settingsCustomCss.checked = await permissions.contentScripts.request();
     }
     await background.settings.customCss.set(settingsCustomCss.checked);
 };
 
 (async () => {
+    await permissions.init();
+
     // Populate the form with the user settings
     settingsInterval.value = String(await background.settings.interval.get());
     settingsNotifications.checked = await background.settings.notifications.get();

@@ -1,6 +1,8 @@
 import { setBadge } from "../common/badge";
 import { notify } from "../common/notifications";
 import { IReadingListResult, NovelUpdatesClient } from "../common/NovelUpdatesClient";
+import { Permission } from "../common/Permission";
+import { Permissions } from "../common/Permissions";
 import { Settings } from "../common/Settings";
 import { sleep } from "../common/sleep";
 import { Storage } from "../common/Storage";
@@ -10,6 +12,7 @@ declare var chrome: any;
 interface ICustomWindow extends Window {
     readingList: any;
     settings: Settings;
+    permissions: Permissions;
     client: NovelUpdatesClient;
     nextListRefresh: Date;
 }
@@ -17,6 +20,7 @@ declare var window: ICustomWindow;
 
 const storage = new Storage();
 const settings = new Settings(storage);
+const permissions = new Permissions();
 const client = new NovelUpdatesClient(storage);
 
 // Check if we are logged in
@@ -115,6 +119,9 @@ function removeProtocol(url: string): string {
     }
     return url;
 }
+function addWebNavigationListener() {
+    browser.webNavigation.onCommitted.addListener(onNavigation);
+}
 async function onNavigation(data: any) {
     // Ignore iframe navigation
     if (data.frameId !== 0) {
@@ -150,22 +157,17 @@ browser.runtime.onMessage.addListener(async (msg, sender) => {
     }
 });
 
-// Permission helpers
-async function waitForPermission(permission: string, cb: () => void) {
-    return waitForPermissions({
-        permissions: [permission],
-    }, cb);
-}
-async function waitForPermissions(permissions: any, cb: () => void) {
+// Permission helper
+async function waitForPermission(permission: Permission, cb: () => void) {
     // If we already have the permission, there is nothing to do
-    if (await browser.permissions.contains(permissions)) {
+    if (permission.isGranted()) {
         cb();
         return;
     }
 
     // Otherwise, we wait for the permission to be granted
-    browser.permissions.onAdded.addListener(async () => {
-        if (await browser.permissions.contains(permissions)) {
+    permission.addEventListener("change", (isGranted: boolean) => {
+        if (isGranted) {
             cb();
         }
     });
@@ -190,9 +192,6 @@ const domains = [
     "www.wuxiaworld.com",
 ];
 const origins = domains.map((d: string) => "*://" + d + "/*");
-async function enableCustomCss(): Promise<boolean> {
-    return browser.permissions.request({ origins });
-}
 async function addCustomCssContentScripts() {
     // Firefox
     if (browser.contentScripts && browser.contentScripts.register) {
@@ -231,6 +230,7 @@ async function addCustomCssContentScripts() {
 // Fill window object for popup and sidebar
 window.settings = settings;
 window.client = client;
+window.permissions = permissions;
 
 // Initial load
 (async () => {
@@ -239,9 +239,10 @@ window.client = client;
     // Show "loading" notification
     await setBadge("...", "gray", "white");
 
-    // Listen for permissions
-    waitForPermission("webNavigation", singleCall(() => browser.webNavigation.onCommitted.addListener(onNavigation)));
-    waitForPermissions({ origins }, singleCall(addCustomCssContentScripts));
+    // Initialize permissions
+    await permissions.init();
+    waitForPermission(permissions.webNavigation, singleCall(addWebNavigationListener));
+    waitForPermission(permissions.contentScripts, singleCall(addCustomCssContentScripts));
 
     // Start reloading the reading list
     if (await checkLoginStatus()) {
