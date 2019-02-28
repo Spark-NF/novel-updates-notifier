@@ -1,12 +1,15 @@
+import { Observable } from "./Observable";
 import { Storage } from "./Storage";
 
-export class Setting<T> {
+export class Setting<T> extends Observable {
     private storage: Storage;
     private key: string;
     private def: T;
     private value?: T;
 
     constructor(storage: Storage, key: string, def: T) {
+        super();
+
         this.storage = storage;
         this.key = key;
         this.def = def;
@@ -35,6 +38,8 @@ export class Setting<T> {
         if (value !== current) {
             this.value = value;
             await this.sync();
+
+            this.fireEvent("change", [this.value]);
         }
     }
 }

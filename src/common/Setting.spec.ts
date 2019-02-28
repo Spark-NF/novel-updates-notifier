@@ -26,4 +26,22 @@ describe("Setting", () => {
         const val = await setting.get();
         expect(val).toBe(7);
     });
+
+    it("Triggers the 'change' event when the value is changed", async () => {
+        const handler = jest.fn();
+
+        const mock = new FakeStorageArea();
+        const storage = new Storage();
+        await storage.init(mock, mock);
+
+        const setting = new Setting<number>(storage, "test", 5);
+        setting.addEventListener("change", handler);
+
+        await setting.set(7);
+        expect(handler.mock.calls.length).toBe(1);
+        expect(handler.mock.calls[0]).toEqual([7]);
+
+        await setting.set(7);
+        expect(handler.mock.calls.length).toBe(1);
+    });
 });
