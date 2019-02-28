@@ -17,18 +17,8 @@ body {
 #settings {
 	padding: 15px;
 }
-#settings .block-body {
-	padding: 0;
-	padding-bottom: 70px;
-}
-#settings .block-body iframe {
-	border: none;
-	height: 100%;
-	width: 100%;
-}
 
 .block-body {
-	height: 100%;
 	margin: -15px;
 	padding: 15px;
 	padding-bottom: 70px;

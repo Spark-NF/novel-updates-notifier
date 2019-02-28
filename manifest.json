@@ -78,6 +78,10 @@
 		"open_at_install": false
 	},
 
+	"options_ui": {
+		"page": "src/options/options.html"
+	},
+
 	"web_accessible_resources": [
 		"src/userstyles/css/*.css"
 	]
