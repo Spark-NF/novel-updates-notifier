@@ -21,7 +21,7 @@ zip -r -q $ZIPFILE . -i "src/vendor/**/*.js" "src/**/bundle.js"
 
 # Generate and add manifest file
 if [ $TARGET == "chrome" ]; then
-    jq "del(.applications,.sidebar_action)" "manifest.json" > "packages/manifest.json"
+    jq "del(.developer,.applications,.sidebar_action)" "manifest.json" > "packages/manifest.json"
 else
     cp "manifest.json" "packages/manifest.json"
 fi
