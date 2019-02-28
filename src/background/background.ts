@@ -71,7 +71,7 @@ async function loadReadingList(): Promise<IReadingListResult[]> {
     }
 
     // Push notification
-    const notificationsEnabled = await settings.get("notifications");
+    const notificationsEnabled = await settings.notifications.get();
     if (notificationsEnabled && novelsWithNewChanges.length > 0) {
         notify("New novel chapters available",  "- " + novelsWithNewChanges.join("\n- "));
     }
@@ -93,7 +93,7 @@ async function reloadReadingList(): Promise<void> {
     }
 
     // Plan a reload after the next interval
-    const interval = await settings.get("interval");
+    const interval = await settings.interval.get();
     const intervalMs = interval * 60 * 1000;
     listRefreshIntervalId = window.setTimeout(reloadReadingList, intervalMs);
     window.nextListRefresh = new Date(new Date().getTime() + intervalMs);
@@ -123,7 +123,7 @@ async function onNavigation(data: any) {
 
     const tabId: string = "tabUrl_" + data.tabId.toString();
 
-    const autoMarkAsRead: boolean = await settings.get("autoMarkAsRead");
+    const autoMarkAsRead: boolean = await settings.autoMarkAsRead.get();
     if (autoMarkAsRead) {
         if (tabId in window.sessionStorage) {
             const oldUrl = window.sessionStorage[tabId];
@@ -235,7 +235,6 @@ window.client = client;
 // Initial load
 (async () => {
     await storage.init();
-    await settings.reload();
 
     // Show "loading" notification
     await setBadge("...", "gray", "white");

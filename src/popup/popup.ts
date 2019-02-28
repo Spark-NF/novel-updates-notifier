@@ -74,7 +74,7 @@ function makeChapterLink(chapter: IReadingListResultChapter): HTMLAnchorElement 
 
         e.preventDefault();
         const canSidebar = browser.sidebarAction !== undefined;
-        const readInSidebar = await background.settings.get("readInSidebar") && canSidebar;
+        const readInSidebar = await background.settings.readInSidebar.get() && canSidebar;
         const middleClick = e.button === 1;
 
         // Open in a new tab
@@ -101,7 +101,7 @@ async function updateRefreshLabel() {
         return;
     }
 
-    const interval = await background.settings.get("interval");
+    const interval = await background.settings.interval.get();
 
     const secs = Math.max(0, Math.round((background.nextListRefresh.getTime() - new Date().getTime()) / 1000));
     const mins = Math.floor(secs / 60);
@@ -247,29 +247,27 @@ function createIconButton(btnClass: string, iconClass: string, title: string): H
 
 // Settings page
 openSettingsButton.onclick = async () => {
-    const settings = await background.settings.getSettings();
-
     // Populate the form with the user settings
-    settingsInterval.value = settings.interval.toString();
-    settingsNotifications.checked = settings.notifications;
-    settingsAutoMarkAsRead.checked = settings.autoMarkAsRead;
+    settingsInterval.value = await background.settings.interval.get().toString();
+    settingsNotifications.checked = await background.settings.notifications.get();
+    settingsAutoMarkAsRead.checked = await background.settings.autoMarkAsRead.get();
 
     // Only show the sidebar settings if the API is available
     if (browser.sidebarAction) {
-        settingsReadInSidebar.checked = settings.readInSidebar;
-        settingsCustomCss.checked = settings.customCss;
+        settingsReadInSidebar.checked = await background.settings.readInSidebar.get();
+        settingsCustomCss.checked = await background.settings.customCss.get();
     }
 
     settingsDiv.classList.remove("hidden");
 };
 settingsInterval.onchange = async () => {
-    await background.settings.set("interval", parseInt(settingsInterval.value, 10));
+    await background.settings.interval.set(parseInt(settingsInterval.value, 10));
 };
 settingsNotifications.onchange = async () => {
-    await background.settings.set("notifications", settingsNotifications.checked);
+    await background.settings.notifications.set(settingsNotifications.checked);
 };
 settingsReadInSidebar.onchange = async () => {
-    await background.settings.set("readInSidebar", settingsReadInSidebar.checked);
+    await background.settings.readInSidebar.set(settingsReadInSidebar.checked);
 };
 settingsAutoMarkAsRead.onchange = async () => {
     if (settingsAutoMarkAsRead.checked) {
@@ -280,13 +278,13 @@ settingsAutoMarkAsRead.onchange = async () => {
             settingsAutoMarkAsRead.checked = await browser.permissions.request(perms);
         }
     }
-    await background.settings.set("autoMarkAsRead", settingsAutoMarkAsRead.checked);
+    await background.settings.autoMarkAsRead.set(settingsAutoMarkAsRead.checked);
 };
 settingsCustomCss.onchange = async () => {
     if (settingsCustomCss.checked) {
         settingsCustomCss.checked = await background.enableCustomCss();
     }
-    await background.settings.set("customCss", settingsCustomCss.checked);
+    await background.settings.customCss.set(settingsCustomCss.checked);
 };
 settingsBack.onclick = () => {
     settingsDiv.classList.add("hidden");
