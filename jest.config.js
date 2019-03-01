@@ -14,6 +14,10 @@ module.exports = {
         "html",
     ],
 
+    collectCoverageFrom: [
+        "src/**/*.ts",
+    ],
+
     globals: {
         "ts-jest": {
             diagnostics: false,
