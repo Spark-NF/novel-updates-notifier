@@ -15,7 +15,7 @@ describe("sleep", () => {
     });
 
     it("Waits the given duration", async () => {
-        const diff = await elapsed(async () => sleep(100));
+        const diff = await elapsed(async () => sleep(110));
         expect(diff).toBeGreaterThanOrEqual(100);
     });
 });
