@@ -12,16 +12,25 @@ export class Permission extends Observable {
         this.permissions = permissions;
     }
 
+    private set(granted: boolean): void {
+        if (granted !== this.granted) {
+            const oldValue = this.granted;
+            this.granted = granted;
+            if (oldValue !== undefined) {
+                this.fireEvent("change", [this.granted]);
+            }
+        }
+    }
+
     public async init(): Promise<void> {
-        this.granted = await browser.permissions.contains(this.permissions);
+        this.set(await browser.permissions.contains(this.permissions));
     }
 
     public async request(): Promise<boolean> {
         if (this.granted) {
             return true;
         }
-        this.granted = await browser.permissions.request(this.permissions);
-        this.fireEvent("change", [this.granted]);
+        this.set(await browser.permissions.request(this.permissions));
         return this.granted;
     }
 
