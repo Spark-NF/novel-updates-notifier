@@ -21,4 +21,45 @@ describe("Storage", () => {
         const after = await storage.getCache("some_key");
         expect(after).toBe(undefined);
     });
+
+    it("Loads inner storages from the browser object", async () => {
+        const sync = new FakeStorageArea();
+        const local = new FakeStorageArea();
+        window.browser = {
+            storage: {
+                sync,
+                local,
+            },
+        } as any;
+
+        const storage = new Storage();
+        await storage.init();
+
+        await storage.setSync({ test_sync: "val" });
+        await storage.setCache("test_local", "val", 100);
+
+        expect(sync.data).toHaveProperty("test_sync");
+        expect(local.data).toHaveProperty("cache_test_local");
+    });
+
+    it("Fallbacks to the local storage if sync is not available", async () => {
+        const local = new FakeStorageArea();
+        window.browser = {
+            storage: {
+                sync: {
+                    get: () => { throw Error("Sync storage disabled"); },
+                },
+                local,
+            },
+        } as any;
+
+        const storage = new Storage();
+        await storage.init();
+
+        await storage.setSync({ test_sync: "val" });
+        await storage.setCache("test_local", "val", 100);
+
+        expect(local.data).toHaveProperty("test_sync");
+        expect(local.data).toHaveProperty("cache_test_local");
+    });
 });
