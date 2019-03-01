@@ -17,6 +17,9 @@ export class Permission extends Observable {
     }
 
     public async request(): Promise<boolean> {
+        if (this.granted) {
+            return true;
+        }
         this.granted = await browser.permissions.request(this.permissions);
         this.fireEvent("change", [this.granted]);
         return this.granted;
