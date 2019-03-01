@@ -3,7 +3,6 @@ import { Settings } from "../common/Settings";
 
 interface IBackground extends Window {
     settings: Settings;
-    permissions: Permissions;
     enableCustomCss: () => Promise<boolean>;
 }
 
