@@ -17,7 +17,7 @@ export class Permissions {
     }
 
     public async init(): Promise<void> {
-        this.webNavigation.init();
-        this.contentScripts.init();
+        await this.webNavigation.init();
+        await this.contentScripts.init();
     }
 }
