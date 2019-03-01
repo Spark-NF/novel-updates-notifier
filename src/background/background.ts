@@ -151,9 +151,12 @@ async function onNavigation(data: any) {
 }
 
 // Sidebar checker
-browser.runtime.onMessage.addListener(async (msg, sender) => {
+browser.runtime.onMessage.addListener((msg, sender) => {
     if ("type" in msg && msg.type === "check-is-sidebar") {
-        return !sender.tab || !sender.tab.id;
+        return Promise.resolve(!sender.tab || !sender.tab.id);
+    }
+    if ("type" in msg && msg.type === "get-setting") {
+        return (settings as any)[msg.key].get();
     }
 });
 

@@ -5,8 +5,9 @@
     ];
 
     const isSidebar = await browser.runtime.sendMessage({ type: "check-is-sidebar" });
+    const isEnabled = await browser.runtime.sendMessage({ type: "get-setting", key: "customCss" });
 
-    if (isSidebar) {
+    if (isSidebar && isEnabled) {
         for (const domain of domains) {
             if (location.hostname.includes(domain)) {
                 document.addEventListener("DOMContentLoaded", () => {
