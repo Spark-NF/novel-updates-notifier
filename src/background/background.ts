@@ -1,4 +1,5 @@
 import { setBadge } from "../common/badge";
+import { ContentScriptsManager } from "../common/ContentScriptsManager";
 import { notify } from "../common/notifications";
 import { IReadingListResult, NovelUpdatesClient } from "../common/NovelUpdatesClient";
 import { Permission } from "../common/Permission";
@@ -6,8 +7,6 @@ import { Permissions } from "../common/Permissions";
 import { Settings } from "../common/Settings";
 import { sleep } from "../common/sleep";
 import { Storage } from "../common/Storage";
-
-declare var chrome: any;
 
 interface ICustomWindow extends Window {
     readingList: any;
@@ -194,41 +193,7 @@ const domains = [
     "m.webnovel.com",
     "www.wuxiaworld.com",
 ];
-const origins = domains.map((d: string) => "*://" + d + "/*");
-async function addCustomCssContentScripts() {
-    // Firefox
-    if (browser.contentScripts && browser.contentScripts.register) {
-        await browser.contentScripts.register({
-            matches: origins,
-            allFrames: true,
-            runAt: "document_start",
-            js: [{
-                file: "src/userstyles/bundle.js",
-            }],
-        });
-        return;
-    }
-
-    // Chrome (disabled because custom CSS is a sidebar feature)
-    if (false && chrome.declarativeContent && chrome.declarativeContent.onPageChanged) {
-        chrome.declarativeContent.onPageChanged.removeRules(undefined, () => {
-            chrome.declarativeContent.onPageChanged.addRules([{
-                conditions: domains.map((d: string) => {
-                    return new chrome.declarativeContent.PageStateMatcher({
-                        pageUrl: {
-                            hostEquals: d,
-                        },
-                    });
-                }),
-                actions: [
-                    new chrome.declarativeContent.RequestContentScript({
-                        js: ["src/userstyles/bundle.js"],
-                    }),
-                ],
-            }]);
-        });
-    }
-}
+const contentScriptsManager = new ContentScriptsManager(permissions.contentScripts, domains);
 
 // Fill window object for popup and sidebar
 window.settings = settings;
@@ -245,7 +210,8 @@ window.permissions = permissions;
     // Initialize permissions
     await permissions.init();
     waitForPermission(permissions.webNavigation, singleCall(addWebNavigationListener));
-    waitForPermission(permissions.contentScripts, singleCall(addCustomCssContentScripts));
+
+    contentScriptsManager.init();
 
     // Start reloading the reading list
     if (await checkLoginStatus()) {
