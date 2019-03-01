@@ -1,36 +1,27 @@
-import { Permission } from "../common/Permission";
+import { IListener } from "./Listener";
 
 declare var chrome: any;
 
-export class ContentScriptsManager {
-    private permission: Permission;
+export class ContentScriptsManager implements IListener {
     private domains: string[];
+    private file: string;
+
     private handle?: browser.contentScripts.RegisteredContentScript;
 
-    constructor(permission: Permission, domains: string[]) {
-        this.permission = permission;
+    constructor(domains: string[], file: string) {
         this.domains = domains;
+        this.file = file;
+
         this.handle = undefined;
     }
 
-    public async init(): Promise<void> {
-        // If we already have the permission, there is nothing to do
-        if (this.permission.isGranted()) {
-            this.add();
-            return;
-        }
-
-        // Otherwise, we wait for the permission to be granted
-        this.permission.addEventListener("change", (isGranted: boolean) => {
-            if (isGranted) {
-                this.add();
-            }
-        });
+    public isActive(): boolean {
+        return this.handle !== undefined;
     }
 
-    private async add(): Promise<void> {
+    public async add(): Promise<void> {
         // If the content scripts are already added, we don't re-add them
-        if (this.handle !== undefined) {
+        if (this.isActive()) {
             return;
         }
 
@@ -41,14 +32,14 @@ export class ContentScriptsManager {
                 allFrames: true,
                 runAt: "document_start",
                 js: [{
-                    file: "src/userstyles/bundle.js",
+                    file: this.file,
                 }],
             });
             return;
         }
 
         // Chrome (disabled because custom CSS is a sidebar feature)
-        if (false && chrome.declarativeContent && chrome.declarativeContent.onPageChanged) {
+        /*if (chrome.declarativeContent && chrome.declarativeContent.onPageChanged) {
             chrome.declarativeContent.onPageChanged.removeRules(undefined, () => {
                 chrome.declarativeContent.onPageChanged.addRules([{
                     conditions: this.domains.map((d: string) => new chrome.declarativeContent.PageStateMatcher({
@@ -58,11 +49,20 @@ export class ContentScriptsManager {
                     })),
                     actions: [
                         new chrome.declarativeContent.RequestContentScript({
-                            js: ["src/userstyles/bundle.js"],
+                            js: [this.file],
                         }),
                     ],
                 }]);
             });
+        }*/
+    }
+
+    public async remove(): Promise<void> {
+        if (!this.isActive()) {
+            return;
         }
+
+        await this.handle.unregister();
+        this.handle = undefined;
     }
 }

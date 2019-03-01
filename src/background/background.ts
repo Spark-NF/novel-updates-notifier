@@ -1,9 +1,10 @@
 import { setBadge } from "../common/badge";
 import { ContentScriptsManager } from "../common/ContentScriptsManager";
+import { waitForPermission } from "../common/Listener";
 import { notify } from "../common/notifications";
-import { IReadingListResult, NovelUpdatesClient } from "../common/NovelUpdatesClient";
-import { Permission } from "../common/Permission";
+import { IReadingListResult, IReadingListResultChapter, NovelUpdatesClient } from "../common/NovelUpdatesClient";
 import { Permissions } from "../common/Permissions";
+import { ReadChapterListener } from "../common/ReadChapterListener";
 import { Settings } from "../common/Settings";
 import { sleep } from "../common/sleep";
 import { Storage } from "../common/Storage";
@@ -109,45 +110,13 @@ async function getReadingList(): Promise<IReadingListResult[]> {
 }
 
 // Check when a chapter has been finished
-function removeProtocol(url: string): string {
-    if (url.startsWith("http:")) {
-        return url.substring(5);
-    }
-    if (url.startsWith("https:")) {
-        return url.substring(6);
-    }
-    return url;
-}
-function addWebNavigationListener() {
-    browser.webNavigation.onCommitted.addListener(onNavigation);
-}
-async function onNavigation(data: any) {
-    // Ignore iframe navigation
-    if (data.frameId !== 0) {
-        return;
-    }
-
-    const tabId: string = "tabUrl_" + data.tabId.toString();
-
-    const autoMarkAsRead: boolean = await settings.autoMarkAsRead.get();
-    if (autoMarkAsRead) {
-        if (tabId in window.sessionStorage) {
-            const oldUrl = window.sessionStorage[tabId];
-            const readingList = await getReadingList();
-            for (const novel of readingList) {
-                if (novel.next.length >= 2
-                    && removeProtocol(novel.next[0].url) === removeProtocol(oldUrl)
-                    && removeProtocol(novel.next[1].url) === removeProtocol(data.url)
-                ) {
-                    await client.markChapterRead(novel.id, novel.next[0].id);
-                    await reloadReadingList();
-                }
-            }
-        }
-    }
-
-    window.sessionStorage[tabId] = data.url;
-}
+const readChapterListener = new ReadChapterListener(
+    getReadingList,
+    async (novel: IReadingListResult, chapter: IReadingListResultChapter) => {
+        await client.markChapterRead(novel.id, chapter.id);
+        await reloadReadingList();
+    },
+);
 
 // Sidebar checker
 browser.runtime.onMessage.addListener((msg, sender) => {
@@ -159,41 +128,13 @@ browser.runtime.onMessage.addListener((msg, sender) => {
     }
 });
 
-// Permission helper
-async function waitForPermission(permission: Permission, cb: () => void) {
-    // If we already have the permission, there is nothing to do
-    if (permission.isGranted()) {
-        cb();
-        return;
-    }
-
-    // Otherwise, we wait for the permission to be granted
-    permission.addEventListener("change", (isGranted: boolean) => {
-        if (isGranted) {
-            cb();
-        }
-    });
-}
-
-// Ensure a function is called only once
-function singleCall(cb: () => void): () => void {
-    let called = false;
-    return () => {
-        if (called) {
-            return;
-        }
-        called = true;
-        cb();
-    };
-}
-
 // Custom CSS
 const domains = [
     "www.webnovel.com",
     "m.webnovel.com",
     "www.wuxiaworld.com",
 ];
-const contentScriptsManager = new ContentScriptsManager(permissions.contentScripts, domains);
+const contentScriptsManager = new ContentScriptsManager(domains, "src/userstyles/bundle.js");
 
 // Fill window object for popup and sidebar
 window.settings = settings;
@@ -209,9 +150,8 @@ window.permissions = permissions;
 
     // Initialize permissions
     await permissions.init();
-    waitForPermission(permissions.webNavigation, singleCall(addWebNavigationListener));
-
-    contentScriptsManager.init();
+    waitForPermission(readChapterListener, permissions.webNavigation);
+    waitForPermission(contentScriptsManager, permissions.contentScripts);
 
     // Start reloading the reading list
     if (await checkLoginStatus()) {
