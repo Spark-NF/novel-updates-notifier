@@ -16,8 +16,6 @@ function setUpBrowser(contained: boolean, allowed: boolean) {
         },
         runtime: {
             sendMessage: (msg: any) => {
-                // tslint:disable
-                console.log(msg, listeners);
                 for (const listener of listeners) {
                     listener(msg);
                 }
