@@ -23,7 +23,7 @@ zip -r -q $ZIPFILE . -i "src/vendor/**/*.js" "src/**/bundle.js"
 if [ $TARGET == "chrome" ]; then
     jq "del(.developer,.applications,.sidebar_action)" "manifest.json" > "packages/manifest.json"
 else
-    cp "manifest.json" "packages/manifest.json"
+    jq ".permissions=([.permissions,.optional_permissions]|flatten) | del(.optional_permissions)" "manifest.json" > "packages/manifest.json"
 fi
 pushd "packages"
     zip -r -q "../$ZIPFILE" . -i "manifest.json"
