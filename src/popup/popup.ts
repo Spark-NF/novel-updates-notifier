@@ -124,102 +124,104 @@ async function displayNovels() {
     }
 
     // Populate the table
-    for (const novel of novels) {
-        const hasNew = novel.status.id !== novel.latest.id;
+    if (novels && Array.isArray(novels)) {
+        for (const novel of novels) {
+            const hasNew = novel.status.id !== novel.latest.id;
 
-        const row = novelsTable.insertRow();
-        row.id = "novel-row-" + novel.id;
-        if (hasNew) {
-            row.classList.add("table-warning");
-        }
-
-        const nameCell = row.insertCell();
-        nameCell.classList.add("novel-name");
-        nameCell.appendChild(makeLink(novel.url, novel.name));
-        if (novel.next.length > 0) {
-            const counter = document.createElement("span");
-            counter.classList.add("badge");
-            counter.classList.add("badge-primary");
-            counter.textContent = novel.next.length.toString();
-            nameCell.appendChild(counter);
-        }
-
-        const readCell = row.insertCell();
-        readCell.classList.add("novel-chapter");
-        const readLink = makeChapterLink(novel.status);
-        readCell.appendChild(readLink);
-        const readSelect = document.createElement("select");
-        readSelect.classList.add("hidden");
-        const optChapters = hasNew ? [novel.status].concat(novel.next) : novel.chapters;
-        for (const chapter of optChapters) {
-            const opt = document.createElement("option");
-            opt.value = chapter.id.toString();
-            opt.innerText = chapter.name;
-            if (chapter.id === novel.status.id) {
-                opt.selected = true;
-            }
-            readSelect.appendChild(opt);
-        }
-        readSelect.onchange = readSelect.onblur = async () => {
-            const newId = parseInt(readSelect.value, 10);
-            if (newId !== novel.status.id) {
-                loaderText.textContent = "Applying change...";
-                loaderDiv.classList.remove("hidden");
-
-                readLink.innerText = readSelect.selectedOptions[0].innerText;
-                await background.client.markChapterRead(novel.id, newId);
+            const row = novelsTable.insertRow();
+            row.id = "novel-row-" + novel.id;
+            if (hasNew) {
+                row.classList.add("table-warning");
             }
 
+            const nameCell = row.insertCell();
+            nameCell.classList.add("novel-name");
+            nameCell.appendChild(makeLink(novel.url, novel.name));
+            if (novel.next.length > 0) {
+                const counter = document.createElement("span");
+                counter.classList.add("badge");
+                counter.classList.add("badge-primary");
+                counter.textContent = novel.next.length.toString();
+                nameCell.appendChild(counter);
+            }
+
+            const readCell = row.insertCell();
+            readCell.classList.add("novel-chapter");
+            const readLink = makeChapterLink(novel.status);
+            readCell.appendChild(readLink);
+            const readSelect = document.createElement("select");
             readSelect.classList.add("hidden");
-            readLink.classList.remove("hidden");
-            editReadButton.classList.remove("hidden");
-
-            if (newId !== novel.status.id) {
-                await background.reloadReadingList();
-                await displayNovels();
+            const optChapters = hasNew ? [novel.status].concat(novel.next) : novel.chapters;
+            for (const chapter of optChapters) {
+                const opt = document.createElement("option");
+                opt.value = chapter.id.toString();
+                opt.innerText = chapter.name;
+                if (chapter.id === novel.status.id) {
+                    opt.selected = true;
+                }
+                readSelect.appendChild(opt);
             }
-        };
-        readCell.appendChild(readSelect);
+            readSelect.onchange = readSelect.onblur = async () => {
+                const newId = parseInt(readSelect.value, 10);
+                if (newId !== novel.status.id) {
+                    loaderText.textContent = "Applying change...";
+                    loaderDiv.classList.remove("hidden");
 
-        const nextCell = row.insertCell();
-        nextCell.classList.add("novel-chapter");
-        if (novel.next.length > 0) {
-            nextCell.appendChild(makeChapterLink(novel.next[0]));
-        }
+                    readLink.innerText = readSelect.selectedOptions[0].innerText;
+                    await background.client.markChapterRead(novel.id, newId);
+                }
 
-        const latestCell = row.insertCell();
-        latestCell.classList.add("novel-chapter");
-        latestCell.appendChild(makeChapterLink(novel.latest));
+                readSelect.classList.add("hidden");
+                readLink.classList.remove("hidden");
+                editReadButton.classList.remove("hidden");
 
-        const actionsCell = row.insertCell();
-        actionsCell.classList.add("novel-actions");
-
-        if (hasNew) {
-            const lastChapter = novel.chapters[novel.chapters.length - 1];
-            const readLastButton = createIconButton("success", "check", "Mark last chapter as read");
-            readLastButton.onclick = async () => {
-                loaderText.textContent = "Applying change...";
-                loaderDiv.classList.remove("hidden");
-
-                readLink.innerText = lastChapter.html;
-                await background.client.markChapterRead(novel.id, lastChapter.id);
-
-                await background.reloadReadingList();
-                await displayNovels();
+                if (newId !== novel.status.id) {
+                    await background.reloadReadingList();
+                    await displayNovels();
+                }
             };
-            actionsCell.appendChild(readLastButton);
+            readCell.appendChild(readSelect);
+
+            const nextCell = row.insertCell();
+            nextCell.classList.add("novel-chapter");
+            if (novel.next.length > 0) {
+                nextCell.appendChild(makeChapterLink(novel.next[0]));
+            }
+
+            const latestCell = row.insertCell();
+            latestCell.classList.add("novel-chapter");
+            latestCell.appendChild(makeChapterLink(novel.latest));
+
+            const actionsCell = row.insertCell();
+            actionsCell.classList.add("novel-actions");
+
+            if (hasNew) {
+                const lastChapter = novel.chapters[novel.chapters.length - 1];
+                const readLastButton = createIconButton("success", "check", "Mark last chapter as read");
+                readLastButton.onclick = async () => {
+                    loaderText.textContent = "Applying change...";
+                    loaderDiv.classList.remove("hidden");
+
+                    readLink.innerText = lastChapter.html;
+                    await background.client.markChapterRead(novel.id, lastChapter.id);
+
+                    await background.reloadReadingList();
+                    await displayNovels();
+                };
+                actionsCell.appendChild(readLastButton);
+            }
+            const editReadButton = createIconButton("warning", "pencil", "Edit last read chapter manually");
+            editReadButton.onclick = async () => {
+                readLink.classList.add("hidden");
+                editReadButton.classList.add("hidden");
+                readSelect.classList.remove("hidden");
+                readSelect.focus();
+            };
+            actionsCell.appendChild(editReadButton);
+            const removeButton = createIconButton("danger", "trash-o", "Remove novel from reading list");
+            removeButton.onclick = () => { removeNovel(novel.id); };
+            actionsCell.appendChild(removeButton);
         }
-        const editReadButton = createIconButton("warning", "pencil", "Edit last read chapter manually");
-        editReadButton.onclick = async () => {
-            readLink.classList.add("hidden");
-            editReadButton.classList.add("hidden");
-            readSelect.classList.remove("hidden");
-            readSelect.focus();
-        };
-        actionsCell.appendChild(editReadButton);
-        const removeButton = createIconButton("danger", "trash-o", "Remove novel from reading list");
-        removeButton.onclick = () => { removeNovel(novel.id); };
-        actionsCell.appendChild(removeButton);
     }
 
     updateRefreshLabel();
