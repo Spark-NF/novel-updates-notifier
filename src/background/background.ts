@@ -94,6 +94,9 @@ async function reloadReadingList(): Promise<void> {
         window.readingList = await loadReadingList();
         window.networkError = undefined;
     } catch (e) {
+        // tslint:disable-next-line:no-console
+        console.log("Error loading reading list", e);
+        setBadge("Error", "red", "white");
         window.networkError = e.toString();
     }
 
