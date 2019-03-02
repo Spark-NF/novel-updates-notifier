@@ -10,7 +10,6 @@ export function waitForPermission(listener: IListener, permission: Permission): 
     // If we already have the permission, there is nothing to do
     if (permission.isGranted()) {
         listener.add();
-        return;
     }
 
     // Otherwise, we wait for the permission to be granted
