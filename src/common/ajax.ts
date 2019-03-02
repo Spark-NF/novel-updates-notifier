@@ -19,7 +19,8 @@ export function ajax(url: string, method?: "GET" | "POST", data?: any, contentTy
         xhr.onload = function() {
             resolve(this);
         };
-        xhr.onerror = reject;
+        xhr.onerror = () => reject("A network error occurred");
+        xhr.ontimeout = () => reject("A network timeout occurred");
         xhr.open(method || "GET", url, true);
         if (contentType) {
             xhr.setRequestHeader("Content-type", contentType);

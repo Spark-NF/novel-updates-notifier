@@ -12,6 +12,7 @@ interface IBackground extends Window {
     tryLogin: (username: string, password: string) => Promise<boolean>;
 
     nextListRefresh?: Date;
+    networkError?: string;
 }
 
 const background = browser.extension.getBackgroundPage() as IBackground;
@@ -32,6 +33,7 @@ const settingsDiv = document.getElementById("settings");
 const settingsBack = document.getElementById("settings-back") as HTMLButtonElement;
 const openSettingsButton = document.getElementById("open-settings");
 const nextRefreshLabel = document.getElementById("next-refresh");
+const loadingError = document.getElementById("loading-error");
 
 async function removeNovel(id: number) {
     await background.client.removeFromList(id);
@@ -99,6 +101,16 @@ async function updateRefreshLabel() {
     const interval = await background.settings.interval.get();
     const secs = Math.max(0, Math.round((background.nextListRefresh.getTime() - new Date().getTime()) / 1000));
     nextRefreshLabel.textContent = secondsToString(secs, interval > 60);
+
+    // Show network error
+    const errorHidden = loadingError.classList.contains("hidden");
+    if (background.networkError && errorHidden) {
+        loadingError.title = background.networkError;
+        loadingError.classList.remove("hidden");
+    } else if (!background.networkError && !errorHidden) {
+        loadingError.title = "";
+        loadingError.classList.add("hidden");
+    }
 }
 setInterval(updateRefreshLabel, 1000);
 

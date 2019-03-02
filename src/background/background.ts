@@ -15,6 +15,7 @@ interface ICustomWindow extends Window {
     permissions: Permissions;
     client: NovelUpdatesClient;
     nextListRefresh: Date;
+    networkError?: string;
 }
 declare var window: ICustomWindow;
 
@@ -89,7 +90,12 @@ async function loadReadingList(): Promise<IReadingListResult[]> {
 // Reading list accessor
 let listRefreshIntervalId: number;
 async function reloadReadingList(): Promise<void> {
-    window.readingList = await loadReadingList();
+    try {
+        window.readingList = await loadReadingList();
+        window.networkError = undefined;
+    } catch (e) {
+        window.networkError = e.toString();
+    }
 
     // Clear previous timeout if this call was triggered manually
     if (listRefreshIntervalId) {
