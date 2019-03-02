@@ -1,6 +1,6 @@
 {
   "name": "novel-updates-notifier",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Add a notification icon and reading shortcuts for your Novel Updates reading list.",
   "scripts": {
     "postinstall": "bash scripts/postinstall.sh",
