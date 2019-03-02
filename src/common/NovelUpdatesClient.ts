@@ -278,7 +278,7 @@ export class NovelUpdatesClient {
             // Load the chapters
             const cacheKey = "chapters_" + novel.id;
             let chapters: IReadingListResultChapter[] = await this.storage.getCache(cacheKey);
-            if (!chapters || chapters[chapters.length - 1].id !== novel.latest.id) {
+            if (!chapters || (chapters.length >= 1 && chapters[chapters.length - 1].id !== novel.latest.id)) {
                 chapters = await this.loadSeriesChapters(novel.id);
                 await this.storage.setCache(cacheKey, chapters, 24 * 60 * 60 * 1000);
             }
