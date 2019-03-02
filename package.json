@@ -1,7 +1,7 @@
 {
   "name": "novel-updates-notifier",
-  "version": "1.0.0",
-  "description": "Add-on that notifies you when a novel from your reading list has a new chapter available.",
+  "version": "1.1.0",
+  "description": "Add a notification icon and reading shortcuts for your Novel Updates reading list.",
   "scripts": {
     "postinstall": "bash scripts/postinstall.sh",
     "build": "bash scripts/build.sh",
