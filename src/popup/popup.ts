@@ -1,5 +1,6 @@
 import { IReadingListResult, IReadingListResultChapter, NovelUpdatesClient } from "../common/NovelUpdatesClient";
 import { Settings } from "../common/Settings";
+import { secondsToString } from "../common/time";
 
 interface IBackground extends Window {
     settings: Settings;
@@ -96,21 +97,8 @@ async function updateRefreshLabel() {
     }
 
     const interval = await background.settings.interval.get();
-
     const secs = Math.max(0, Math.round((background.nextListRefresh.getTime() - new Date().getTime()) / 1000));
-    const mins = Math.floor(secs / 60);
-    const hours = Math.floor(mins / 60);
-
-    if (interval > 60) {
-        const strHours = hours.toString();
-        const strMins = (mins % 60).toString().padStart(2, "0");
-        const strSecs = (secs % 60).toString().padStart(2, "0");
-        nextRefreshLabel.textContent = `${strHours}:${strMins}:${strSecs}`;
-    } else {
-        const strMins = mins.toString();
-        const strSecs = (secs % 60).toString().padStart(2, "0");
-        nextRefreshLabel.textContent = `${strMins}:${strSecs}`;
-    }
+    nextRefreshLabel.textContent = secondsToString(secs, interval > 60);
 }
 setInterval(updateRefreshLabel, 1000);
 
