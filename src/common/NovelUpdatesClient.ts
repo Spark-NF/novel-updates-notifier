@@ -249,10 +249,38 @@ export class NovelUpdatesClient {
             const cells = row.getElementsByTagName("td");
             const checkboxInput = cells[0].getElementsByTagName("input")[0];
             const novelLink = cells[1].getElementsByTagName("a")[0];
-            const chapterLinks = row.getElementsByClassName("chp-release");
-            const statusLink = chapterLinks[0] as HTMLAnchorElement;
-            const latestLink = chapterLinks[1] as HTMLAnchorElement;
-            const latestIdInput = Array.from(row.getElementsByTagName("input")).filter((i) => i.type === "hidden")[0];
+
+            let status: IReadingListResultChapter;
+            let latest: IReadingListResultChapter;
+
+            if (cells.length > 3) {
+                const chapterLinks = row.getElementsByClassName("chp-release");
+                const statusLink = chapterLinks[0] as HTMLAnchorElement;
+                const latestLink = chapterLinks[1] as HTMLAnchorElement;
+                const inputs = Array.from(row.getElementsByTagName("input"));
+                const latestIdInput = inputs.filter((i) => i.type === "hidden")[0];
+
+                status = chapterFromLink(
+                    parseInt(checkboxInput.value.substr(0, checkboxInput.value.indexOf(":")), 10),
+                    statusLink,
+                );
+                latest = chapterFromLink(
+                    parseInt(latestIdInput.value, 10),
+                    latestLink,
+                );
+            } else {
+                const text = cells[2].textContent || cells[2].innerText || "";
+                const parts = text.split("/").map((s: string) => s.trim());
+
+                status = {
+                    id: undefined,
+                    name: parts[0],
+                };
+                latest = {
+                    id: undefined,
+                    name: parts[1],
+                };
+            }
 
             // Construct the novel object
             const novel: IReadingListResult = {
@@ -264,15 +292,9 @@ export class NovelUpdatesClient {
                     tags: row.dataset.tags.split(",").filter((t) => t.length > 0),
                 },
                 chapters: [] as IReadingListResultChapter[],
-                status: chapterFromLink(
-                    parseInt(checkboxInput.value.substr(0, checkboxInput.value.indexOf(":")), 10),
-                    statusLink,
-                ),
+                status,
                 next: [] as IReadingListResultChapter[],
-                latest: chapterFromLink(
-                    parseInt(latestIdInput.value, 10),
-                    latestLink,
-                ),
+                latest,
             };
 
             // Load the chapters
