@@ -3,7 +3,7 @@ import { Storage } from "./Storage";
 
 export interface ISearchResult {
     name: string;
-    html: string;
+    html?: string;
     url: string;
     img: string;
 }
@@ -11,7 +11,7 @@ export interface ISearchResult {
 export interface IReadingListResultChapter {
     id: number;
     name: string;
-    html: string;
+    html?: string;
     url?: string;
     date?: Date;
 }

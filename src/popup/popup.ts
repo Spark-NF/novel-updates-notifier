@@ -63,7 +63,7 @@ function makeLink(href: string, txt: string): HTMLAnchorElement {
     return link;
 }
 function makeChapterLink(chapter: IReadingListResultChapter): HTMLAnchorElement {
-    const link = makeLink(chapter.url, chapter.html);
+    const link = makeLink(chapter.url, chapter.html || chapter.name);
     link.onclick = async (e) => {
         if (e.button !== 0 && e.button !== 1) {
             return;
@@ -202,7 +202,7 @@ async function displayNovels() {
                     loaderText.textContent = "Applying change...";
                     loaderDiv.classList.remove("hidden");
 
-                    readLink.innerText = lastChapter.html;
+                    readLink.innerText = lastChapter.html || lastChapter.name;
                     await background.client.markChapterRead(novel.id, lastChapter.id);
 
                     await background.reloadReadingList();
@@ -287,7 +287,7 @@ searchInput.oninput = async () => {
 
             const nameCell = row.insertCell();
             nameCell.classList.add("novel-name");
-            nameCell.appendChild(makeLink(result.url, result.html));
+            nameCell.appendChild(makeLink(result.url, result.html || result.name));
 
             const actionsCell = row.insertCell();
             const addButton = document.createElement("button");
