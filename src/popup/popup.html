@@ -8,10 +8,12 @@
         <link rel="stylesheet" href="popup.css" />
     </head>
     <body>
-        <div id="loader" class="overlay">
-            <div>
-                <img src="../common/loading.gif" alt="" /><br/>
-                <span>Loading...</span>
+        <div id="app">
+            <div id="loader" class="overlay" v-if="loadingMessage">
+                <div>
+                    <img src="../common/loading.gif" alt="" /><br/>
+                    <span>{{ loadingMessage }}</span>
+                </div>
             </div>
         </div>
         <div id="login-form" class="hidden">
@@ -87,6 +89,7 @@
             </div>
         </div>
         <script src="../vendor/js/browser-polyfill.min.js"></script>
+        <script src="../vendor/js/vue.min.js"></script>
         <script src="bundle.js"></script>
     </body>
 </html>

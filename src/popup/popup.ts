@@ -1,3 +1,4 @@
+import Vue from "vue";
 import { IReadingListResult, IReadingListResultChapter, NovelUpdatesClient } from "../common/NovelUpdatesClient";
 import { Settings } from "../common/Settings";
 import { secondsToString } from "../common/time";
@@ -16,9 +17,8 @@ interface IBackground extends Window {
 }
 
 const background = browser.extension.getBackgroundPage() as IBackground;
+let app: Vue;
 
-const loaderDiv = document.getElementById("loader")!;
-const loaderText = loaderDiv.getElementsByTagName("span")[0];
 const loginDiv = document.getElementById("login-form")!;
 const loginForm = loginDiv.getElementsByTagName("form")[0];
 const loginFormError = document.getElementById("login-error")!;
@@ -39,6 +39,13 @@ const openSettingsButton = document.getElementById("open-settings")!;
 const nextRefreshLabel = document.getElementById("next-refresh")!;
 const loadingError = document.getElementById("loading-error")!;
 
+function showLoader(msg: string): void {
+    app.$data.loadingMessage = msg;
+}
+function hideLoader(): void {
+    showLoader("");
+}
+
 async function removeNovel(id: number) {
     await background.client.removeFromList(id);
     const element = document.getElementById("novel-row-" + id);
@@ -47,16 +54,15 @@ async function removeNovel(id: number) {
     }
 }
 async function addNovel(url: string) {
-    loaderText.textContent = "Getting novel ID...";
-    loaderDiv.classList.remove("hidden");
+    showLoader("Getting novel ID...");
     searchInput.value = "";
     searchResults.classList.add("hidden");
     const id = await background.client.getIdFromUrl(url);
 
-    loaderText.textContent = "Adding novel...";
+    showLoader("Adding novel...");
     await background.client.putInList(id, 0);
 
-    loaderText.textContent = "Refreshing novels...";
+    showLoader("Refreshing novels...");
     await background.reloadReadingList();
     await displayNovels();
 }
@@ -181,8 +187,7 @@ async function displayNovels() {
                 const newId = parseInt(readSelect.value, 10);
                 const hasChanged = readSelect.value !== "" && newId !== novel.status.id;
                 if (hasChanged) {
-                    loaderText.textContent = "Applying change...";
-                    loaderDiv.classList.remove("hidden");
+                    showLoader("Applying change...");
 
                     readLink.innerText = readSelect.selectedOptions[0].innerText;
                     await background.client.markChapterRead(novel.id, newId);
@@ -221,8 +226,7 @@ async function displayNovels() {
                     const lastChapter = novel.latest;
                     const readLastButton = createIconButton("success", "check", "Mark last chapter as read");
                     readLastButton.onclick = async () => {
-                        loaderText.textContent = "Applying change...";
-                        loaderDiv.classList.remove("hidden");
+                        showLoader("Applying change...");
 
                         readLink.innerText = lastChapter.html || lastChapter.name;
                         await background.client.markChapterRead(novel.id, lastChapter.id);
@@ -257,7 +261,7 @@ async function displayNovels() {
     }
 
     updateRefreshLabel();
-    loaderDiv.classList.add("hidden");
+    hideLoader();
     novelsDiv.classList.remove("hidden");
 }
 function createIconButton(btnClass: string, iconClass: string, title: string): HTMLElement {
@@ -296,8 +300,7 @@ openGroupsSettingsButton.onclick = () => {
 
 // Button to refresh novel list
 novelsRefreshButton.onclick = async () => {
-    loaderText.textContent = "Refreshing novels...";
-    loaderDiv.classList.remove("hidden");
+    showLoader("Refreshing novels...");
 
     await background.reloadReadingList();
     await displayNovels();
@@ -352,8 +355,7 @@ searchInput.oninput = async () => {
 loginForm.onsubmit = async (e) => {
     e.preventDefault();
 
-    loaderText.textContent = "Logging in...";
-    loaderDiv.classList.remove("hidden");
+    showLoader("Logging in...");
 
     if (await background.tryLogin(loginUsername.value, loginPassword.value)) {
         loginFormError.classList.add("hidden");
@@ -365,7 +367,7 @@ loginForm.onsubmit = async (e) => {
         loginFormError.textContent = "Login failure";
         loginFormError.classList.remove("hidden");
 
-        loaderDiv.classList.add("hidden");
+        hideLoader();
     }
 
     return false;
@@ -373,11 +375,18 @@ loginForm.onsubmit = async (e) => {
 
 // Show novels or login form on popup load
 (async () => {
+    app = new Vue({
+        el: "#app",
+        data: {
+            loadingMessage: "Loading...",
+        },
+    });
+
     if (await background.checkLoginStatus()) {
-        loaderText.textContent = "Loading reading list...";
+        showLoader("Loading reading list...");
         await displayNovels();
     } else {
-        loaderDiv.classList.add("hidden");
+        hideLoader();
         loginDiv.classList.remove("hidden");
     }
 })();
