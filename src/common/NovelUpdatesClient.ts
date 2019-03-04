@@ -239,6 +239,23 @@ export class NovelUpdatesClient {
         return lists;
     }
 
+    private getChapterByName(name: string, chapters: IReadingListResultChapter[]): IReadingListResultChapter {
+        const equals = chapters.filter((chapter) => chapter.name === name);
+        if (equals.length > 0) {
+            const ret = equals[0];
+            if (equals.length > 1) {
+                ret.html += " <span class='ml-2 text-warning' title='More than one chapter with this name'>\
+                    <i class='fa fa-exclamation-triangle'></i>\
+                </span>";
+            }
+            return ret;
+        }
+
+        // tslint:disable-next-line:no-console
+        console.log("No chapter found by name", name);
+        return undefined;
+    }
+
     public async getReadingListNovels(id: number): Promise<IReadingListResult[]> {
         if (!await this.checkLoginStatus()) {
             return undefined;
@@ -318,16 +335,33 @@ export class NovelUpdatesClient {
             }
             novel.chapters = chapters;
 
+            // Fix status/latest information
+            if (novel.status.id === undefined) {
+                const replace = this.getChapterByName(novel.status.name, novel.chapters);
+                if (replace) {
+                    novel.status = replace;
+                }
+            }
+            if (novel.latest.id === undefined) {
+                const replace = this.getChapterByName(novel.latest.name, novel.chapters);
+                if (replace) {
+                    novel.latest = replace;
+                }
+            }
+
             // Load and build next chapters if necessary
-            if (novel.status.id !== novel.latest.id) {
+            if (novel.status.id !== undefined && novel.status.id !== novel.latest.id) {
+
+                const fullNext: { [key: number]: IReadingListResultChapter } = {};
 
                 // Load the next three chapters with correct URLs
                 const nextChapterSpan = row.getElementsByClassName("show-pop")[0] as HTMLSpanElement;
-                const nextChaptersUrl = nextChapterSpan.dataset.url;
-                const next = await this.getNextChaptersByUrl(nextChaptersUrl, novel.status.id);
-                const fullNext: { [key: number]: IReadingListResultChapter } = {};
-                for (const chapter of next) {
-                    fullNext[chapter.id] = chapter;
+                if (nextChapterSpan) {
+                    const nextChaptersUrl = nextChapterSpan.dataset.url;
+                    const next = await this.getNextChaptersByUrl(nextChaptersUrl, novel.status.id);
+                    for (const chapter of next) {
+                        fullNext[chapter.id] = chapter;
+                    }
                 }
 
                 // Build the "next" object
