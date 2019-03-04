@@ -17,28 +17,30 @@ interface IBackground extends Window {
 
 const background = browser.extension.getBackgroundPage() as IBackground;
 
-const loaderDiv = document.getElementById("loader");
+const loaderDiv = document.getElementById("loader")!;
 const loaderText = loaderDiv.getElementsByTagName("span")[0];
-const loginDiv = document.getElementById("login-form");
+const loginDiv = document.getElementById("login-form")!;
 const loginForm = loginDiv.getElementsByTagName("form")[0];
-const loginFormError = document.getElementById("login-error");
+const loginFormError = document.getElementById("login-error")!;
 const loginUsername = document.getElementsByName("username")[0] as HTMLInputElement;
 const loginPassword = document.getElementsByName("password")[0] as HTMLInputElement;
-const novelsDiv = document.getElementById("novel-list");
-const novelsTable = document.getElementById("novel-table") as HTMLTableElement;
-const novelsRefreshButton = document.getElementById("refresh-novel-list");
-const searchInput = document.getElementById("search").getElementsByTagName("input")[0];
-const searchResults = document.getElementById("search-results") as HTMLTableElement;
-const settingsDiv = document.getElementById("settings");
-const settingsBack = document.getElementById("settings-back") as HTMLButtonElement;
-const openSettingsButton = document.getElementById("open-settings");
-const nextRefreshLabel = document.getElementById("next-refresh");
-const loadingError = document.getElementById("loading-error");
+const novelsDiv = document.getElementById("novel-list")!;
+const novelsTable = document.getElementById("novel-table")! as HTMLTableElement;
+const novelsRefreshButton = document.getElementById("refresh-novel-list")!;
+const searchInput = document.getElementById("search")!.getElementsByTagName("input")[0];
+const searchResults = document.getElementById("search-results")! as HTMLTableElement;
+const settingsDiv = document.getElementById("settings")!;
+const settingsBack = document.getElementById("settings-back")! as HTMLButtonElement;
+const openSettingsButton = document.getElementById("open-settings")!;
+const nextRefreshLabel = document.getElementById("next-refresh")!;
+const loadingError = document.getElementById("loading-error")!;
 
 async function removeNovel(id: number) {
     await background.client.removeFromList(id);
     const element = document.getElementById("novel-row-" + id);
-    element.parentElement.removeChild(element);
+    if (element) {
+        element.parentElement!.removeChild(element);
+    }
 }
 async function addNovel(url: string) {
     loaderText.textContent = "Getting novel ID...";

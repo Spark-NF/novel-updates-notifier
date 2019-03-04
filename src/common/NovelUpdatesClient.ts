@@ -58,10 +58,10 @@ function fixUrl(url: string): string {
 
 function chapterFromLink(id: number, link: HTMLAnchorElement): IReadingListResultChapter {
     const url = fixUrl(link.href);
-    let date: Date;
+    let date: Date | undefined;
     if (link.hasAttribute("onmousedown")) {
         const event = link.getAttribute("onmousedown");
-        const match = event.match(/latestchp\((?:[^,]+,){4}'(\d{4}-\d{2}-\d{2})/);
+        const match = event && event.match(/latestchp\((?:[^,]+,){4}'(\d{4}-\d{2}-\d{2})/);
         if (match && match.length >= 2) {
             date = new Date(match[1]);
         }
@@ -239,7 +239,10 @@ export class NovelUpdatesClient {
         return lists;
     }
 
-    private getChapterByName(name: string, chapters: IReadingListResultChapter[]): IReadingListResultChapter {
+    private getChapterByName(
+        name: string,
+        chapters: IReadingListResultChapter[],
+    ): IReadingListResultChapter | undefined {
         const equals = chapters.filter((chapter) => chapter.name === name);
         if (equals.length > 0) {
             const ret = equals[0];
@@ -256,7 +259,7 @@ export class NovelUpdatesClient {
         return undefined;
     }
 
-    public async getReadingListNovels(id: number): Promise<IReadingListResult[]> {
+    public async getReadingListNovels(id: number): Promise<IReadingListResult[] | undefined> {
         if (!await this.checkLoginStatus()) {
             return undefined;
         }

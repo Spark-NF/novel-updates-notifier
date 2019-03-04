@@ -62,7 +62,7 @@ export class ContentScriptsManager implements IListener {
             return;
         }
 
-        await this.handle.unregister();
+        await this.handle!.unregister();
         this.handle = undefined;
     }
 }

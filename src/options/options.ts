@@ -47,8 +47,8 @@ settingsCustomCss.onchange = async () => {
 
     // Only show the sidebar settings if the API is available
     if (!browser.sidebarAction) {
-        settingsReadInSidebar.parentElement.parentElement.remove();
-        settingsCustomCss.parentElement.parentElement.remove();
+        settingsReadInSidebar.parentElement!.parentElement!.remove();
+        settingsCustomCss.parentElement!.parentElement!.remove();
     } else {
         settingsReadInSidebar.checked = await background.settings.readInSidebar.get();
         settingsCustomCss.checked = await background.settings.customCss.get();

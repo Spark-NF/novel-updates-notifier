@@ -6,8 +6,8 @@ interface ICacheData {
 }
 
 export class Storage {
-    private sync: StorageArea;
-    private local: StorageArea;
+    private sync?: StorageArea;
+    private local?: StorageArea;
 
     public async init(sync?: StorageArea, local?: StorageArea): Promise<void> {
         this.sync = sync || await this.getStorage();
@@ -17,7 +17,7 @@ export class Storage {
     // Return the sync storage with fallback on local one
     private async getStorage(): Promise<StorageArea> {
         try {
-            if (await browser.storage.sync.get(null)) {
+            if (await browser.storage.sync.get(undefined)) {
                 return browser.storage.sync;
             }
         } catch (e) { /* ignore */ }
@@ -30,11 +30,11 @@ export class Storage {
     }
 
     public async getSync(key: string): Promise<any> {
-        return this.get(this.sync, key);
+        return this.get(this.sync!, key);
     }
 
     public async setSync(items: any): Promise<any> {
-        return this.sync.set(items);
+        return this.sync!.set(items);
     }
 
     public async setCache(key: string, value: any, duration: number): Promise<void> {
@@ -43,11 +43,11 @@ export class Storage {
             value,
             expiration: new Date().getTime() + duration,
         };
-        await this.local.set(values);
+        await this.local!.set(values);
     }
 
     public async getCache(key: string): Promise<any> {
-        const data: ICacheData = await this.get(this.local, "cache_" + key);
+        const data: ICacheData = await this.get(this.local!, "cache_" + key);
         if (data && data.expiration > new Date().getTime()) {
             return data.value;
         }

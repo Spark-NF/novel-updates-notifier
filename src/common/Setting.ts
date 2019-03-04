@@ -30,7 +30,7 @@ export class Setting<T> extends Observable {
         if (this.value === undefined) {
             await this.reload();
         }
-        return this.value;
+        return this.value!;
     }
 
     public async set(value: T): Promise<void> {

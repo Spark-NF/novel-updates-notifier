@@ -48,10 +48,10 @@ export class Permission extends Observable {
             return true;
         }
         this.set(await browser.permissions.request(this.permissions), true);
-        return this.granted;
+        return this.granted!;
     }
 
-    public isGranted(): boolean {
+    public isGranted(): boolean | undefined {
         return this.granted;
     }
 }

@@ -48,7 +48,7 @@ async function tryLogin(username: string, password: string): Promise<boolean> {
 
 // Get the status of novels in the user's reading list
 const lastChanges: { [novelId: number]: number } = {};
-async function loadReadingList(): Promise<IReadingListResult[]> {
+async function loadReadingList(): Promise<IReadingListResult[] | undefined> {
     const readingLists = await client.getReadingLists();
 
     const novels: IReadingListResult[] = [];
