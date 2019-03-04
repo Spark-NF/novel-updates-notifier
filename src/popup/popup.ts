@@ -209,29 +209,41 @@ async function displayNovels() {
             const actionsCell = row.insertCell();
             actionsCell.classList.add("novel-actions");
 
-            if (hasNew) {
-                const lastChapter = novel.chapters[novel.chapters.length - 1];
-                const readLastButton = createIconButton("success", "check", "Mark last chapter as read");
-                readLastButton.onclick = async () => {
-                    loaderText.textContent = "Applying change...";
-                    loaderDiv.classList.remove("hidden");
-
-                    readLink.innerText = lastChapter.html || lastChapter.name;
-                    await background.client.markChapterRead(novel.id, lastChapter.id);
-
-                    await background.reloadReadingList();
-                    await displayNovels();
-                };
-                actionsCell.appendChild(readLastButton);
-            }
             const editReadButton = createIconButton("warning", "pencil", "Edit last read chapter manually");
-            editReadButton.onclick = async () => {
-                readLink.classList.add("hidden");
-                editReadButton.classList.add("hidden");
-                readSelect.classList.remove("hidden");
-                readSelect.focus();
-            };
-            actionsCell.appendChild(editReadButton);
+            if (novel.status.id !== undefined) {
+                if (hasNew && novel.latest.id !== undefined) {
+                    const lastChapter = novel.latest;
+                    const readLastButton = createIconButton("success", "check", "Mark last chapter as read");
+                    readLastButton.onclick = async () => {
+                        loaderText.textContent = "Applying change...";
+                        loaderDiv.classList.remove("hidden");
+
+                        readLink.innerText = lastChapter.html || lastChapter.name;
+                        await background.client.markChapterRead(novel.id, lastChapter.id);
+                        if (novel.manual !== undefined) {
+                            await background.client.markChapterReadManual(novel.id, novel.manual, lastChapter.name);
+                        }
+
+                        await background.reloadReadingList();
+                        await displayNovels();
+                    };
+                    actionsCell.appendChild(readLastButton);
+                }
+                editReadButton.onclick = async () => {
+                    readLink.classList.add("hidden");
+                    editReadButton.classList.add("hidden");
+                    readSelect.classList.remove("hidden");
+                    readSelect.focus();
+                };
+                actionsCell.appendChild(editReadButton);
+            } else {
+                actionsCell.appendChild(createIconElement(
+                    "span",
+                    "btn btn-xs btn-icon text-warning",
+                    "exclamation-triangle",
+                    "Edition is disabled because your current chapter could not be mapped to an existing chapter",
+                ));
+            }
             const removeButton = createIconButton("danger", "trash-o", "Remove novel from reading list");
             removeButton.onclick = () => { removeNovel(novel.id); };
             actionsCell.appendChild(removeButton);
@@ -242,9 +254,12 @@ async function displayNovels() {
     loaderDiv.classList.add("hidden");
     novelsDiv.classList.remove("hidden");
 }
-function createIconButton(btnClass: string, iconClass: string, title: string): HTMLButtonElement {
-    const button = document.createElement("button");
-    button.className = "btn btn-xs btn-icon btn-" + btnClass;
+function createIconButton(btnClass: string, iconClass: string, title: string): HTMLElement {
+    return createIconElement("button", "btn btn-xs btn-icon btn-" + btnClass, iconClass, title);
+}
+function createIconElement(elt: string, clss: string, iconClass: string, title: string): HTMLElement {
+    const button = document.createElement(elt);
+    button.className = clss;
     button.title = title;
 
     const icon = document.createElement("i");
