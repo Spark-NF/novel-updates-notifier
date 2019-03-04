@@ -10,6 +10,9 @@ const background = browser.extension.getBackgroundPage() as IBackground;
 
 // Necessary to avoid adding observers everywhere
 function clone(obj: any): any {
+    if (obj === null || obj === undefined) {
+        return obj;
+    }
     return JSON.parse(JSON.stringify(obj));
 }
 
