@@ -265,7 +265,9 @@ export class NovelUpdatesClient {
         const parser = new DOMParser();
         const xml = parser.parseFromString(rq.responseText, "text/html");
         const rows = xml.getElementsByClassName("rl_links") as HTMLCollectionOf<HTMLTableRowElement>;
-        const manual = (xml.getElementsByName("chk_mrl")[0] as HTMLInputElement).checked;
+
+        const manualCheckbox = xml.getElementsByName("chk_mrl") as NodeListOf<HTMLInputElement>;
+        const manual = manualCheckbox.length > 0 && manualCheckbox[0].checked;
 
         const novels: IReadingListResult[] = [];
 
