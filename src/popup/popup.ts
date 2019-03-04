@@ -87,7 +87,7 @@ Vue.component("novel", {
                     <i class="fa fa-exclamation-triangle"></i>
                 </span>
                 <template v-else>
-                    <button class="btn btn-xs btn-icon btn-success" title="Mark last chapter as read" @click="markLatestAsRead" v-id="hasNew && novel.latest.id !== undefined">
+                    <button class="btn btn-xs btn-icon btn-success" title="Mark last chapter as read" @click="markLatestAsRead" v-if="hasNew && novel.latest.id !== undefined">
                         <i class="fa fa-check"></i>
                     </button>
                     <button class="btn btn-xs btn-icon btn-warning" title="Edit last read chapter manually" @click="startEdition" v-if="!editing">
