@@ -62,8 +62,16 @@ function makeLink(href: string, txt: string): HTMLAnchorElement {
     link.target = "_blank";
     return link;
 }
-function makeChapterLink(chapter: IReadingListResultChapter): HTMLAnchorElement {
-    const link = makeLink(chapter.url, chapter.html || chapter.name);
+function makeChapterLink(chapter: IReadingListResultChapter): HTMLElement {
+    const txt = chapter.html || chapter.name;
+    const url = chapter.url || (chapter.id && `https://www.novelupdates.com/extnu/${chapter.id}/`);
+    if (!url) {
+        const span = document.createElement("span");
+        span.innerHTML = txt;
+        return span;
+    }
+
+    const link = makeLink(url, txt);
     link.onclick = async (e) => {
         if (e.button !== 0 && e.button !== 1) {
             return;
@@ -78,14 +86,14 @@ function makeChapterLink(chapter: IReadingListResultChapter): HTMLAnchorElement 
         if (middleClick || !readInSidebar) {
             await browser.tabs.create({
                 active: !middleClick,
-                url: chapter.url,
+                url,
             });
             return false;
         }
 
         // Open in sidebar
         await browser.sidebarAction.open();
-        await browser.sidebarAction.setPanel({ panel: chapter.url });
+        await browser.sidebarAction.setPanel({ panel: url });
 
         return false;
     };
