@@ -29,6 +29,7 @@ export interface IReadingListResult {
     status: IReadingListResultChapter;
     next: IReadingListResultChapter[];
     latest: IReadingListResultChapter;
+    manual?: number;
 }
 
 export interface IReadingList {
@@ -247,6 +248,7 @@ export class NovelUpdatesClient {
         const parser = new DOMParser();
         const xml = parser.parseFromString(rq.responseText, "text/html");
         const rows = xml.getElementsByClassName("rl_links") as HTMLCollectionOf<HTMLTableRowElement>;
+        const manual = (xml.getElementsByName("chk_mrl")[0] as HTMLInputElement).checked;
 
         const novels: IReadingListResult[] = [];
 
@@ -301,6 +303,11 @@ export class NovelUpdatesClient {
                 next: [] as IReadingListResultChapter[],
                 latest,
             };
+
+            // Manual reading list
+            if (manual) {
+                novel.manual = id;
+            }
 
             // Load the chapters
             const cacheKey = "chapters_" + novel.id;
