@@ -1,7 +1,10 @@
+// tslint:disable:max-line-length
+
 import Vue from "vue";
 import { IReadingListResult, IReadingListResultChapter, NovelUpdatesClient } from "../common/NovelUpdatesClient";
 import { Settings } from "../common/Settings";
 import { secondsToString } from "../common/time";
+import "./components/chapter-link";
 
 interface IBackground extends Window {
     settings: Settings;
@@ -19,20 +22,85 @@ interface IBackground extends Window {
 const background = browser.extension.getBackgroundPage() as IBackground;
 let app: Vue;
 
-const novelsDiv = document.getElementById("novel-list")!;
-const novelsTable = document.getElementById("novel-table")! as HTMLTableElement;
-const novelsRefreshButton = document.getElementById("refresh-novel-list")!;
-const searchInput = document.getElementById("search")!.getElementsByTagName("input")[0];
-const searchResults = document.getElementById("search-results")! as HTMLTableElement;
-const settingsDiv = document.getElementById("settings")!;
-const settingsGeneralDiv = document.getElementById("settings-general")!;
-const settingsGroupsDiv = document.getElementById("settings-groups")!;
-const settingsBack = document.getElementsByClassName("settings-back") as HTMLCollectionOf<HTMLButtonElement>;
-const openGeneralSettingsButton = document.getElementById("open-general-settings")! as HTMLButtonElement;
-const openGroupsSettingsButton = document.getElementById("open-groups-settings")! as HTMLButtonElement;
-const openSettingsButton = document.getElementById("open-settings")!;
-const nextRefreshLabel = document.getElementById("next-refresh")!;
-const loadingError = document.getElementById("loading-error")!;
+Vue.component("novel", {
+    props: ["novel"],
+    data() {
+        const hasNew = this.novel.next.length > 0;
+        return {
+            hasNew,
+            editing: false,
+            optChapters: hasNew && this.novel.status.id !== undefined && this.novel.next.length > 0
+                ? [this.novel.status].concat(this.novel.next)
+                : this.novel.chapters,
+            readOverride: "",
+        };
+    },
+    methods: {
+        async changeCurrentChapter() {
+            this.editing = false;
+
+            const readSelect = this.$refs.readSelect as HTMLSelectElement;
+            const value = readSelect.value;
+            const id = parseInt(value, 10);
+            if (value !== "" && id !== this.novel.status.id) {
+                const text = readSelect.selectedOptions[0].innerText;
+                await markChapterAsRead({ id, name: text }, this.novel);
+            }
+        },
+        async markLatestAsRead() {
+            await markChapterAsRead(this.novel.latest, this.novel);
+        },
+        removeNovel,
+        startEdition() {
+            this.editing = true;
+            (this.$refs.readSelect as any).focus();
+        },
+    },
+    template: `
+        <tr v-bind:class="{ 'table-warning': hasNew }" v-bind:id="'novel-row-' + novel.id">
+            <td class="novel-name">
+                <a v-bind:href="novel.url" target="_blank">
+                    {{ novel.name }}
+                </a>
+                <span class="badge badge-primary" v-if="novel.next.length > 0">
+                    {{ novel.next.length }}
+                </span>
+            </td>
+            <td class="novel-chapter">
+                <chapter-link v-bind:chapter="novel.status" v-if="!editing" />
+                <select ref="readSelect" v-if="editing" v-on:change="changeCurrentChapter(this, novel)" v-on:blur="changeCurrentChapter(this, novel)">
+                    <option v-for="chapter of optChapters" v-bind:value="chapter.id" v-bind:selected="chapter.id === novel.status.id">
+                        {{ chapter.name }}
+                    </option>
+                </select>
+            </td>
+            <td class="novel-chapter">
+                <span v-if="novel.next.length > 0">
+                    <chapter-link v-bind:chapter="novel.next[0]" />
+                </span>
+            </td>
+            <td class="novel-chapter">
+                <chapter-link v-bind:chapter="novel.latest" />
+            </td>
+            <td class="novel-actions">
+                <span class="btn btn-xs btn-icon text-warning" title="Edition is disabled because your current chapter could not be mapped to an existing chapter" v-if="!novel.status.id">
+                    <i class="fa fa-exclamation-triangle"></i>
+                </span>
+                <template v-else>
+                    <button class="btn btn-xs btn-icon btn-success" title="Mark last chapter as read" v-on:click="markLatestAsRead" v-id="hasNew && novel.latest.id !== undefined">
+                        <i class="fa fa-check"></i>
+                    </button>
+                    <button class="btn btn-xs btn-icon btn-warning" title="Edit last read chapter manually" v-on:click="startEdition" v-if="!editing">
+                        <i class="fa fa-pencil"></i>
+                    </button>
+                </template>
+                <button class="btn btn-xs btn-icon btn-danger" title="Remove novel from reading list" v-on:click="removeNovel(novel.id)">
+                    <i class="fa fa-trash-o"></i>
+                </button>
+            </td>
+        </tr>
+    `,
+});
 
 function showLoader(msg: string): void {
     app.$data.loadingMessage = msg;
@@ -50,8 +118,8 @@ async function removeNovel(id: number) {
 }
 async function addNovel(url: string) {
     showLoader("Getting novel ID...");
-    searchInput.value = "";
-    searchResults.classList.add("hidden");
+    app.$data.search.value = "";
+    app.$data.search.results = [];
     const id = await background.client.getIdFromUrl(url);
 
     showLoader("Adding novel...");
@@ -62,51 +130,6 @@ async function addNovel(url: string) {
     await displayNovels();
 }
 
-function makeLink(href: string, txt: string): HTMLAnchorElement {
-    const link = document.createElement("a");
-    link.href = href;
-    link.innerHTML = txt;
-    link.target = "_blank";
-    return link;
-}
-function makeChapterLink(chapter: IReadingListResultChapter): HTMLElement {
-    const txt = chapter.html || chapter.name;
-    const url = chapter.url || (chapter.id && `https://www.novelupdates.com/extnu/${chapter.id}/`);
-    if (!url) {
-        const span = document.createElement("span");
-        span.innerHTML = txt;
-        return span;
-    }
-
-    const link = makeLink(url, txt);
-    link.onclick = async (e) => {
-        if (e.button !== 0 && e.button !== 1) {
-            return;
-        }
-
-        e.preventDefault();
-        const canSidebar = browser.sidebarAction !== undefined;
-        const readInSidebar = await background.settings.readInSidebar.get() && canSidebar;
-        const middleClick = e.button === 1;
-
-        // Open in a new tab
-        if (middleClick || !readInSidebar) {
-            await browser.tabs.create({
-                active: !middleClick,
-                url,
-            });
-            return false;
-        }
-
-        // Open in sidebar
-        await browser.sidebarAction.open();
-        await browser.sidebarAction.setPanel({ panel: url });
-
-        return false;
-    };
-    return link;
-}
-
 // Show next refresh timer
 async function updateRefreshLabel() {
     if (!background.nextListRefresh) {
@@ -115,149 +138,51 @@ async function updateRefreshLabel() {
 
     const interval = await background.settings.interval.get();
     const secs = Math.max(0, Math.round((background.nextListRefresh.getTime() - new Date().getTime()) / 1000));
-    nextRefreshLabel.textContent = secondsToString(secs, interval > 60);
+    app.$data.novels.nextRefresh = secondsToString(secs, interval > 60);
 
     // Show network error
-    const errorHidden = loadingError.classList.contains("hidden");
-    if (background.networkError && errorHidden) {
-        loadingError.title = background.networkError;
-        loadingError.classList.remove("hidden");
-    } else if (!background.networkError && !errorHidden) {
-        loadingError.title = "";
-        loadingError.classList.add("hidden");
-    }
+    app.$data.novels.error = background.networkError;
 }
 setInterval(updateRefreshLabel, 1000);
+
+async function changeCurrentChapterr(value: string, text: string, novel: IReadingListResult) {
+    const newId = parseInt(value, 10);
+    const hasChanged = value !== "" && newId !== novel.status.id;
+    if (hasChanged) {
+        showLoader("Applying change...");
+
+        await background.client.markChapterRead(novel.id, newId);
+        if (novel.manual !== undefined) {
+            await background.client.markChapterReadManual(novel.id, novel.manual, text);
+        }
+    }
+
+    return hasChanged;
+}
+
+async function markChapterAsRead(chapter: IReadingListResultChapter, novel: IReadingListResult) {
+    showLoader("Applying change...");
+
+    await background.client.markChapterRead(novel.id, chapter.id);
+    if (novel.manual !== undefined) {
+        await background.client.markChapterReadManual(novel.id, novel.manual, chapter.name);
+    }
+
+    showLoader("Reloading list...");
+    await background.reloadReadingList();
+    await displayNovels();
+}
 
 async function displayNovels() {
     const novels = await background.getReadingList();
 
-    // Empty the novels table first
-    let rowCount = novelsTable.rows.length;
-    while (--rowCount > 0) {
-        novelsTable.deleteRow(rowCount);
-    }
-
     // Populate the table
-    if (novels && Array.isArray(novels)) {
-        for (const novel of novels) {
-            const hasNew = novel.status.id !== novel.latest.id;
-
-            const row = novelsTable.insertRow();
-            row.id = "novel-row-" + novel.id;
-            if (hasNew) {
-                row.classList.add("table-warning");
-            }
-
-            const nameCell = row.insertCell();
-            nameCell.classList.add("novel-name");
-            nameCell.appendChild(makeLink(novel.url, novel.name));
-            if (novel.next.length > 0) {
-                const counter = document.createElement("span");
-                counter.classList.add("badge");
-                counter.classList.add("badge-primary");
-                counter.textContent = novel.next.length.toString();
-                nameCell.appendChild(counter);
-            }
-
-            const readCell = row.insertCell();
-            readCell.classList.add("novel-chapter");
-            const readLink = makeChapterLink(novel.status);
-            readCell.appendChild(readLink);
-            const readSelect = document.createElement("select");
-            readSelect.classList.add("hidden");
-            const optChapters = hasNew && novel.status.id !== undefined && novel.next.length > 0
-                ? [novel.status].concat(novel.next)
-                : novel.chapters;
-            for (const chapter of optChapters) {
-                const opt = document.createElement("option");
-                opt.value = chapter.id.toString();
-                opt.innerText = chapter.name;
-                if (chapter.id === novel.status.id) {
-                    opt.selected = true;
-                }
-                readSelect.appendChild(opt);
-            }
-            readSelect.onchange = readSelect.onblur = async () => {
-                const newId = parseInt(readSelect.value, 10);
-                const hasChanged = readSelect.value !== "" && newId !== novel.status.id;
-                if (hasChanged) {
-                    showLoader("Applying change...");
-
-                    readLink.innerText = readSelect.selectedOptions[0].innerText;
-                    await background.client.markChapterRead(novel.id, newId);
-                    if (novel.manual !== undefined) {
-                        await background.client.markChapterReadManual(novel.id, novel.manual, readLink.innerText);
-                    }
-                }
-
-                readSelect.classList.add("hidden");
-                readLink.classList.remove("hidden");
-                editReadButton.classList.remove("hidden");
-
-                if (hasChanged) {
-                    await background.reloadReadingList();
-                    await displayNovels();
-                }
-            };
-            readCell.appendChild(readSelect);
-
-            const nextCell = row.insertCell();
-            nextCell.classList.add("novel-chapter");
-            if (novel.next.length > 0) {
-                nextCell.appendChild(makeChapterLink(novel.next[0]));
-            }
-
-            const latestCell = row.insertCell();
-            latestCell.classList.add("novel-chapter");
-            latestCell.appendChild(makeChapterLink(novel.latest));
-
-            const actionsCell = row.insertCell();
-            actionsCell.classList.add("novel-actions");
-
-            const editReadButton = createIconButton("warning", "pencil", "Edit last read chapter manually");
-            if (novel.status.id !== undefined) {
-                if (hasNew && novel.latest.id !== undefined) {
-                    const lastChapter = novel.latest;
-                    const readLastButton = createIconButton("success", "check", "Mark last chapter as read");
-                    readLastButton.onclick = async () => {
-                        showLoader("Applying change...");
-
-                        readLink.innerText = lastChapter.html || lastChapter.name;
-                        await background.client.markChapterRead(novel.id, lastChapter.id);
-                        if (novel.manual !== undefined) {
-                            await background.client.markChapterReadManual(novel.id, novel.manual, lastChapter.name);
-                        }
-
-                        await background.reloadReadingList();
-                        await displayNovels();
-                    };
-                    actionsCell.appendChild(readLastButton);
-                }
-                editReadButton.onclick = async () => {
-                    readLink.classList.add("hidden");
-                    editReadButton.classList.add("hidden");
-                    readSelect.classList.remove("hidden");
-                    readSelect.focus();
-                };
-                actionsCell.appendChild(editReadButton);
-            } else {
-                actionsCell.appendChild(createIconElement(
-                    "span",
-                    "btn btn-xs btn-icon text-warning",
-                    "exclamation-triangle",
-                    "Edition is disabled because your current chapter could not be mapped to an existing chapter",
-                ));
-            }
-            const removeButton = createIconButton("danger", "trash-o", "Remove novel from reading list");
-            removeButton.onclick = () => { removeNovel(novel.id); };
-            actionsCell.appendChild(removeButton);
-        }
-    }
+    app.$data.novels.results = novels;
 
     updateRefreshLabel();
     hideLoader();
-    novelsDiv.classList.remove("hidden");
+
+    app.$data.novels.ok = true;
 }
 function createIconButton(btnClass: string, iconClass: string, title: string): HTMLElement {
     return createIconElement("button", "btn btn-xs btn-icon btn-" + btnClass, iconClass, title);
@@ -276,75 +201,47 @@ function createIconElement(elt: string, clss: string, iconClass: string, title: 
 }
 
 // Settings page
-openSettingsButton.onclick = async () => {
-    settingsDiv.classList.remove("hidden");
-};
-for (const btn of Array.from(settingsBack)) {
-    btn.onclick = () => {
-        settingsDiv.classList.add("hidden");
-    };
+function openSettings() {
+    app.$data.settings.open = true;
 }
-openGeneralSettingsButton.onclick = () => {
-    settingsGeneralDiv.classList.remove("hidden");
-    settingsGroupsDiv.classList.add("hidden");
-};
-openGroupsSettingsButton.onclick = () => {
-    settingsGeneralDiv.classList.add("hidden");
-    settingsGroupsDiv.classList.remove("hidden");
-};
+function closeSettings() {
+    app.$data.settings.open = false;
+}
+function openGeneralSettings() {
+    app.$data.settings.panel = "general";
+}
+function openGroupsSettings() {
+    app.$data.settings.panel = "groups";
+}
 
 // Button to refresh novel list
-novelsRefreshButton.onclick = async () => {
+async function refreshNovels() {
     showLoader("Refreshing novels...");
 
     await background.reloadReadingList();
     await displayNovels();
-};
+}
 
 // Show search results input change
 let latestSearch = "";
-searchInput.oninput = async () => {
-    const val = searchInput.value.trim();
+async function doSearch() {
+    const val = app.$data.search.value.trim();
     latestSearch = val;
     if (val.length === 0) {
-        searchResults.classList.add("hidden");
+        app.$data.search.results = [];
     } else {
-        searchResults.classList.remove("hidden");
-        searchResults.textContent = "Loading results...";
+        app.$data.search.message = "Loading results...";
         const results = await background.client.search(val);
+
+        // If the current val is deprecated because the user kept typing, stop here
         if (val !== latestSearch) {
             return;
         }
-        searchResults.textContent = "";
-        for (let i = 0; i < 5 && i < results.length; ++i) {
-            const result = results[i];
-            const row = searchResults.insertRow();
 
-            const imgCell = row.insertCell();
-            imgCell.classList.add("novel-icon");
-            imgCell.style.width = "0%";
-            const img = document.createElement("img");
-            img.alt = "";
-            img.src = result.img;
-            imgCell.appendChild(img);
-
-            const nameCell = row.insertCell();
-            nameCell.classList.add("novel-name");
-            nameCell.appendChild(makeLink(result.url, result.html || result.name));
-
-            const actionsCell = row.insertCell();
-            const addButton = document.createElement("button");
-            addButton.className = "btn btn-xs btn-success btn-icon";
-            addButton.onclick = () => { addNovel(result.url); };
-            const plusIcon = document.createElement("i");
-            plusIcon.classList.add("fa");
-            plusIcon.classList.add("fa-plus");
-            addButton.appendChild(plusIcon);
-            actionsCell.appendChild(addButton);
-            actionsCell.style.width = "0%";
-        }
+        app.$data.search.message = "";
+        app.$data.search.results = results.slice(0, 5);
     }
-};
+}
 
 // Store credentials on login form submit
 async function doLogin() {
@@ -363,7 +260,7 @@ async function doLogin() {
     }
 
     return false;
-};
+}
 
 // Show novels or login form on popup load
 (async () => {
@@ -377,9 +274,32 @@ async function doLogin() {
                 username: "",
                 password: "",
             },
+            search: {
+                value: "",
+                message: "",
+                results: [],
+            },
+            novels: {
+                ok: false,
+                error: "",
+                nextRefresh: "",
+                results: [],
+                editing: undefined,
+            },
+            settings: {
+                open: false,
+                panel: "general",
+            },
         },
         methods: {
             doLogin,
+            doSearch,
+            refreshNovels,
+            openSettings,
+            closeSettings,
+            openGeneralSettings,
+            openGroupsSettings,
+            addNovel,
         },
     });
 
