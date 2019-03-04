@@ -19,11 +19,6 @@ interface IBackground extends Window {
 const background = browser.extension.getBackgroundPage() as IBackground;
 let app: Vue;
 
-const loginDiv = document.getElementById("login-form")!;
-const loginForm = loginDiv.getElementsByTagName("form")[0];
-const loginFormError = document.getElementById("login-error")!;
-const loginUsername = document.getElementsByName("username")[0] as HTMLInputElement;
-const loginPassword = document.getElementsByName("password")[0] as HTMLInputElement;
 const novelsDiv = document.getElementById("novel-list")!;
 const novelsTable = document.getElementById("novel-table")! as HTMLTableElement;
 const novelsRefreshButton = document.getElementById("refresh-novel-list")!;
@@ -352,20 +347,17 @@ searchInput.oninput = async () => {
 };
 
 // Store credentials on login form submit
-loginForm.onsubmit = async (e) => {
-    e.preventDefault();
-
+async function doLogin() {
     showLoader("Logging in...");
 
-    if (await background.tryLogin(loginUsername.value, loginPassword.value)) {
-        loginFormError.classList.add("hidden");
-        loginDiv.classList.add("hidden");
+    if (await background.tryLogin(app.$data.login.username, app.$data.login.password)) {
+        app.$data.login.error = "";
+        app.$data.login.ok = true;
 
         await background.reloadReadingList();
         await displayNovels();
     } else {
-        loginFormError.textContent = "Login failure";
-        loginFormError.classList.remove("hidden");
+        app.$data.login.error = "Login failure";
 
         hideLoader();
     }
@@ -379,6 +371,15 @@ loginForm.onsubmit = async (e) => {
         el: "#app",
         data: {
             loadingMessage: "Loading...",
+            login: {
+                ok: true,
+                error: "",
+                username: "",
+                password: "",
+            },
+        },
+        methods: {
+            doLogin,
         },
     });
 
@@ -387,6 +388,6 @@ loginForm.onsubmit = async (e) => {
         await displayNovels();
     } else {
         hideLoader();
-        loginDiv.classList.remove("hidden");
+        app.$data.login.ok = false;
     }
 })();
