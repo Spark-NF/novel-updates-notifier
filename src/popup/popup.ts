@@ -94,7 +94,7 @@ Vue.component("novel", {
                         <i class="fa fa-pencil"></i>
                     </button>
                 </template>
-                <button class="btn btn-xs btn-icon btn-danger" title="Remove novel from reading list" v-on:click="removeNovel(novel.id)">
+                <button class="btn btn-xs btn-icon btn-danger" title="Remove novel from reading list" v-on:click="removeNovel(novel)">
                     <i class="fa fa-trash-o"></i>
                 </button>
             </td>
@@ -109,11 +109,12 @@ function hideLoader(): void {
     showLoader("");
 }
 
-async function removeNovel(id: number) {
-    await background.client.removeFromList(id);
-    const element = document.getElementById("novel-row-" + id);
-    if (element) {
-        element.parentElement!.removeChild(element);
+async function removeNovel(novel: IReadingListResult) {
+    await background.client.removeFromList(novel.id);
+
+    const index = app.$data.novels.results.indexOf(novel);
+    if (index !== -1) {
+        app.$data.novels.results.splice(index, 1);
     }
 }
 async function addNovel(url: string) {

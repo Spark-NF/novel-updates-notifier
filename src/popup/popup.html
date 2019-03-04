@@ -95,7 +95,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr is="novel" v-for="novel of novels.results" v-bind:novel="novel" />
+                            <tr is="novel" v-for="novel of novels.results" v-bind:novel="novel" v-bind:key="novel.id"></tr>
                         </tbody>
                     </table>
                 </div>
