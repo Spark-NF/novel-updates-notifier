@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="../vendor/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="../vendor/css/font-awesome.min.css" />
+        <link rel="stylesheet" href="../common/common.css" />
+        <link rel="stylesheet" href="options.css" />
+    </head>
+    <body>
+        <form id="app">
+            <div class="novel-group" v-for="group in groups">
+                <div class="form-group row">
+                    <label for="name" class="col-4 col-form-label">Name</label>
+                    <div class="col-8 input-group">
+                        <input type="text" class="form-control" name="name" id="name" v-model="group.name" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="lists" class="col-4 col-form-label">Lists</label>
+                    <div class="col-8 input-group">
+                        <select name="lists" id="lists" v-model="group.lists" multiple>
+                            <option v-for="list in lists" v-bind:value="list.id">
+                                {{ list.name }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-success" v-on:click="addGroup">
+                <i class="fa fa-plus"></i> Add
+            </button>
+            <button type="button" class="btn btn-primary" v-on:click="saveGroups">
+                <i class="fa fa-save"></i> Save
+            </button>
+        </form>
+        <script src="../vendor/js/browser-polyfill.min.js"></script>
+        <script src="groups.js"></script>
+    </body>
+</html>

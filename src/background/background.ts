@@ -10,6 +10,7 @@ import { sleep } from "../common/sleep";
 import { Storage } from "../common/Storage";
 
 interface ICustomWindow extends Window {
+    readingLists: any;
     readingList: any;
     settings: Settings;
     permissions: Permissions;
@@ -50,6 +51,7 @@ async function tryLogin(username: string, password: string): Promise<boolean> {
 const lastChanges: { [novelId: number]: number } = {};
 async function loadReadingList(): Promise<IReadingListResult[] | undefined> {
     const readingLists = await client.getReadingLists();
+    window.readingLists = readingLists;
 
     const novels: IReadingListResult[] = [];
     for (const readingList of readingLists) {
