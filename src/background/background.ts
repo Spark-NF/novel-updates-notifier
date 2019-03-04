@@ -53,9 +53,21 @@ async function loadReadingList(): Promise<IReadingListResult[] | undefined> {
     const readingLists = await client.getReadingLists();
     window.readingLists = readingLists;
 
+    const groups = await settings.groups.get();
+    let idsToLoad: number[] = [];
+    if (groups.length > 0) {
+        for (const group of groups) {
+            idsToLoad = idsToLoad.concat(group.readingLists);
+        }
+    } else {
+        for (const readingList of readingLists) {
+            idsToLoad.push(readingList.id);
+        }
+    }
+
     const novels: IReadingListResult[] = [];
-    for (const readingList of readingLists) {
-        const l = await client.getReadingListNovels(readingList.id);
+    for (const id of idsToLoad) {
+        const l = await client.getReadingListNovels(id);
         if (l) {
             novels.push(...l);
         }

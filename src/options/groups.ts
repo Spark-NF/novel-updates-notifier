@@ -1,27 +1,34 @@
 import Vue from "vue";
 import { IReadingList } from "../common/NovelUpdatesClient";
+import { Settings } from "../common/Settings";
 
 interface IBackground extends Window {
     readingLists: IReadingList[];
+    settings: Settings;
 }
 const background = browser.extension.getBackgroundPage() as IBackground;
+
+// Necessary to avoid adding observers everywhere
+function clone(obj: any): any {
+    return JSON.parse(JSON.stringify(obj));
+}
 
 (async () => {
     const app = new Vue({
         el: "#app",
         data: {
-            groups: JSON.parse(localStorage.getItem("groups")) || [],
-            lists: background.readingLists,
+            groups: clone(await background.settings.groups.get()),
+            lists: clone(background.readingLists),
         },
         methods: {
             addGroup() {
                 this.groups.push({
                     name: "",
-                    lists: [],
+                    readingLists: [],
                 });
             },
-            saveGroups() {
-                localStorage.setItem("groups", JSON.stringify(this.groups));
+            async saveGroups() {
+                await background.settings.groups.set(clone(this.groups));
             },
         },
     });
