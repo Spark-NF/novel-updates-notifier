@@ -30,7 +30,11 @@ const novelsRefreshButton = document.getElementById("refresh-novel-list")!;
 const searchInput = document.getElementById("search")!.getElementsByTagName("input")[0];
 const searchResults = document.getElementById("search-results")! as HTMLTableElement;
 const settingsDiv = document.getElementById("settings")!;
-const settingsBack = document.getElementById("settings-back")! as HTMLButtonElement;
+const settingsGeneralDiv = document.getElementById("settings-general")!;
+const settingsGroupsDiv = document.getElementById("settings-groups")!;
+const settingsBack = document.getElementsByClassName("settings-back") as HTMLCollectionOf<HTMLButtonElement>;
+const openGeneralSettingsButton = document.getElementById("open-general-settings")! as HTMLButtonElement;
+const openGroupsSettingsButton = document.getElementById("open-groups-settings")! as HTMLButtonElement;
 const openSettingsButton = document.getElementById("open-settings")!;
 const nextRefreshLabel = document.getElementById("next-refresh")!;
 const loadingError = document.getElementById("loading-error")!;
@@ -276,8 +280,18 @@ function createIconElement(elt: string, clss: string, iconClass: string, title: 
 openSettingsButton.onclick = async () => {
     settingsDiv.classList.remove("hidden");
 };
-settingsBack.onclick = () => {
-    settingsDiv.classList.add("hidden");
+for (const btn of Array.from(settingsBack)) {
+    btn.onclick = () => {
+        settingsDiv.classList.add("hidden");
+    };
+}
+openGeneralSettingsButton.onclick = () => {
+    settingsGeneralDiv.classList.remove("hidden");
+    settingsGroupsDiv.classList.add("hidden");
+};
+openGroupsSettingsButton.onclick = () => {
+    settingsGeneralDiv.classList.add("hidden");
+    settingsGroupsDiv.classList.remove("hidden");
 };
 
 // Button to refresh novel list
