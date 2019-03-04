@@ -57,9 +57,9 @@ Vue.component("novel", {
         },
     },
     template: `
-        <tr v-bind:class="{ 'table-warning': hasNew }" v-bind:id="'novel-row-' + novel.id">
+        <tr :class="{ 'table-warning': hasNew }" :id="'novel-row-' + novel.id">
             <td class="novel-name">
-                <a v-bind:href="novel.url" target="_blank">
+                <a :href="novel.url" target="_blank">
                     {{ novel.name }}
                 </a>
                 <span class="badge badge-primary" v-if="novel.next.length > 0">
@@ -67,34 +67,34 @@ Vue.component("novel", {
                 </span>
             </td>
             <td class="novel-chapter">
-                <chapter-link v-bind:chapter="novel.status" v-if="!editing" />
-                <select ref="readSelect" v-if="editing" v-on:change="changeCurrentChapter(this, novel)" v-on:blur="changeCurrentChapter(this, novel)">
-                    <option v-for="chapter of optChapters" v-bind:value="chapter.id" v-bind:selected="chapter.id === novel.status.id">
+                <chapter-link :chapter="novel.status" v-if="!editing" />
+                <select ref="readSelect" v-if="editing" @change="changeCurrentChapter(this, novel)" @blur="changeCurrentChapter(this, novel)">
+                    <option v-for="chapter of optChapters" :value="chapter.id" :selected="chapter.id === novel.status.id">
                         {{ chapter.name }}
                     </option>
                 </select>
             </td>
             <td class="novel-chapter">
                 <span v-if="novel.next.length > 0">
-                    <chapter-link v-bind:chapter="novel.next[0]" />
+                    <chapter-link :chapter="novel.next[0]" />
                 </span>
             </td>
             <td class="novel-chapter">
-                <chapter-link v-bind:chapter="novel.latest" />
+                <chapter-link :chapter="novel.latest" />
             </td>
             <td class="novel-actions">
                 <span class="btn btn-xs btn-icon text-warning" title="Edition is disabled because your current chapter could not be mapped to an existing chapter" v-if="!novel.status.id">
                     <i class="fa fa-exclamation-triangle"></i>
                 </span>
                 <template v-else>
-                    <button class="btn btn-xs btn-icon btn-success" title="Mark last chapter as read" v-on:click="markLatestAsRead" v-id="hasNew && novel.latest.id !== undefined">
+                    <button class="btn btn-xs btn-icon btn-success" title="Mark last chapter as read" @click="markLatestAsRead" v-id="hasNew && novel.latest.id !== undefined">
                         <i class="fa fa-check"></i>
                     </button>
-                    <button class="btn btn-xs btn-icon btn-warning" title="Edit last read chapter manually" v-on:click="startEdition" v-if="!editing">
+                    <button class="btn btn-xs btn-icon btn-warning" title="Edit last read chapter manually" @click="startEdition" v-if="!editing">
                         <i class="fa fa-pencil"></i>
                     </button>
                 </template>
-                <button class="btn btn-xs btn-icon btn-danger" title="Remove novel from reading list" v-on:click="removeNovel(novel)">
+                <button class="btn btn-xs btn-icon btn-danger" title="Remove novel from reading list" @click="removeNovel(novel)">
                     <i class="fa fa-trash-o"></i>
                 </button>
             </td>

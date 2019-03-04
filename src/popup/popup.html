@@ -16,7 +16,7 @@
                 </div>
             </div>
             <div id="login-form" v-if="!login.ok">
-                <form v-on:submit.prevent="doLogin">
+                <form @submit.prevent="doLogin">
                     <div class="block-body">
                         <p id="login-error" class="text-danger" v-if="login.error">{{ login.error }}</p>
                         <div class="form-group row">
@@ -44,8 +44,8 @@
                             <iframe src="../options/groups.html" frameBorder="0"></iframe>
                         </div>
                         <div class="block-footer">
-                            <button class="btn btn-secondary float-right settings-back" v-on:click="closeSettings"><i class="fa fa-chevron-circle-left"></i> Back</button>
-                            <button class="btn btn-primary float-left" id="open-general-settings" v-on:click="openGeneralSettings"><i class="fa fa-cogs"></i> General settings</a>
+                            <button class="btn btn-secondary float-right settings-back" @click="closeSettings"><i class="fa fa-chevron-circle-left"></i> Back</button>
+                            <button class="btn btn-primary float-left" id="open-general-settings" @click="openGeneralSettings"><i class="fa fa-cogs"></i> General settings</a>
                         </div>
                     </div>
                     <div id="settings-general" v-if="settings.panel === 'general'">
@@ -53,8 +53,8 @@
                             <iframe src="../options/options.html" frameBorder="0"></iframe>
                         </div>
                         <div class="block-footer">
-                            <button class="btn btn-secondary float-right settings-back" v-on:click="closeSettings"><i class="fa fa-chevron-circle-left"></i> Back</button>
-                            <button class="btn btn-primary float-left" id="open-groups-settings" v-on:click="openGroupsSettings"><i class="fa fa-list"></i> Group settings</a>
+                            <button class="btn btn-secondary float-right settings-back" @click="closeSettings"><i class="fa fa-chevron-circle-left"></i> Back</button>
+                            <button class="btn btn-primary float-left" id="open-groups-settings" @click="openGroupsSettings"><i class="fa fa-list"></i> Group settings</a>
                         </div>
                     </div>
                 </div>
@@ -62,22 +62,22 @@
                     <div id="search">
                         <form>
                             <div class="form-group">
-                                <input type="text" class="form-control" name="search" v-model="search.value" v-on:input="doSearch" placeholder="Search..." />
+                                <input type="text" class="form-control" name="search" v-model="search.value" @input="doSearch" placeholder="Search..." />
                             </div>
                         </form>
                         <p v-if="search.message">{{ search.message }}</p>
                         <table id="search-results" class="table table-sm" v-id="search.results">
                             <tr v-for="result in search.results">
                                 <td class="novel-icon" style="width: 0%">
-                                    <img v-bind:src="result.img" alt="" />
+                                    <img :src="result.img" alt="" />
                                 </td>
                                 <td class="novel-name">
-                                    <a v-bind:href="result.url" target="_blank">
+                                    <a :href="result.url" target="_blank">
                                         {{ result.name }}
                                     </a>
                                 </td>
                                 <td style="width: 0%">
-                                    <button class="btn btn-xs btn-success btn-icon" v-on:click="addNovel(result.url)">
+                                    <button class="btn btn-xs btn-success btn-icon" @click="addNovel(result.url)">
                                         <i class="fa fa-plus"></i>
                                     </button>
                                 </td>
@@ -95,17 +95,17 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr is="novel" v-for="novel of novels.results" v-bind:novel="novel" v-bind:key="novel.id"></tr>
+                            <tr is="novel" v-for="novel of novels.results" :novel="novel" :key="novel.id"></tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="block-footer">
-                    <button id="open-settings" class="btn btn-secondary float-right" v-on:click="openSettings"><i class="fa fa-cogs"></i> Settings</button>
+                    <button id="open-settings" class="btn btn-secondary float-right" @click="openSettings"><i class="fa fa-cogs"></i> Settings</button>
                     <a href="https://www.novelupdates.com/reading-list/" target="_blank" class="btn btn-success float-left mr-1"><i class="fa fa-external-link"></i> Open</a>
                     <div class="d-flex align-items-center">
-                        <button id="refresh-novel-list" class="btn btn-info" v-on:click="refreshNovels"><i class="fa fa-refresh"></i> Refresh</button>
+                        <button id="refresh-novel-list" class="btn btn-info" @click="refreshNovels"><i class="fa fa-refresh"></i> Refresh</button>
                         <span class="ml-3 text-muted">Next refresh in <span id="next-refresh">{{ novels.nextRefresh }}</span></span>
-                        <span class="ml-2 text-warning" id="loading-error" v-bind:title="novels.error" v-if="novels.error"><i class="fa fa-exclamation-triangle"></i></span>
+                        <span class="ml-2 text-warning" id="loading-error" :title="novels.error" v-if="novels.error"><i class="fa fa-exclamation-triangle"></i></span>
                     </div>
                 </div>
             </div>

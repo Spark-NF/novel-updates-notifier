@@ -20,15 +20,15 @@
                     <label for="lists" class="col-4 col-form-label">Lists</label>
                     <div class="col-8">
                         <select name="lists" class="form-control" id="lists" v-model="group.readingLists" multiple>
-                            <option v-for="list in lists" v-bind:value="list.id">
+                            <option v-for="list in lists" :value="list.id">
                                 {{ list.name }}
                             </option>
                         </select>
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-success" v-on:click="addGroup"><i class="fa fa-plus"></i> Add</button>
-            <button type="button" class="btn btn-primary" v-on:click="saveGroups"><i class="fa fa-save"></i> Save</button>
+            <button type="button" class="btn btn-success" @click="addGroup"><i class="fa fa-plus"></i> Add</button>
+            <button type="button" class="btn btn-primary" @click="saveGroups"><i class="fa fa-save"></i> Save</button>
         </form>
         <script src="../vendor/js/browser-polyfill.min.js"></script>
         <script src="../vendor/js/vue.min.js"></script>

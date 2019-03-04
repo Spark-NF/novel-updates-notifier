@@ -19,7 +19,7 @@ Vue.component("chapter-link", {
     },
     template: `
         <span v-if="!url">{{ txt }}</span>
-        <a v-bind:href="url" target="_blank" v-on:click.prevent="openChapter(url, $event)" v-else>{{ txt }}</a>
+        <a :href="url" target="_blank" @click.prevent="openChapter(url, $event)" v-else>{{ txt }}</a>
     `,
 });
 
