@@ -159,7 +159,9 @@ async function displayNovels() {
             readCell.appendChild(readLink);
             const readSelect = document.createElement("select");
             readSelect.classList.add("hidden");
-            const optChapters = hasNew ? [novel.status].concat(novel.next) : novel.chapters;
+            const optChapters = hasNew && novel.status.id !== undefined && novel.next.length > 0
+                ? [novel.status].concat(novel.next)
+                : novel.chapters;
             for (const chapter of optChapters) {
                 const opt = document.createElement("option");
                 opt.value = chapter.id.toString();
@@ -171,19 +173,23 @@ async function displayNovels() {
             }
             readSelect.onchange = readSelect.onblur = async () => {
                 const newId = parseInt(readSelect.value, 10);
-                if (newId !== novel.status.id) {
+                const hasChanged = readSelect.value !== "" && newId !== novel.status.id;
+                if (hasChanged) {
                     loaderText.textContent = "Applying change...";
                     loaderDiv.classList.remove("hidden");
 
                     readLink.innerText = readSelect.selectedOptions[0].innerText;
                     await background.client.markChapterRead(novel.id, newId);
+                    if (novel.manual !== undefined) {
+                        await background.client.markChapterReadManual(novel.id, novel.manual, readLink.innerText);
+                    }
                 }
 
                 readSelect.classList.add("hidden");
                 readLink.classList.remove("hidden");
                 editReadButton.classList.remove("hidden");
 
-                if (newId !== novel.status.id) {
+                if (hasChanged) {
                     await background.reloadReadingList();
                     await displayNovels();
                 }
