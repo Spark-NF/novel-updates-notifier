@@ -124,6 +124,11 @@ export class NovelUpdatesClient {
         const rq = await ajax(baseUrl + `/readinglist_update.php?rid=${releaseId}&sid=${seriesId}&checked=yes`);
         return rq.status === 200;
     }
+    public async markChapterReadManual(seriesId: number, listId: number, text: string): Promise<boolean> {
+        const baseUrl = "https://www.novelupdates.com";
+        const rq = await ajax(baseUrl + `/readinglist_manualupdate.php?tdata=${text}&sid=${seriesId}&lid=${listId}`);
+        return rq.status === 200;
+    }
 
     // Get all chapters for a given series
     public async loadSeriesChapters(id: number): Promise<IReadingListResultChapter[]> {
