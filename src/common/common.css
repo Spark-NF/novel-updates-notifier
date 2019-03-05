@@ -2,6 +2,17 @@
 	display: none;
 }
 
+/* Force Font-Awesome to use the woff2 format */
+@font-face {
+	font-family: 'FontAwesomeWoff2';
+	src: url('../vendor/fonts/fontawesome-webfont.woff2');
+	font-weight: normal;
+	font-style: normal;
+}
+.fa {
+	font-family: 'FontAwesomeWoff2' !important;
+}
+
 .btn i.fa {
 	margin-right: 4px;
 }
