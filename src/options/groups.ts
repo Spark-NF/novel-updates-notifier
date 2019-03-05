@@ -30,6 +30,9 @@ function clone(obj: any): any {
                     readingLists: [],
                 });
             },
+            removeGroup(group: any) {
+                this.groups.splice(this.groups.indexOf(group), 1);
+            },
             async saveGroups() {
                 await background.settings.groups.set(clone(this.groups));
             },

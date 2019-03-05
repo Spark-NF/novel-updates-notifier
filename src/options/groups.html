@@ -12,8 +12,13 @@
             <div class="novel-group" v-for="group in groups" v-cloak>
                 <div class="form-group row">
                     <label for="name" class="col-4 col-form-label">Name</label>
-                    <div class="col-8">
+                    <div class="col-8 input-group">
                         <input type="text" class="form-control" name="name" id="name" v-model="group.name" />
+                        <div class="input-group-append">
+                            <button type="button" class="btn btn-danger" title="Delete this group" @click="removeGroup(group)">
+                                <i class="fa fa-trash-o"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="form-group row">
