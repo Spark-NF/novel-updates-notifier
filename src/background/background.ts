@@ -62,6 +62,10 @@ function isValid(value: number, operator: string, other: number): boolean {
     return false;
 }
 
+function daysBetween(a: Date, b: Date): number {
+    return (a.getTime() - b.getTime()) / (24 * 60 * 60 * 1000);
+}
+
 // Get the status of novels in the user's reading list
 const lastChanges: { [novelId: number]: number } = {};
 async function loadReadingList(): Promise<IReadingListResult[] | undefined> {
@@ -81,7 +85,20 @@ async function loadReadingList(): Promise<IReadingListResult[] | undefined> {
                 for (const novel of l) {
                     let valid: boolean = true;
                     for (const filter of group.filters) {
-                        const val = novel.next.length;
+                        let val = novel.next.length;
+                        switch (filter.what) {
+                            case "days_since_first_unread":
+                                val = novel.next.length > 0 && novel.next[0].date
+                                    ? daysBetween(new Date(), novel.next[0].date)
+                                    : 0;
+                                break;
+
+                            case "days_since_latest":
+                                val = novel.latest && novel.latest.date
+                                    ? daysBetween(new Date(), novel.latest.date)
+                                    : 0;
+                                break;
+                        }
                         valid = valid && isValid(val, filter.operator, filter.value);
                     }
                     if (valid) {

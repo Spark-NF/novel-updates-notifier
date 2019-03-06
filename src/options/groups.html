@@ -56,6 +56,8 @@
                             <div class="input-group-append">
                                 <select class="form-control rounded-0" v-model="filter.what">
                                     <option value="unread">Unread chapters</option>
+                                    <option value="days_since_first_unread">Days since first unread</option>
+                                    <option value="days_since_latest">Days since latest</option>
                                 </select>
                                 <button type="button" class="btn btn-danger" title="Delete this group" @click.prevent="removeFilter(group, filter)">
                                     <i class="fa fa-trash-o"></i>
