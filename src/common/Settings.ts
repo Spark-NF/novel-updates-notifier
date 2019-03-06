@@ -1,11 +1,6 @@
+import { IFilter } from "./Filter";
 import { Setting } from "./Setting";
 import { Storage } from "./Storage";
-
-export interface IFilter {
-    operator: "gt" | "ge" | "eq" | "le" | "lt";
-    value: number;
-    what: "unread" | "days_since_first_unread" | "days_since_latest";
-}
 
 export interface IGroup {
     name: string;

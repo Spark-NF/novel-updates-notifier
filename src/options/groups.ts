@@ -1,6 +1,7 @@
 import Vue from "vue";
+import { IFilter } from "../common/Filter";
 import { IReadingList } from "../common/NovelUpdatesClient";
-import { IFilter, IGroup, Settings } from "../common/Settings";
+import { IGroup, Settings } from "../common/Settings";
 
 interface IBackground extends Window {
     readingLists: IReadingList[];

@@ -1,5 +1,6 @@
 import { setBadge } from "../common/badge";
 import { ContentScriptsManager } from "../common/ContentScriptsManager";
+import { isValid } from "../common/Filter";
 import { waitForPermission } from "../common/Listener";
 import { notify } from "../common/notifications";
 import { IReadingListResult, IReadingListResultChapter, NovelUpdatesClient } from "../common/NovelUpdatesClient";
@@ -47,25 +48,6 @@ async function tryLogin(username: string, password: string): Promise<boolean> {
     return false;
 }
 
-function isValid(value: number, operator: string, other: number): boolean {
-    if (operator === "gt") {
-        return value > other;
-    } else if (operator === "ge") {
-        return value >= other;
-    } else if (operator === "eq") {
-        return value === other;
-    } else if (operator === "le") {
-        return value <= other;
-    } else if (operator === "lt") {
-        return value < other;
-    }
-    return false;
-}
-
-function daysBetween(a: Date, b: Date): number {
-    return (a.getTime() - b.getTime()) / (24 * 60 * 60 * 1000);
-}
-
 // Get the status of novels in the user's reading list
 const lastChanges: { [novelId: number]: number } = {};
 async function loadReadingList(): Promise<IReadingListResult[] | undefined> {
@@ -79,31 +61,8 @@ async function loadReadingList(): Promise<IReadingListResult[] | undefined> {
         for (const group of groups) {
             for (const id of group.readingLists) {
                 const l = await client.getReadingListNovels(id);
-                if (!l) {
-                    continue;
-                }
-                for (const novel of l) {
-                    let valid: boolean = true;
-                    for (const filter of group.filters) {
-                        let val = novel.next.length;
-                        switch (filter.what) {
-                            case "days_since_first_unread":
-                                val = novel.next.length > 0 && novel.next[0].date
-                                    ? daysBetween(new Date(), novel.next[0].date)
-                                    : 0;
-                                break;
-
-                            case "days_since_latest":
-                                val = novel.latest && novel.latest.date
-                                    ? daysBetween(new Date(), novel.latest.date)
-                                    : 0;
-                                break;
-                        }
-                        valid = valid && isValid(val, filter.operator, filter.value);
-                    }
-                    if (valid) {
-                        novels.push(novel);
-                    }
+                if (l) {
+                    novels.push(...l.filter((novel) => isValid(novel, group.filters)));
                 }
             }
         }
