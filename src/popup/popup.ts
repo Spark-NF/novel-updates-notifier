@@ -4,7 +4,9 @@ import Vue from "vue";
 import { IReadingListResult, IReadingListResultChapter, NovelUpdatesClient } from "../common/NovelUpdatesClient";
 import { Settings } from "../common/Settings";
 import { secondsToString } from "../common/time";
-import "./components/chapter-link";
+import ChapterLink from "./components/ChapterLink.vue";
+
+Vue.component("chapter-link", ChapterLink);
 
 interface IBackground extends Window {
     settings: Settings;
