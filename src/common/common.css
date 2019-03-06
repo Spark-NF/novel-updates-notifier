@@ -53,3 +53,12 @@
 #loader img, #error img {
 	margin-bottom: 10px;
 }
+
+.input-group .input-group-prepend select {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+.input-group .input-group-append select {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}

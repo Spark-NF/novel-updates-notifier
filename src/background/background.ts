@@ -47,6 +47,21 @@ async function tryLogin(username: string, password: string): Promise<boolean> {
     return false;
 }
 
+function isValid(value: number, operator: string, other: number): boolean {
+    if (operator === "gt") {
+        return value > other;
+    } else if (operator === "ge") {
+        return value >= other;
+    } else if (operator === "eq") {
+        return value === other;
+    } else if (operator === "le") {
+        return value <= other;
+    } else if (operator === "lt") {
+        return value < other;
+    }
+    return false;
+}
+
 // Get the status of novels in the user's reading list
 const lastChanges: { [novelId: number]: number } = {};
 async function loadReadingList(): Promise<IReadingListResult[] | undefined> {
@@ -54,22 +69,33 @@ async function loadReadingList(): Promise<IReadingListResult[] | undefined> {
     window.readingLists = readingLists;
 
     const groups = await settings.groups.get();
-    let idsToLoad: number[] = [];
+
+    const novels: IReadingListResult[] = [];
     if (groups.length > 0) {
         for (const group of groups) {
-            idsToLoad = idsToLoad.concat(group.readingLists);
+            for (const id of group.readingLists) {
+                const l = await client.getReadingListNovels(id);
+                if (!l) {
+                    continue;
+                }
+                for (const novel of l) {
+                    let valid: boolean = true;
+                    for (const filter of group.filters) {
+                        const val = novel.next.length;
+                        valid = valid && isValid(val, filter.operator, filter.value);
+                    }
+                    if (valid) {
+                        novels.push(novel);
+                    }
+                }
+            }
         }
     } else {
         for (const readingList of readingLists) {
-            idsToLoad.push(readingList.id);
-        }
-    }
-
-    const novels: IReadingListResult[] = [];
-    for (const id of idsToLoad) {
-        const l = await client.getReadingListNovels(id);
-        if (l) {
-            novels.push(...l);
+            const l = await client.getReadingListNovels(readingList.id);
+            if (l) {
+                novels.push(...l);
+            }
         }
     }
     if (novels.length === 0) {

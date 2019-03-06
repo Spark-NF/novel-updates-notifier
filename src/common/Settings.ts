@@ -1,9 +1,16 @@
 import { Setting } from "./Setting";
 import { Storage } from "./Storage";
 
+export interface IFilter {
+    operator: "gt" | "ge" | "eq" | "le" | "lt";
+    value: number;
+    what: "unread";
+}
+
 export interface IGroup {
     name: string;
     readingLists: number[];
+    filters: IFilter[];
 }
 
 export class Settings {

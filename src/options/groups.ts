@@ -1,6 +1,6 @@
 import Vue from "vue";
 import { IReadingList } from "../common/NovelUpdatesClient";
-import { Settings } from "../common/Settings";
+import { IFilter, IGroup, Settings } from "../common/Settings";
 
 interface IBackground extends Window {
     readingLists: IReadingList[];
@@ -28,10 +28,21 @@ function clone(obj: any): any {
                 this.groups.push({
                     name: "",
                     readingLists: [],
+                    filters: [],
                 });
             },
-            removeGroup(group: any) {
+            removeGroup(group: IGroup) {
                 this.groups.splice(this.groups.indexOf(group), 1);
+            },
+            addFilter(group: IGroup) {
+                group.filters.push({
+                    operator: "ge",
+                    value: 1,
+                    what: "unread",
+                });
+            },
+            removeFilter(group: IGroup, filter: IFilter) {
+                group.filters.splice(group.filters.indexOf(filter), 1);
             },
             async saveGroups() {
                 await background.settings.groups.set(clone(this.groups));
