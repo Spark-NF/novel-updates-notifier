@@ -95,7 +95,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr is="novel" v-for="novel of novels.results" :novel="novel" :key="novel.id"></tr>
+                            <tr is="novel-row" v-for="novel of novels.results" v-on:mark-chapter-as-read="markChapterAsRead" v-on:remove-novel="removeNovel" :novel="novel" :key="novel.id"></tr>
                         </tbody>
                     </table>
                 </div>

@@ -3,7 +3,6 @@ import { Settings } from "../common/Settings";
 
 interface IBackground extends Window {
     settings: Settings;
-    enableCustomCss: () => Promise<boolean>;
 }
 
 const background = browser.extension.getBackgroundPage() as IBackground;

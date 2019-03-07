@@ -18,6 +18,11 @@ interface ICustomWindow extends Window {
     client: NovelUpdatesClient;
     nextListRefresh: Date;
     networkError?: string;
+
+    checkLoginStatus: (login?: boolean) => Promise<boolean>;
+    getReadingList: () => Promise<IReadingListResult[]>;
+    reloadReadingList: () => Promise<void>;
+    tryLogin: (username: string, password: string) => Promise<boolean>;
 }
 declare var window: ICustomWindow;
 
@@ -165,6 +170,12 @@ const contentScriptsManager = new ContentScriptsManager(domains, "src/userstyles
 window.settings = settings;
 window.client = client;
 window.permissions = permissions;
+
+// Make functions available
+window.checkLoginStatus = checkLoginStatus;
+window.getReadingList = getReadingList;
+window.reloadReadingList = reloadReadingList;
+window.tryLogin = tryLogin;
 
 // Initial load
 (async () => {
