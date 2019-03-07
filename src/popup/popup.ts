@@ -1,18 +1,22 @@
 // tslint:disable:max-line-length
 
 import Vue from "vue";
-import { IReadingListResult, IReadingListResultChapter, NovelUpdatesClient } from "../common/NovelUpdatesClient";
-import { Settings } from "../common/Settings";
+import { clone } from "../common/clone";
+import { IReadingList, IReadingListResult, IReadingListResultChapter, NovelUpdatesClient } from "../common/NovelUpdatesClient";
+import { IGroup, Settings } from "../common/Settings";
 import { secondsToString } from "../common/time";
+import OptionsGroups from "../options/components/OptionsGroups.vue";
 import ChapterLink from "./components/ChapterLink.vue";
 import NovelRow from "./components/NovelRow.vue";
 
 Vue.component("chapter-link", ChapterLink);
 Vue.component("novel-row", NovelRow);
+Vue.component("options-groups", OptionsGroups);
 
 interface IBackground extends Window {
     settings: Settings;
     client: NovelUpdatesClient;
+    readingLists: IReadingList[];
 
     checkLoginStatus: (login?: boolean) => Promise<boolean>;
     getReadingList: () => Promise<IReadingListResult[]>;
@@ -173,6 +177,10 @@ async function doLogin() {
     return false;
 }
 
+async function saveGroups(groups: IGroup[]) {
+    await background.settings.groups.set(groups);
+}
+
 // Show novels or login form on popup load
 (async () => {
     app = new Vue({
@@ -200,6 +208,8 @@ async function doLogin() {
             settings: {
                 open: false,
                 panel: "general",
+                groups: clone(await background.settings.groups.get()),
+                readingLists: clone(background.readingLists),
             },
         },
         methods: {
@@ -213,6 +223,7 @@ async function doLogin() {
             addNovel,
             removeNovel,
             markChapterAsRead,
+            saveGroups,
         },
     });
 

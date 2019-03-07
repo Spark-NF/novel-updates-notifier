@@ -41,7 +41,7 @@
                 <div id="settings" class="overlay" v-if="settings.open">
                     <div id="settings-groups" v-if="settings.panel === 'groups'">
                         <div class="block-body">
-                            <iframe src="../options/groups.html" frameBorder="0"></iframe>
+                            <options-groups :groups="settings.groups" :readingLists="settings.readingLists" @save-groups="saveGroups" />
                         </div>
                         <div class="block-footer">
                             <button class="btn btn-secondary float-right settings-back" @click="closeSettings"><i class="fa fa-chevron-circle-left"></i> Back</button>
