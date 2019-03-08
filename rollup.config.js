@@ -8,7 +8,6 @@ const files = {
     "src/background/background.ts": "src/background/bundle.js",
     "src/popup/popup.ts": "src/popup/bundle.js",
     "src/options/options.ts": "src/options/bundle.js",
-    "src/options/groups.ts": "src/options/groups.js",
     "src/sidebar/sidebar.ts": "src/sidebar/bundle.js",
     "src/userstyles/apply.ts": "src/userstyles/bundle.js",
 };
