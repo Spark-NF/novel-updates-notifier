@@ -59,7 +59,7 @@ async function loadReadingList(): Promise<IReadingListResult[] | undefined> {
     const readingLists = await client.getReadingLists();
     window.readingLists = readingLists;
 
-    const groups = await settings.groups.get();
+    const groups = settings.groups.get();
 
     const novels: IReadingListResult[] = [];
     if (groups.length > 0) {
@@ -97,7 +97,7 @@ async function loadReadingList(): Promise<IReadingListResult[] | undefined> {
     }
 
     // Push notification
-    const notificationsEnabled = await settings.notifications.get();
+    const notificationsEnabled = settings.notifications.get();
     if (notificationsEnabled && novelsWithNewChanges.length > 0) {
         notify("New novel chapters available",  "- " + novelsWithNewChanges.join("\n- "));
     }
@@ -127,7 +127,7 @@ async function reloadReadingList(): Promise<void> {
     }
 
     // Plan a reload after the next interval
-    const interval = await settings.interval.get();
+    const interval = settings.interval.get();
     const intervalMs = interval * 60 * 1000;
     listRefreshIntervalId = window.setTimeout(reloadReadingList, intervalMs);
     window.nextListRefresh = new Date(new Date().getTime() + intervalMs);
@@ -154,7 +154,7 @@ browser.runtime.onMessage.addListener((msg, sender) => {
         return Promise.resolve(!sender.tab || !sender.tab.id);
     }
     if ("type" in msg && msg.type === "get-setting") {
-        return (settings as any)[msg.key].get();
+        return Promise.resolve((settings as any)[msg.key].get());
     }
 });
 
@@ -180,6 +180,7 @@ window.tryLogin = tryLogin;
 // Initial load
 (async () => {
     await storage.init();
+    await settings.preload();
 
     // Show "loading" notification
     await setBadge("...", "gray", "white");

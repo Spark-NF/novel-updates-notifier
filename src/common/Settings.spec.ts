@@ -9,8 +9,9 @@ describe("Settings", () => {
         await storage.init(mock, mock);
 
         const settings = new Settings(storage);
+        await settings.preload();
 
-        const interval = await settings.interval.get();
+        const interval = settings.interval.get();
         expect(interval).toBe(5);
     });
 });

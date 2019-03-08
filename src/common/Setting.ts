@@ -26,16 +26,18 @@ export class Setting<T> extends Observable {
         await this.storage.setSync(items);
     }
 
-    public async get(): Promise<T> {
+    public async preload(): Promise<void> {
         if (this.value === undefined) {
             await this.reload();
         }
-        return this.value!;
+    }
+
+    public get(): T {
+        return this.value;
     }
 
     public async set(value: T): Promise<void> {
-        const current = await this.get();
-        if (value !== current) {
+        if (value !== this.value) {
             this.value = value;
             await this.sync();
 

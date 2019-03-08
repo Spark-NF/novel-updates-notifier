@@ -1,5 +1,5 @@
 <template>
-    <form id="app" v-cloak>
+    <form>
         <div class="novel-group" v-for="group in groups">
             <div class="form-group row">
                 <label for="name" class="col-4 col-form-label">Name</label>

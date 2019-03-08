@@ -57,7 +57,7 @@ async function updateRefreshLabel() {
         return;
     }
 
-    const interval = await background.settings.interval.get();
+    const interval = background.settings.interval.get();
     const secs = Math.max(0, Math.round((background.nextListRefresh.getTime() - new Date().getTime()) / 1000));
     app.$data.novels.nextRefresh = secondsToString(secs, interval > 60);
 
@@ -208,7 +208,7 @@ async function saveGroups(groups: IGroup[]) {
             settings: {
                 open: false,
                 panel: "general",
-                groups: clone(await background.settings.groups.get()),
+                groups: clone(background.settings.groups.get()),
                 readingLists: clone(background.readingLists),
             },
         },

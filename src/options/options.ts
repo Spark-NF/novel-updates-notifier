@@ -40,16 +40,16 @@ settingsCustomCss.onchange = async () => {
     await permissions.init();
 
     // Populate the form with the user settings
-    settingsInterval.value = String(await background.settings.interval.get());
-    settingsNotifications.checked = await background.settings.notifications.get();
-    settingsAutoMarkAsRead.checked = await background.settings.autoMarkAsRead.get();
+    settingsInterval.value = String(background.settings.interval.get());
+    settingsNotifications.checked = background.settings.notifications.get();
+    settingsAutoMarkAsRead.checked = background.settings.autoMarkAsRead.get();
 
     // Only show the sidebar settings if the API is available
     if (!browser.sidebarAction) {
         settingsReadInSidebar.parentElement!.parentElement!.remove();
         settingsCustomCss.parentElement!.parentElement!.remove();
     } else {
-        settingsReadInSidebar.checked = await background.settings.readInSidebar.get();
-        settingsCustomCss.checked = await background.settings.customCss.get();
+        settingsReadInSidebar.checked = background.settings.readInSidebar.get();
+        settingsCustomCss.checked = background.settings.customCss.get();
     }
 })();

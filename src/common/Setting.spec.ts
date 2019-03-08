@@ -9,8 +9,9 @@ describe("Setting", () => {
         await storage.init(mock, mock);
 
         const setting = new Setting<number>(storage, "test", 5);
+        await setting.preload();
 
-        const val = await setting.get();
+        const val = setting.get();
         expect(val).toBe(5);
     });
 
@@ -23,7 +24,7 @@ describe("Setting", () => {
 
         await setting.set(7);
 
-        const val = await setting.get();
+        const val = setting.get();
         expect(val).toBe(7);
     });
 

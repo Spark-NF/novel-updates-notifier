@@ -27,7 +27,7 @@ export default class ChapterLink extends Vue {
 
         e.preventDefault();
         const canSidebar = browser.sidebarAction !== undefined;
-        const readInSidebar = await background.settings.readInSidebar.get() && canSidebar;
+        const readInSidebar = background.settings.readInSidebar.get() && canSidebar;
         const middleClick = e.button === 1;
 
         // Open in a new tab
