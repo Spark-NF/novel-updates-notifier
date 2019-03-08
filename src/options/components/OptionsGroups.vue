@@ -16,7 +16,7 @@
                 <label for="lists" class="col-4 col-form-label">Lists</label>
                 <div class="col-8">
                     <select name="lists" class="form-control" id="lists" v-model="group.readingLists" multiple>
-                        <option v-for="list in lists" :value="list.id">
+                        <option v-for="list in readingLists" :value="list.id">
                             {{ list.name }}
                         </option>
                     </select>
