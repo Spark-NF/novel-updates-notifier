@@ -65,9 +65,10 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Emit } from "vue-property-decorator";
+import { clone } from "../../common/clone";
+import { IFilter } from "../../common/Filter";
 import { IReadingList } from "../../common/NovelUpdatesClient";
 import { IGroup } from "../../common/Settings";
-import { IFilter } from "../../common/Filter";
 
 @Component
 export default class OptionsGroups extends Vue {
@@ -99,7 +100,7 @@ export default class OptionsGroups extends Vue {
     }
 
     saveGroups() {
-        this.$emit("save-groups", this.groups);
+        this.$emit("save-groups", clone(this.groups));
     }
 };
 </script>
