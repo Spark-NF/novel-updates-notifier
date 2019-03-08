@@ -2,7 +2,7 @@
 
 import Vue from "vue";
 import { clone } from "../common/clone";
-import { IReadingList, IReadingListResult, IReadingListResultChapter, NovelUpdatesClient } from "../common/NovelUpdatesClient";
+import { IReadingList, IReadingListResult, IReadingListResultChapter, ISearchResult, NovelUpdatesClient } from "../common/NovelUpdatesClient";
 import { IGroup, Settings } from "../common/Settings";
 import { secondsToString } from "../common/time";
 import OptionsGeneral from "../options/components/OptionsGeneral.vue";
@@ -142,7 +142,16 @@ async function refreshNovels() {
 // Show search results input change
 let latestSearch = "";
 async function doSearch() {
+    if (app.$data.search.mode !== "search") {
+        app.$data.search.results = [];
+        return;
+    }
+
     const val = app.$data.search.value.trim();
+    if (val === latestSearch) {
+        return;
+    }
+
     latestSearch = val;
     if (val.length === 0) {
         app.$data.search.results = [];
@@ -198,6 +207,7 @@ async function saveGroups(groups: IGroup[]) {
             search: {
                 value: "",
                 message: "",
+                mode: "search",
                 results: [],
             },
             novels: {
@@ -216,6 +226,21 @@ async function saveGroups(groups: IGroup[]) {
                 hasSidebar: !!browser.sidebarAction,
             },
         },
+        computed: {
+            searchResults(): ISearchResult[] {
+                return this.search.mode === "search" ? this.search.results : [];
+            },
+            filteredNovels(): IReadingListResult[] {
+                if (this.search.mode !== "filter") {
+                    return this.novels.results;
+                }
+                const filters: string[] = this.search.value.toLowerCase().split(" ");
+                return this.novels.results.filter((n: IReadingListResult) => {
+                    const data = (n.name + " " + n.notes.tags).toLowerCase();
+                    return filters.every((f: string) => data.includes(f));
+                });
+            },
+        },
         methods: {
             doLogin,
             doSearch,
@@ -228,6 +253,10 @@ async function saveGroups(groups: IGroup[]) {
             removeNovel,
             markChapterAsRead,
             saveGroups,
+            setSearchMode(mode: string): void {
+                this.search.mode = mode;
+                doSearch();
+            },
         },
     });
 

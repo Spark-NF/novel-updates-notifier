@@ -62,12 +62,24 @@
                     <div id="search">
                         <form>
                             <div class="form-group">
-                                <input type="text" class="form-control" name="search" v-model="search.value" @input="doSearch" placeholder="Search..." />
+                                <div style="position:relative">
+                                    <input type="text" class="form-control" name="search" v-model="search.value" @input="doSearch" placeholder="Search..." />
+                                    <span style="position: absolute; right: 7px; top: 5px;">
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-xs btn-icon" :class="{ 'btn-secondary': search.mode === 'filter', 'btn-outline-secondary': search.mode !== 'filter' }" @click="setSearchMode('filter')">
+                                                <i class="fa fa-filter"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-xs btn-icon" :class="{ 'btn-secondary': search.mode === 'search', 'btn-outline-secondary': search.mode !== 'search' }" @click="setSearchMode('search')">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                        </div>
+                                    </span>
+                                </div>
                             </div>
                         </form>
                         <p v-if="search.message">{{ search.message }}</p>
-                        <table id="search-results" class="table table-sm" v-id="search.results">
-                            <tr v-for="result in search.results">
+                        <table id="search-results" class="table table-sm" v-if="searchResults && searchResults.length > 0">
+                            <tr v-for="result in searchResults">
                                 <td class="novel-icon" style="width: 0%">
                                     <img :src="result.img" alt="" />
                                 </td>
@@ -95,7 +107,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr is="novel-row" v-for="novel of novels.results" v-on:mark-chapter-as-read="markChapterAsRead" v-on:remove-novel="removeNovel" :novel="novel" :key="novel.id"></tr>
+                            <tr is="novel-row" v-for="novel of filteredNovels" v-on:mark-chapter-as-read="markChapterAsRead" v-on:remove-novel="removeNovel" :novel="novel" :key="novel.id"></tr>
                         </tbody>
                     </table>
                 </div>
