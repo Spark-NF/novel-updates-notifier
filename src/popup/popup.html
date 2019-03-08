@@ -50,7 +50,7 @@
                     </div>
                     <div id="settings-general" v-if="settings.panel === 'general'">
                         <div class="block-body">
-                            <iframe src="../options/options.html" frameBorder="0"></iframe>
+                            <options-general :settings="settings.settings" :hasSidebar="settings.hasSidebar" />
                         </div>
                         <div class="block-footer">
                             <button class="btn btn-secondary float-right settings-back" @click="closeSettings"><i class="fa fa-chevron-circle-left"></i> Back</button>

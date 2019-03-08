@@ -5,12 +5,14 @@ import { clone } from "../common/clone";
 import { IReadingList, IReadingListResult, IReadingListResultChapter, NovelUpdatesClient } from "../common/NovelUpdatesClient";
 import { IGroup, Settings } from "../common/Settings";
 import { secondsToString } from "../common/time";
+import OptionsGeneral from "../options/components/OptionsGeneral.vue";
 import OptionsGroups from "../options/components/OptionsGroups.vue";
 import ChapterLink from "./components/ChapterLink.vue";
 import NovelRow from "./components/NovelRow.vue";
 
 Vue.component("chapter-link", ChapterLink);
 Vue.component("novel-row", NovelRow);
+Vue.component("options-general", OptionsGeneral);
 Vue.component("options-groups", OptionsGroups);
 
 interface IBackground extends Window {
@@ -210,6 +212,8 @@ async function saveGroups(groups: IGroup[]) {
                 panel: "general",
                 groups: clone(background.settings.groups.get()),
                 readingLists: clone(background.readingLists),
+                settings: background.settings,
+                hasSidebar: !!browser.sidebarAction,
             },
         },
         methods: {

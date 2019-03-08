@@ -12,19 +12,6 @@ body {
 	position: relative;
 }
 
-#settings > div {
-	height: 100%;
-}
-#settings .block-body {
-	padding: 0;
-	padding-bottom: 70px;
-}
-#settings .block-body iframe {
-	border: none;
-	height: 100%;
-	width: 100%;
-}
-
 .block-body {
 	padding: 15px;
 	padding-bottom: 85px;
