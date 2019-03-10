@@ -101,21 +101,6 @@ async function displayNovels() {
 
     app.$data.novels.ok = true;
 }
-function createIconButton(btnClass: string, iconClass: string, title: string): HTMLElement {
-    return createIconElement("button", "btn btn-xs btn-icon btn-" + btnClass, iconClass, title);
-}
-function createIconElement(elt: string, clss: string, iconClass: string, title: string): HTMLElement {
-    const button = document.createElement(elt);
-    button.className = clss;
-    button.title = title;
-
-    const icon = document.createElement("i");
-    icon.classList.add("fa");
-    icon.classList.add("fa-" + iconClass);
-    button.appendChild(icon);
-
-    return button;
-}
 
 // Settings page
 function openSettings() {
