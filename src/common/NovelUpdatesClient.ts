@@ -260,6 +260,16 @@ export class NovelUpdatesClient {
         return undefined;
     }
 
+    private async getNovelChapters(novel: IReadingListResult): Promise<IReadingListResultChapter[]> {
+        const cacheKey = "chapters_" + novel.id;
+        let chapters: IReadingListResultChapter[] = await this.storage.getCache(cacheKey);
+        if (!chapters || (chapters.length >= 1 && chapters[chapters.length - 1].id !== novel.latest.id)) {
+            chapters = await this.loadSeriesChapters(novel.id);
+            await this.storage.setCache(cacheKey, chapters, 24 * 60 * 60 * 1000);
+        }
+        return chapters;
+    }
+
     public async getReadingListNovels(id: number): Promise<IReadingListResult[] | undefined> {
         if (!await this.checkLoginStatus()) {
             return undefined;
@@ -334,13 +344,7 @@ export class NovelUpdatesClient {
             }
 
             // Load the chapters
-            const cacheKey = "chapters_" + novel.id;
-            let chapters: IReadingListResultChapter[] = await this.storage.getCache(cacheKey);
-            if (!chapters || (chapters.length >= 1 && chapters[chapters.length - 1].id !== novel.latest.id)) {
-                chapters = await this.loadSeriesChapters(novel.id);
-                await this.storage.setCache(cacheKey, chapters, 24 * 60 * 60 * 1000);
-            }
-            novel.chapters = chapters;
+            novel.chapters = await this.getNovelChapters(novel);
 
             // Fix status/latest information
             if (novel.status.id === undefined) {
@@ -356,33 +360,64 @@ export class NovelUpdatesClient {
                 }
             }
 
-            // Load and build next chapters if necessary
-            if (novel.status.id !== undefined && novel.status.id !== novel.latest.id) {
-
-                const fullNext: { [key: number]: IReadingListResultChapter } = {};
-
-                // Load the next three chapters with correct URLs
-                const nextChapterSpan = row.getElementsByClassName("show-pop")[0] as HTMLSpanElement;
-                if (nextChapterSpan) {
-                    const nextChaptersUrl = nextChapterSpan.dataset.url;
-                    const next = await this.getNextChaptersByUrl(nextChaptersUrl, novel.status.id);
-                    for (const chapter of next) {
-                        fullNext[chapter.id] = chapter;
-                    }
-                }
-
-                // Build the "next" object
-                const index = chapters.map((c) => c.id).indexOf(novel.status.id);
-                for (let i = index + 1; i < chapters.length; ++i) {
-                    const chapter = chapters[i];
-                    const fullChapter = chapter.id in fullNext ? fullNext[chapter.id] : chapter;
-                    novel.next.push(fullChapter);
-                }
-            }
+            await this.loadNextChapters(novel, row);
 
             novels.push(novel);
         }
 
         return novels;
+    }
+
+    public async refreshNovel(novel: IReadingListResult): Promise<boolean> {
+        if (!await this.checkLoginStatus()) {
+            return false;
+        }
+
+        const rq = await ajax(`https://www.novelupdates.com/reading-list/?list=${novel.readingList}`);
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(rq.responseText, "text/html");
+        const rows = xml.getElementsByClassName("rl_links") as HTMLCollectionOf<HTMLTableRowElement>;
+
+        // Find the proper row in the reading list
+        const row = Array.from(rows).find((r) => {
+            const id = parseInt(r.dataset.sid || "0", 10);
+            return id > 0 && id === novel.id;
+        });
+        if (!row) {
+            return false;
+        }
+
+        // Refresh "next" and "chapters" members
+        novel.chapters = await this.getNovelChapters(novel);
+        novel.next.splice(0, novel.next.length);
+        await this.loadNextChapters(novel, row);
+
+        return true;
+    }
+
+    private async loadNextChapters(novel: IReadingListResult, row: HTMLTableRowElement): Promise<void> {
+        // Load and build next chapters if necessary
+        if (novel.status.id !== undefined && novel.status.id !== novel.latest.id) {
+
+            const fullNext: { [key: number]: IReadingListResultChapter } = {};
+
+            // Load the next three chapters with correct URLs
+            const nextChapterSpan = row.getElementsByClassName("show-pop")[0] as HTMLSpanElement;
+            if (nextChapterSpan) {
+                const nextChaptersUrl = nextChapterSpan.dataset.url;
+                const next = await this.getNextChaptersByUrl(nextChaptersUrl, novel.status.id);
+                for (const chapter of next) {
+                    fullNext[chapter.id] = chapter;
+                }
+            }
+
+            // Build the "next" object
+            const index = novel.chapters.map((c) => c.id).indexOf(novel.status.id);
+            for (let i = index + 1; i < novel.chapters.length; ++i) {
+                const chapter = novel.chapters[i];
+                const fullChapter = chapter.id in fullNext ? fullNext[chapter.id] : chapter;
+                novel.next.push(fullChapter);
+            }
+        }
     }
 }

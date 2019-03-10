@@ -77,17 +77,18 @@ async function removeNovel(novel: IReadingListResult) {
     }
 }
 
-async function markChapterAsRead(chapter: IReadingListResultChapter, novel: IReadingListResult) {
-    showLoader("Applying change...");
-
+async function markChapterAsRead(chapter: IReadingListResultChapter, novel: IReadingListResult, cb?: () => void) {
     await background.client.markChapterRead(novel.id, chapter.id);
-    if (novel.manual !== undefined) {
-        await background.client.markChapterReadManual(novel.id, novel.manual, chapter.name);
+    if (novel.manual) {
+        await background.client.markChapterReadManual(novel.id, novel.readingList, chapter.name);
     }
 
-    showLoader("Reloading list...");
-    await background.reloadReadingList();
-    await displayNovels();
+    novel.status = chapter;
+    await background.client.refreshNovel(novel);
+
+    if (cb) {
+        cb();
+    }
 }
 
 async function displayNovels() {

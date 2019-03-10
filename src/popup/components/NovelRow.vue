@@ -89,7 +89,10 @@ export default class NovelRow extends Vue {
     }
 
     markChapterAsRead(chapter: IReadingListResultChapter, novel: IReadingListResult) {
-        this.$emit("mark-chapter-as-read", chapter, novel);
+        this.loadingMessage = "Loading...";
+        this.$emit("mark-chapter-as-read", chapter, novel, () => {
+            this.loadingMessage = "";
+        });
     }
 
     removeNovel(novel: IReadingListResult) {
