@@ -252,7 +252,7 @@ describe("NovelUpdatesClient", () => {
             expect(novels[0].status.name).toBe("c1357");
             expect(novels[0].status.html).toBe("c1357");
             expect(novels[0].status.url).toBe("http://www.wuxiaworld.com/novel/martial-world/mw-chapter-1357");
-            expect(novels[0].next.map((c) => c.id)).toEqual([64956, 55539]); // ?
+            expect(novels[0].next.id).toEqual(64956);
             expect(novels[0].latest.id).toBe(2310235);
             expect(novels[0].latest.name).toBe("c2132");
             expect(novels[0].latest.html).toBe("c2132");

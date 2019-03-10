@@ -26,7 +26,8 @@ export interface IReadingListResult {
         notes?: string;
     };
     status: IReadingListResultChapter;
-    next: IReadingListResultChapter[];
+    next?: IReadingListResultChapter;
+    nextLength: number;
     latest: IReadingListResultChapter;
     readingList: number;
     manual?: boolean;
@@ -330,9 +331,8 @@ export class NovelUpdatesClient {
                     hasNotes: row.dataset.notes === "yes",
                     tags: row.dataset.tags.split(",").filter((t) => t.length > 0),
                 },
-                chapters: [] as IReadingListResultChapter[],
                 status,
-                next: [] as IReadingListResultChapter[],
+                nextLength: 0,
                 latest,
                 readingList: id,
             };
@@ -360,7 +360,6 @@ export class NovelUpdatesClient {
             }
 
             await this.loadNextChapters(novel, row, chapters);
-
             novels.push(novel);
         }
 
@@ -388,7 +387,6 @@ export class NovelUpdatesClient {
 
         // Refresh "next" and "chapters" members
         const chapters = await this.getNovelChapters(novel);
-        novel.next.splice(0, novel.next.length);
         await this.loadNextChapters(novel, row, chapters);
 
         return true;
@@ -399,6 +397,9 @@ export class NovelUpdatesClient {
         row: HTMLTableRowElement,
         chapters: IReadingListResultChapter[],
     ): Promise<void> {
+        novel.next = undefined;
+        novel.nextLength = 0;
+
         // Load and build next chapters if necessary
         if (novel.status.id !== undefined && novel.status.id !== novel.latest.id) {
 
@@ -416,10 +417,10 @@ export class NovelUpdatesClient {
 
             // Build the "next" object
             const index = chapters.map((c) => c.id).indexOf(novel.status.id);
-            for (let i = index + 1; i < chapters.length; ++i) {
-                const chapter = chapters[i];
-                const fullChapter = chapter.id in fullNext ? fullNext[chapter.id] : chapter;
-                novel.next.push(fullChapter);
+            novel.nextLength = chapters.length - index - 1;
+            if (index + 1 < chapters.length) {
+                const chapter = chapters[index + 1];
+                novel.next = chapter.id in fullNext ? fullNext[chapter.id] : chapter;
             }
         }
     }

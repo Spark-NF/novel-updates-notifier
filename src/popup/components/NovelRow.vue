@@ -4,8 +4,8 @@
             <a :href="novel.url" target="_blank">
                 {{ novel.name }}
             </a>
-            <span class="badge badge-primary" v-if="novel.next.length > 0">
-                {{ novel.next.length }}
+            <span class="badge badge-primary" v-if="novel.nextLength > 0">
+                {{ novel.nextLength }}
             </span>
         </td>
         <td class="novel-loading" colspan="4" v-if="loadingMessage">
@@ -21,8 +21,8 @@
             </select>
         </td>
         <td class="novel-chapter" v-if="!loadingMessage">
-            <span v-if="novel.next.length > 0">
-                <chapter-link :chapter="novel.next[0]" />
+            <span v-if="novel.nextLength > 0">
+                <chapter-link :chapter="novel.next" />
             </span>
         </td>
         <td class="novel-chapter" v-if="!loadingMessage">
@@ -65,7 +65,7 @@ export default class NovelRow extends Vue {
     optChapters: any = {};
 
     get hasNew(): boolean {
-        return this.novel.next.length > 0;
+        return this.novel.nextLength > 0;
     }
 
     changeCurrentChapter() {
@@ -96,9 +96,10 @@ export default class NovelRow extends Vue {
     }
 
     async startEdition() {
-        this.optChapters = this.hasNew && this.novel.status.id !== undefined && this.novel.next.length > 0
-            ? [this.novel.status].concat(this.novel.next)
-            : await background.client.getNovelChapters(this.novel);
+        const chapters = await background.client.getNovelChapters(this.novel);
+        this.optChapters = this.hasNew && this.novel.status.id !== undefined && this.novel.nextLength > 0
+            ? chapters.slice(chapters.map((c) => c.id).indexOf(this.novel.status.id))
+            : chapters
         this.editing = true;
 
         (this.$refs.readSelect as HTMLSelectElement).focus();

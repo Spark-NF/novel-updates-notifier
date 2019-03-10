@@ -30,13 +30,13 @@ export class ReadChapterListener extends WebNavigationListener {
             const oldUrl = window.sessionStorage[tabId];
             const readingList = await this.novelsGetter();
             for (const novel of readingList) {
-                if (novel.next.length >= 1
+                if (novel.nextLength >= 1
                     && novel.status.url
-                    && novel.next[0].url
+                    && novel.next.url
                     && removeProtocol(novel.status.url) === removeProtocol(oldUrl)
-                    && removeProtocol(novel.next[0].url) === removeProtocol(data.url)
+                    && removeProtocol(novel.next.url) === removeProtocol(data.url)
                 ) {
-                    await this.callback(novel, novel.next[0]);
+                    await this.callback(novel, novel.next);
                 }
             }
         }

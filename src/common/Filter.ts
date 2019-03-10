@@ -35,8 +35,8 @@ function daysBetween(a: Date, b: Date): number {
 function getVal(novel: IReadingListResult, what: IFilter["what"]): number {
     switch (what) {
         case "days_since_first_unread":
-            return novel.next.length > 0 && novel.next[0].date
-                ? daysBetween(new Date(), novel.next[0].date)
+            return novel.nextLength > 0 && novel.next.date
+                ? daysBetween(new Date(), novel.next.date)
                 : 0;
 
         case "days_since_latest":
@@ -46,7 +46,7 @@ function getVal(novel: IReadingListResult, what: IFilter["what"]): number {
 
         case "unread":
         default:
-            return novel.next.length;
+            return novel.nextLength;
     }
 }
 

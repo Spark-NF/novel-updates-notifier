@@ -50,10 +50,11 @@ describe("ReadChapterListener", async () => {
             hasNotes: false,
             tags: [],
         },
-        chapters,
         status: chapters[0],
-        next: chapters.slice(1),
+        next: chapters[1],
+        nextLength: 2,
         latest: chapters[chapters.length - 1],
+        readingList: 1,
     }];
 
     it("Ignores iframe navigation", async () => {

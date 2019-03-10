@@ -2,7 +2,7 @@ import { IFilter, isValid } from "./Filter";
 
 describe("isValid", () => {
     it("Returns true for a valid filter", () => {
-        const novel: any = { next: [] };
+        const novel: any = { nextLength: 0 };
         const filter: IFilter = {
             operator: "eq",
             value: 0,
@@ -13,7 +13,7 @@ describe("isValid", () => {
     });
 
     it("Returns true for an invalid filter", () => {
-        const novel: any = { next: [] };
+        const novel: any = { nextLength: 0 };
         const filter: IFilter = {
             operator: "lt",
             value: 0,
@@ -24,7 +24,7 @@ describe("isValid", () => {
     });
 
     it("Works with 'days since first unread chapter' filters", () => {
-        const novel: any = { next: [{ date: new Date("2019-01-01") }] };
+        const novel: any = { next: { date: new Date("2019-01-01") }, nextLength: 1 };
         const filter: IFilter = {
             operator: "ge",
             value: 1,
