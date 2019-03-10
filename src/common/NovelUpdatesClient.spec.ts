@@ -248,7 +248,6 @@ describe("NovelUpdatesClient", () => {
             expect(novels[0].notes.hasNotes).toBe(true);
             expect(novels[0].notes.tags).toEqual(["martial", "world"]);
             expect(novels[0].notes.notes).toBe(undefined);
-            expect(novels[0].chapters.map((c) => c.id)).toEqual([64956, 55539]);
             expect(novels[0].status.id).toBe(1328137);
             expect(novels[0].status.name).toBe("c1357");
             expect(novels[0].status.html).toBe("c1357");

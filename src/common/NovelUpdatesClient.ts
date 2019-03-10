@@ -25,7 +25,6 @@ export interface IReadingListResult {
         tags: string[];
         notes?: string;
     };
-    chapters: IReadingListResultChapter[];
     status: IReadingListResultChapter;
     next: IReadingListResultChapter[];
     latest: IReadingListResultChapter;
@@ -260,7 +259,7 @@ export class NovelUpdatesClient {
         return undefined;
     }
 
-    private async getNovelChapters(novel: IReadingListResult): Promise<IReadingListResultChapter[]> {
+    public async getNovelChapters(novel: IReadingListResult): Promise<IReadingListResultChapter[]> {
         const cacheKey = "chapters_" + novel.id;
         let chapters: IReadingListResultChapter[] = await this.storage.getCache(cacheKey);
         if (!chapters || (chapters.length >= 1 && chapters[chapters.length - 1].id !== novel.latest.id)) {
@@ -344,23 +343,23 @@ export class NovelUpdatesClient {
             }
 
             // Load the chapters
-            novel.chapters = await this.getNovelChapters(novel);
+            const chapters = await this.getNovelChapters(novel);
 
             // Fix status/latest information
             if (novel.status.id === undefined) {
-                const replace = this.getChapterByName(novel.status.name, novel.chapters);
+                const replace = this.getChapterByName(novel.status.name, chapters);
                 if (replace) {
                     novel.status = replace;
                 }
             }
             if (novel.latest.id === undefined) {
-                const replace = this.getChapterByName(novel.latest.name, novel.chapters);
+                const replace = this.getChapterByName(novel.latest.name, chapters);
                 if (replace) {
                     novel.latest = replace;
                 }
             }
 
-            await this.loadNextChapters(novel, row);
+            await this.loadNextChapters(novel, row, chapters);
 
             novels.push(novel);
         }
@@ -388,14 +387,18 @@ export class NovelUpdatesClient {
         }
 
         // Refresh "next" and "chapters" members
-        novel.chapters = await this.getNovelChapters(novel);
+        const chapters = await this.getNovelChapters(novel);
         novel.next.splice(0, novel.next.length);
-        await this.loadNextChapters(novel, row);
+        await this.loadNextChapters(novel, row, chapters);
 
         return true;
     }
 
-    private async loadNextChapters(novel: IReadingListResult, row: HTMLTableRowElement): Promise<void> {
+    private async loadNextChapters(
+        novel: IReadingListResult,
+        row: HTMLTableRowElement,
+        chapters: IReadingListResultChapter[],
+    ): Promise<void> {
         // Load and build next chapters if necessary
         if (novel.status.id !== undefined && novel.status.id !== novel.latest.id) {
 
@@ -412,9 +415,9 @@ export class NovelUpdatesClient {
             }
 
             // Build the "next" object
-            const index = novel.chapters.map((c) => c.id).indexOf(novel.status.id);
-            for (let i = index + 1; i < novel.chapters.length; ++i) {
-                const chapter = novel.chapters[i];
+            const index = chapters.map((c) => c.id).indexOf(novel.status.id);
+            for (let i = index + 1; i < chapters.length; ++i) {
+                const chapter = chapters[i];
                 const fullChapter = chapter.id in fullNext ? fullNext[chapter.id] : chapter;
                 novel.next.push(fullChapter);
             }

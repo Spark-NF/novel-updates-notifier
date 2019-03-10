@@ -62,14 +62,10 @@ export default class NovelRow extends Vue {
 
     editing = false;
     loadingMessage = "";
+    optChapters: any = {};
 
     get hasNew(): boolean {
         return this.novel.next.length > 0;
-    }
-    get optChapters() {
-        return this.hasNew && this.novel.status.id !== undefined && this.novel.next.length > 0
-            ? [this.novel.status].concat(this.novel.next)
-            : this.novel.chapters;
     }
 
     changeCurrentChapter() {
@@ -99,9 +95,13 @@ export default class NovelRow extends Vue {
         this.$emit("remove-novel", novel);
     }
 
-    startEdition() {
+    async startEdition() {
+        this.optChapters = this.hasNew && this.novel.status.id !== undefined && this.novel.next.length > 0
+            ? [this.novel.status].concat(this.novel.next)
+            : await background.client.getNovelChapters(this.novel);
         this.editing = true;
-        (this.$refs.readSelect as any).focus();
+
+        (this.$refs.readSelect as HTMLSelectElement).focus();
     }
 };
 </script>
