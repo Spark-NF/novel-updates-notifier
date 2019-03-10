@@ -29,7 +29,8 @@ export interface IReadingListResult {
     status: IReadingListResultChapter;
     next: IReadingListResultChapter[];
     latest: IReadingListResultChapter;
-    manual?: number;
+    readingList: number;
+    manual?: boolean;
 }
 
 export interface IReadingList {
@@ -324,11 +325,12 @@ export class NovelUpdatesClient {
                 status,
                 next: [] as IReadingListResultChapter[],
                 latest,
+                readingList: id,
             };
 
             // Manual reading list
             if (manual) {
-                novel.manual = id;
+                novel.manual = manual;
             }
 
             // Load the chapters
