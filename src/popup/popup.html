@@ -50,7 +50,7 @@
                     </div>
                     <div id="settings-general" v-if="settings.panel === 'general'">
                         <div class="block-body">
-                            <options-general :settings="settings.settings" :hasSidebar="settings.hasSidebar" />
+                            <options-general :settings="settingsObj" :hasSidebar="settings.hasSidebar" />
                         </div>
                         <div class="block-footer">
                             <button class="btn btn-secondary float-right settings-back" @click="closeSettings"><i class="fa fa-chevron-circle-left"></i> Back</button>
@@ -107,7 +107,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr is="novel-row" v-for="novel of filteredNovels" v-on:mark-chapter-as-read="markChapterAsRead" v-on:remove-novel="removeNovel" :novel="novel" :key="novel.id"></tr>
+                            <tr is="novel-row" v-for="novel of filteredNovels" v-on:mark-chapter-as-read="markChapterAsRead" v-on:remove-novel="removeNovel" :novel="novel" :open-in-sidebar="openInSidebar" :key="novel.id"></tr>
                         </tbody>
                     </table>
                 </div>

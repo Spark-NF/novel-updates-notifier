@@ -13,7 +13,7 @@
             {{ loadingMessage }}
         </td>
         <td class="novel-chapter" v-if="!loadingMessage">
-            <chapter-link :chapter="novel.status" v-if="!editing" />
+            <chapter-link :chapter="novel.status" :open-in-sidebar="openInSidebar" v-if="!editing" />
             <input ref="readManual" type="text" :value="novel.status.name" :class="{ hidden: !editing }" v-if="novel.manual"  @change="changeCurrentChapterManual" @blur="changeCurrentChapterManual" />
             <select ref="readSelect" :class="{ hidden: !editing }" v-if="!novel.manual" @change="changeCurrentChapter" @blur="changeCurrentChapter">
                 <option v-for="chapter of optChapters" :value="chapter.id" :selected="chapter.id === novel.status.id" :key="chapter.id">
@@ -23,11 +23,11 @@
         </td>
         <td class="novel-chapter" v-if="!loadingMessage">
             <span v-if="novel.nextLength > 0">
-                <chapter-link :chapter="novel.next" />
+                <chapter-link :chapter="novel.next" :open-in-sidebar="openInSidebar" />
             </span>
         </td>
         <td class="novel-chapter" v-if="!loadingMessage">
-            <chapter-link :chapter="novel.latest" />
+            <chapter-link :chapter="novel.latest" :open-in-sidebar="openInSidebar" />
         </td>
         <td class="novel-actions" v-if="!loadingMessage">
             <button class="btn btn-xs btn-icon btn-success" title="Mark last chapter as read" @click="markLatestAsRead" v-if="hasNew && novel.status.id && novel.latest.id !== undefined && !novel.manual">
@@ -55,6 +55,7 @@ const background = browser.extension.getBackgroundPage() as IBackground;
 @Component
 export default class NovelRow extends Vue {
     @Prop() readonly novel!: IReadingListResult;
+    @Prop() readonly openInSidebar!: boolean;
 
     editing = false;
     loadingMessage = "";

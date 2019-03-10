@@ -4,6 +4,7 @@ import Vue from "vue";
 import { clone } from "../common/clone";
 import { IReadingList, IReadingListResult, IReadingListResultChapter, ISearchResult, NovelUpdatesClient } from "../common/NovelUpdatesClient";
 import { IGroup, Settings } from "../common/Settings";
+import { Storage } from "../common/Storage";
 import { secondsToString } from "../common/time";
 import OptionsGeneral from "../options/components/OptionsGeneral.vue";
 import OptionsGroups from "../options/components/OptionsGroups.vue";
@@ -16,7 +17,6 @@ Vue.component("options-general", OptionsGeneral);
 Vue.component("options-groups", OptionsGroups);
 
 interface IBackground extends Window {
-    settings: Settings;
     client: NovelUpdatesClient;
     readingLists: IReadingList[];
 
@@ -31,6 +31,9 @@ interface IBackground extends Window {
 
 const background = browser.extension.getBackgroundPage() as IBackground;
 let app: Vue;
+
+const storage = new Storage();
+const settings = new Settings(storage);
 
 function showLoader(msg: string): void {
     app.$data.loadingMessage = msg;
@@ -59,7 +62,7 @@ async function updateRefreshLabel() {
         return;
     }
 
-    const interval = background.settings.interval.get();
+    const interval = settings.interval.get();
     const secs = Math.max(0, Math.round((background.nextListRefresh.getTime() - new Date().getTime()) / 1000));
     app.$data.novels.nextRefresh = secondsToString(secs, interval > 60);
 
@@ -177,11 +180,14 @@ async function doLogin() {
 }
 
 async function saveGroups(groups: IGroup[]) {
-    await background.settings.groups.set(groups);
+    await settings.groups.set(clone(groups));
 }
 
 // Show novels or login form on popup load
 (async () => {
+    await storage.init();
+    await settings.preload();
+
     app = new Vue({
         el: "#app",
         data: {
@@ -208,13 +214,15 @@ async function saveGroups(groups: IGroup[]) {
             settings: {
                 open: false,
                 panel: "general",
-                groups: clone(background.settings.groups.get()),
+                groups: clone(settings.groups.get()),
                 readingLists: clone(background.readingLists),
-                settings: background.settings,
-                hasSidebar: !!browser.sidebarAction,
+                hasSidebar: browser.sidebarAction !== undefined,
             },
         },
         computed: {
+            settingsObj(): Settings {
+                return settings;
+            },
             searchResults(): ISearchResult[] {
                 return this.search.mode === "search" ? this.search.results : [];
             },
@@ -227,6 +235,10 @@ async function saveGroups(groups: IGroup[]) {
                     const data = (n.name + " " + n.notes.tags).toLowerCase();
                     return filters.every((f: string) => data.includes(f));
                 });
+            },
+            openInSidebar(): boolean {
+                const canSidebar = browser.sidebarAction !== undefined;
+                return settings.readInSidebar.get() && canSidebar;
             },
         },
         methods: {

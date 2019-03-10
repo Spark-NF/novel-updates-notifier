@@ -12,9 +12,6 @@ import { Storage } from "../common/Storage";
 
 interface ICustomWindow extends Window {
     readingLists: any;
-    readingList: any;
-    settings: Settings;
-    permissions: Permissions;
     client: NovelUpdatesClient;
     nextListRefresh: Date;
     networkError?: string;
@@ -72,8 +69,8 @@ async function loadReadingList(): Promise<IReadingListResult[] | undefined> {
             }
         }
     } else {
-        for (const readingList of readingLists) {
-            const l = await client.getReadingListNovels(readingList.id);
+        for (const list of readingLists) {
+            const l = await client.getReadingListNovels(list.id);
             if (l) {
                 novels.push(...l);
             }
@@ -109,6 +106,7 @@ async function loadReadingList(): Promise<IReadingListResult[] | undefined> {
 }
 
 // Reading list accessor
+let readingList: IReadingListResult[];
 let listRefreshIntervalId: number;
 let listRefreshPromise: Promise<IReadingListResult[] | undefined>;
 async function reloadReadingList(): Promise<void> {
@@ -116,7 +114,7 @@ async function reloadReadingList(): Promise<void> {
         if (!listRefreshPromise) {
             listRefreshPromise = loadReadingList();
         }
-        window.readingList = await listRefreshPromise;
+        readingList = await listRefreshPromise;
         window.networkError = undefined;
     } catch (e) {
         // tslint:disable-next-line:no-console
@@ -139,10 +137,10 @@ async function reloadReadingList(): Promise<void> {
     window.nextListRefresh = new Date(new Date().getTime() + intervalMs);
 }
 async function getReadingList(): Promise<IReadingListResult[]> {
-    if (window.readingList === undefined) {
+    if (readingList === undefined) {
         await reloadReadingList();
     }
-    return window.readingList;
+    return readingList;
 }
 
 // Check when a chapter has been finished
@@ -173,11 +171,7 @@ const domains = [
 const contentScriptsManager = new ContentScriptsManager(domains, "src/userstyles/bundle.js");
 
 // Fill window object for popup and sidebar
-window.settings = settings;
 window.client = client;
-window.permissions = permissions;
-
-// Make functions available
 window.checkLoginStatus = checkLoginStatus;
 window.getReadingList = getReadingList;
 window.reloadReadingList = reloadReadingList;
