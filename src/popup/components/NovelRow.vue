@@ -8,7 +8,11 @@
                 {{ novel.next.length }}
             </span>
         </td>
-        <td class="novel-chapter">
+        <td class="novel-loading" colspan="4" v-if="loadingMessage">
+            <img :src="'../common/loading.gif'" alt="" />
+            {{ loadingMessage }}
+        </td>
+        <td class="novel-chapter" v-if="!loadingMessage">
             <chapter-link :chapter="novel.status" v-if="!editing" />
             <select ref="readSelect" v-if="editing" @change="changeCurrentChapter(this, novel)" @blur="changeCurrentChapter(this, novel)">
                 <option v-for="chapter of optChapters" :value="chapter.id" :selected="chapter.id === novel.status.id" :key="chapter.id">
@@ -16,15 +20,15 @@
                 </option>
             </select>
         </td>
-        <td class="novel-chapter">
+        <td class="novel-chapter" v-if="!loadingMessage">
             <span v-if="novel.next.length > 0">
                 <chapter-link :chapter="novel.next[0]" />
             </span>
         </td>
-        <td class="novel-chapter">
+        <td class="novel-chapter" v-if="!loadingMessage">
             <chapter-link :chapter="novel.latest" />
         </td>
-        <td class="novel-actions">
+        <td class="novel-actions" v-if="!loadingMessage">
             <span class="btn btn-xs btn-icon text-warning" title="Edition is disabled because your current chapter could not be mapped to an existing chapter" v-if="!novel.status.id">
                 <i class="fa fa-exclamation-triangle"></i>
             </span>
@@ -56,11 +60,17 @@ const background = browser.extension.getBackgroundPage() as IBackground;
 export default class NovelRow extends Vue {
     @Prop() readonly novel!: IReadingListResult;
 
-    hasNew = this.novel.next.length > 0;
     editing = false;
-    optChapters = this.hasNew && this.novel.status.id !== undefined && this.novel.next.length > 0
-        ? [this.novel.status].concat(this.novel.next)
-        : this.novel.chapters;
+    loadingMessage = "";
+
+    get hasNew(): boolean {
+        return this.novel.next.length > 0;
+    }
+    get optChapters() {
+        return this.hasNew && this.novel.status.id !== undefined && this.novel.next.length > 0
+            ? [this.novel.status].concat(this.novel.next)
+            : this.novel.chapters;
+    }
 
     changeCurrentChapter() {
         this.editing = false;
