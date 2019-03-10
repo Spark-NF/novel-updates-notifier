@@ -110,15 +110,21 @@ async function loadReadingList(): Promise<IReadingListResult[] | undefined> {
 
 // Reading list accessor
 let listRefreshIntervalId: number;
+let listRefreshPromise: Promise<IReadingListResult[] | undefined>;
 async function reloadReadingList(): Promise<void> {
     try {
-        window.readingList = await loadReadingList();
+        if (!listRefreshPromise) {
+            listRefreshPromise = loadReadingList();
+        }
+        window.readingList = await listRefreshPromise;
         window.networkError = undefined;
     } catch (e) {
         // tslint:disable-next-line:no-console
         console.log("Error loading reading list", e);
         setBadge("Error", "red", "white");
         window.networkError = e.toString();
+    } finally {
+        listRefreshPromise = undefined;
     }
 
     // Clear previous timeout if this call was triggered manually
