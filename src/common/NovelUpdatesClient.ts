@@ -263,7 +263,8 @@ export class NovelUpdatesClient {
     public async getNovelChapters(novel: IReadingListResult): Promise<IReadingListResultChapter[]> {
         const cacheKey = "chapters_" + novel.id;
         let chapters: IReadingListResultChapter[] = await this.storage.getCache(cacheKey);
-        const wrongLatest = chapters.length >= 1
+        const wrongLatest = chapters
+            && chapters.length >= 1
             && novel.latest.id !== undefined
             && chapters[chapters.length - 1].id !== novel.latest.id;
         if (!chapters || wrongLatest) {
