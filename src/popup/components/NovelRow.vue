@@ -65,6 +65,9 @@ export default class NovelRow extends Vue {
     }
 
     changeCurrentChapter() {
+        if (!this.editing) {
+            return;
+        }
         this.editing = false;
 
         const readSelect = this.$refs.readSelect as HTMLSelectElement;
@@ -76,6 +79,9 @@ export default class NovelRow extends Vue {
         }
     }
     changeCurrentChapterManual() {
+        if (!this.editing) {
+            return;
+        }
         this.editing = false;
 
         const readManual = this.$refs.readManual as HTMLInputElement;
