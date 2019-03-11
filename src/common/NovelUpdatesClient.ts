@@ -263,9 +263,13 @@ export class NovelUpdatesClient {
     public async getNovelChapters(novel: IReadingListResult): Promise<IReadingListResultChapter[]> {
         const cacheKey = "chapters_" + novel.id;
         let chapters: IReadingListResultChapter[] = await this.storage.getCache(cacheKey);
-        if (!chapters || (chapters.length >= 1 && chapters[chapters.length - 1].id !== novel.latest.id)) {
+        const wrongLatest = chapters.length >= 1
+            && novel.latest.id !== undefined
+            && chapters[chapters.length - 1].id !== novel.latest.id;
+        if (!chapters || wrongLatest) {
             chapters = await this.loadSeriesChapters(novel.id);
-            await this.storage.setCache(cacheKey, chapters, 24 * 60 * 60 * 1000);
+            const storageDuration = (novel.latest.id !== undefined ? 24 : 2) * 60 * 60 * 1000;
+            await this.storage.setCache(cacheKey, chapters, storageDuration);
         }
         return chapters;
     }
@@ -342,24 +346,7 @@ export class NovelUpdatesClient {
                 novel.manual = manual;
             }
 
-            // Load the chapters
-            const chapters = await this.getNovelChapters(novel);
-
-            // Fix status/latest information
-            if (novel.status.id === undefined) {
-                const replace = this.getChapterByName(novel.status.name, chapters);
-                if (replace) {
-                    novel.status = replace;
-                }
-            }
-            if (novel.latest.id === undefined) {
-                const replace = this.getChapterByName(novel.latest.name, chapters);
-                if (replace) {
-                    novel.latest = replace;
-                }
-            }
-
-            await this.loadNextChapters(novel, row, chapters);
+            await this.loadNextChapters(novel, row);
             novels.push(novel);
         }
 
@@ -385,22 +372,32 @@ export class NovelUpdatesClient {
             return false;
         }
 
-        // Refresh "next" and "chapters" members
-        const chapters = await this.getNovelChapters(novel);
-        await this.loadNextChapters(novel, row, chapters);
-
+        await this.loadNextChapters(novel, row);
         return true;
     }
 
-    private async loadNextChapters(
-        novel: IReadingListResult,
-        row: HTMLTableRowElement,
-        chapters: IReadingListResultChapter[],
-    ): Promise<void> {
+    private async loadNextChapters(novel: IReadingListResult, row: HTMLTableRowElement): Promise<void> {
+        // Load the chapters
+        const chapters = await this.getNovelChapters(novel);
+
+        // Fix status/latest information
+        if (novel.status.id === undefined) {
+            const replace = this.getChapterByName(novel.status.name, chapters);
+            if (replace) {
+                novel.status = replace;
+            }
+        }
+        if (novel.latest.id === undefined) {
+            const replace = this.getChapterByName(novel.latest.name, chapters);
+            if (replace) {
+                novel.latest = replace;
+            }
+        }
+
+        // Load and build next chapters if necessary
         novel.next = undefined;
         novel.nextLength = 0;
 
-        // Load and build next chapters if necessary
         if (novel.status.id !== undefined && novel.status.id !== novel.latest.id) {
 
             const fullNext: { [key: number]: IReadingListResultChapter } = {};

@@ -77,13 +77,15 @@ async function removeNovel(novel: IReadingListResult) {
     }
 }
 
-async function markChapterAsRead(chapter: IReadingListResultChapter, novel: IReadingListResult, cb?: () => void) {
-    await background.client.markChapterRead(novel.id, chapter.id);
-    if (novel.manual) {
-        await background.client.markChapterReadManual(novel.id, novel.readingList, chapter.name);
+async function markChapterAsRead(chapter: IReadingListResultChapter | string, novel: IReadingListResult, cb?: () => void) {
+    if (typeof chapter === "string") {
+        await background.client.markChapterReadManual(novel.id, novel.readingList, chapter);
+        novel.status = { id: undefined, name: chapter };
+    } else {
+        await background.client.markChapterRead(novel.id, chapter.id);
+        novel.status = chapter;
     }
 
-    novel.status = chapter;
     await background.client.refreshNovel(novel);
 
     if (cb) {

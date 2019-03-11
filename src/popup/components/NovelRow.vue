@@ -14,7 +14,8 @@
         </td>
         <td class="novel-chapter" v-if="!loadingMessage">
             <chapter-link :chapter="novel.status" v-if="!editing" />
-            <select ref="readSelect" v-if="editing" @change="changeCurrentChapter(this, novel)" @blur="changeCurrentChapter(this, novel)">
+            <input ref="readManual" type="text" :value="novel.status.name" :class="{ hidden: !editing }" v-if="novel.manual"  @change="changeCurrentChapterManual" @blur="changeCurrentChapterManual" />
+            <select ref="readSelect" :class="{ hidden: !editing }" v-if="!novel.manual" @change="changeCurrentChapter" @blur="changeCurrentChapter">
                 <option v-for="chapter of optChapters" :value="chapter.id" :selected="chapter.id === novel.status.id" :key="chapter.id">
                     {{ chapter.name }}
                 </option>
@@ -29,17 +30,12 @@
             <chapter-link :chapter="novel.latest" />
         </td>
         <td class="novel-actions" v-if="!loadingMessage">
-            <span class="btn btn-xs btn-icon text-warning" title="Edition is disabled because your current chapter could not be mapped to an existing chapter" v-if="!novel.status.id">
-                <i class="fa fa-exclamation-triangle"></i>
-            </span>
-            <template v-else>
-                <button class="btn btn-xs btn-icon btn-success" title="Mark last chapter as read" @click="markLatestAsRead" v-if="hasNew && novel.latest.id !== undefined">
-                    <i class="fa fa-check"></i>
-                </button>
-                <button class="btn btn-xs btn-icon btn-warning" title="Edit last read chapter manually" @click="startEdition" v-if="!editing">
-                    <i class="fa fa-pencil"></i>
-                </button>
-            </template>
+            <button class="btn btn-xs btn-icon btn-success" title="Mark last chapter as read" @click="markLatestAsRead" v-if="hasNew && novel.status.id && novel.latest.id !== undefined && !novel.manual">
+                <i class="fa fa-check"></i>
+            </button>
+            <button class="btn btn-xs btn-icon btn-warning" title="Edit last read chapter manually" @click="startEdition" v-if="!editing">
+                <i class="fa fa-pencil"></i>
+            </button>
             <button class="btn btn-xs btn-icon btn-danger" title="Remove novel from reading list" @click="removeNovel(novel)">
                 <i class="fa fa-trash-o"></i>
             </button>
@@ -79,12 +75,21 @@ export default class NovelRow extends Vue {
             this.markChapterAsRead({ id, name: text }, this.novel);
         }
     }
+    changeCurrentChapterManual() {
+        this.editing = false;
+
+        const readManual = this.$refs.readManual as HTMLInputElement;
+        const value = readManual.value;
+        if (value !== "" && value !== this.novel.status.name) {
+            this.markChapterAsRead(value, this.novel);
+        }
+    }
 
     markLatestAsRead() {
         this.markChapterAsRead(this.novel.latest, this.novel);
     }
 
-    markChapterAsRead(chapter: IReadingListResultChapter, novel: IReadingListResult) {
+    markChapterAsRead(chapter: IReadingListResultChapter | string, novel: IReadingListResult) {
         this.loadingMessage = "Loading...";
         this.$emit("mark-chapter-as-read", chapter, novel, () => {
             this.loadingMessage = "";
