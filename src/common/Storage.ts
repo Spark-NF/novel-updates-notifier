@@ -25,8 +25,8 @@ export class Storage {
     }
 
     private async get(storage: StorageArea, key: string): Promise<any> {
-        const raw = await storage.get(key) || {};
-        return key in raw ? raw[key] : undefined;
+        const raw = await storage.get(key);
+        return raw && typeof raw === "object" && key in raw ? raw[key] : undefined;
     }
 
     public async getSync(key: string): Promise<any> {
