@@ -8,7 +8,7 @@
         <link rel="stylesheet" href="popup.css" />
     </head>
     <body>
-        <div id="app" v-cloak>
+        <div id="app" :class="{ 'no-overflow': loadingMessage || settings.open }" v-cloak>
             <div id="loader" class="overlay" v-if="loadingMessage">
                 <div>
                     <img src="../common/loading.gif" alt="" /><br/>
@@ -37,28 +37,28 @@
                     </div>
                 </form>
             </div>
-            <div id="novel-list" v-if="novels.ok">
-                <div id="settings" class="overlay" v-if="settings.open">
-                    <div id="settings-groups" v-if="settings.panel === 'groups'">
-                        <div class="block-body">
-                            <options-groups :groups="settings.groups" :reading-lists="settings.readingLists" @save-groups="saveGroups" />
-                        </div>
-                        <div class="block-footer">
-                            <button class="btn btn-secondary float-right settings-back" @click="closeSettings"><i class="fa fa-chevron-circle-left"></i> Back</button>
-                            <button class="btn btn-primary float-left" id="open-general-settings" @click="openGeneralSettings"><i class="fa fa-cogs"></i> General settings</a>
-                        </div>
+            <div id="settings" class="overlay" v-if="settings.open">
+                <div id="settings-groups" v-if="settings.panel === 'groups'">
+                    <div class="block-body">
+                        <options-groups :groups="settings.groups" :reading-lists="settings.readingLists" @save-groups="saveGroups" />
                     </div>
-                    <div id="settings-general" v-if="settings.panel === 'general'">
-                        <div class="block-body">
-                            <options-general :settings="settingsObj" :hasSidebar="settings.hasSidebar" />
-                        </div>
-                        <div class="block-footer">
-                            <button class="btn btn-secondary float-right settings-back" @click="closeSettings"><i class="fa fa-chevron-circle-left"></i> Back</button>
-                            <button class="btn btn-primary float-left" id="open-groups-settings" @click="openGroupsSettings"><i class="fa fa-list"></i> Group settings</a>
-                        </div>
+                    <div class="block-footer">
+                        <button class="btn btn-secondary float-right settings-back" @click="closeSettings"><i class="fa fa-chevron-circle-left"></i> Back</button>
+                        <button class="btn btn-primary float-left" id="open-general-settings" @click="openGeneralSettings"><i class="fa fa-cogs"></i> General settings</a>
                     </div>
                 </div>
-                <div class="block-body" :class="{ hidden: settings.open }">
+                <div id="settings-general" v-if="settings.panel === 'general'">
+                    <div class="block-body">
+                        <options-general :settings="settingsObj" :hasSidebar="settings.hasSidebar" />
+                    </div>
+                    <div class="block-footer">
+                        <button class="btn btn-secondary float-right settings-back" @click="closeSettings"><i class="fa fa-chevron-circle-left"></i> Back</button>
+                        <button class="btn btn-primary float-left" id="open-groups-settings" @click="openGroupsSettings"><i class="fa fa-list"></i> Group settings</a>
+                    </div>
+                </div>
+            </div>
+            <div id="novel-list" v-if="novels.ok">
+                <div class="block-body">
                     <div id="search">
                         <form>
                             <div class="form-group">

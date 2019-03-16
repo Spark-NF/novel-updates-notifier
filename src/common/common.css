@@ -30,6 +30,10 @@
 .hidden {
 	display: none !important;
 }
+.no-overflow {
+	max-height: 100%;
+	overflow: hidden;
+}
 
 .overlay {
 	width: 100%;
