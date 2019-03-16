@@ -1,4 +1,5 @@
 import { setBadge } from "../common/badge";
+import { clone } from "../common/clone";
 import { ContentScriptsManager } from "../common/ContentScriptsManager";
 import { isValid } from "../common/Filter";
 import { waitForPermission } from "../common/Listener";
@@ -140,7 +141,7 @@ async function getReadingList(): Promise<IReadingListResult[]> {
     if (readingList === undefined) {
         await reloadReadingList();
     }
-    return readingList;
+    return clone(readingList);
 }
 
 // Check when a chapter has been finished
