@@ -31,6 +31,12 @@ export class Setting<T> extends Observable {
     public async preload(): Promise<void> {
         if (this.value === undefined) {
             await this.reload();
+
+            browser.runtime.onMessage.addListener((msg) => {
+                if ("type" in msg && msg.type === "setting-change" && msg.key === this.key) {
+                    this.reload();
+                }
+            });
         }
     }
 
@@ -44,6 +50,7 @@ export class Setting<T> extends Observable {
             await this.sync();
 
             this.fireEvent("change", [this.value]);
+            browser.runtime.sendMessage({ type: "setting-change", key: this.key });
         }
     }
 }
