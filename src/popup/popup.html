@@ -107,7 +107,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr is="novel-row" v-for="novel of filteredNovels" v-on:mark-chapter-as-read="markChapterAsRead" v-on:remove-novel="removeNovel" :novel="novel" :open-in-sidebar="openInSidebar" :key="novel.id"></tr>
+                            <tr is="novel-row" v-for="novel of filteredNovels" v-on:mark-chapter-as-read="markChapterAsRead" v-on:remove-novel="removeNovel" :novel="novel" :open-in-sidebar="settings.hasSidebar && settings.openInSidebar" :key="novel.id"></tr>
                         </tbody>
                     </table>
                 </div>

@@ -217,6 +217,7 @@ async function saveGroups(groups: IGroup[]) {
                 groups: clone(settings.groups.get()),
                 readingLists: clone(background.readingLists),
                 hasSidebar: browser.sidebarAction !== undefined,
+                openInSidebar: settings.readInSidebar.get(),
             },
         },
         computed: {
@@ -236,10 +237,11 @@ async function saveGroups(groups: IGroup[]) {
                     return filters.every((f: string) => data.includes(f));
                 });
             },
-            openInSidebar(): boolean {
-                const canSidebar = browser.sidebarAction !== undefined;
-                return settings.readInSidebar.get() && canSidebar;
-            },
+        },
+        created() {
+            settings.readInSidebar.addEventListener("change", () => {
+                this.settings.openInSidebar = settings.readInSidebar.get();
+            });
         },
         methods: {
             doLogin,
