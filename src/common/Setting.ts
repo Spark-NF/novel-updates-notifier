@@ -2,6 +2,8 @@ import { Observable } from "./Observable";
 import { Storage } from "./Storage";
 
 export class Setting<T> extends Observable {
+    private static PREFIX = "setting_";
+
     private storage: Storage;
     private key: string;
     private def: T;
@@ -16,12 +18,12 @@ export class Setting<T> extends Observable {
     }
 
     private async reload(): Promise<void> {
-        this.value = await this.storage.getSync("setting_" + this.key) || this.def;
+        this.value = await this.storage.getSync(Setting.PREFIX + this.key) || this.def;
     }
 
     private async sync(): Promise<void> {
         const items: any = {};
-        items[this.key] = this.value;
+        items[Setting.PREFIX + this.key] = this.value;
 
         await this.storage.setSync(items);
     }

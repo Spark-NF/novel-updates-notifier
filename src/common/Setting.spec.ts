@@ -20,11 +20,13 @@ describe("Setting", () => {
         const storage = new Storage();
         await storage.init(mock, mock);
 
-        const setting = new Setting<number>(storage, "test", 5);
+        const setter = new Setting<number>(storage, "test", 5);
+        await setter.preload();
+        await setter.set(7);
 
-        await setting.set(7);
-
-        const val = setting.get();
+        const getter = new Setting<number>(storage, "test", 5);
+        await getter.preload();
+        const val = getter.get();
         expect(val).toBe(7);
     });
 
