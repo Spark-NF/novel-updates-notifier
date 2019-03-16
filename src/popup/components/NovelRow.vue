@@ -114,7 +114,11 @@ export default class NovelRow extends Vue {
             : chapters
         this.editing = true;
 
-        (this.$refs.readSelect as HTMLSelectElement).focus();
+        if (this.novel.manual) {
+            (this.$refs.readManual as HTMLInputElement).focus();
+        } else {
+            (this.$refs.readSelect as HTMLSelectElement).focus();
+        }
     }
 };
 </script>
