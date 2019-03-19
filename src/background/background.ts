@@ -148,8 +148,12 @@ async function getReadingList(): Promise<IReadingListResult[]> {
 const readChapterListener = new ReadChapterListener(
     getReadingList,
     async (novel: IReadingListResult, chapter: IReadingListResultChapter) => {
-        await client.markChapterRead(novel.id, chapter.id);
-        await reloadReadingList();
+        if (novel.manual) {
+            await client.markChapterReadManual(novel.id, novel.readingList, chapter.name);
+        } else {
+            await client.markChapterRead(novel.id, chapter.id);
+        }
+        await client.refreshNovel(novel);
     },
 );
 
