@@ -24,6 +24,7 @@ interface IBackground extends Window {
     getReadingList: () => Promise<IReadingListResult[]>;
     reloadReadingList: () => Promise<void>;
     tryLogin: (username: string, password: string) => Promise<boolean>;
+    updateReadingList: (novel: IReadingListResult) => boolean;
 
     nextListRefresh?: Date;
     networkError?: string;
@@ -90,6 +91,7 @@ async function markChapterAsRead(chapter: IReadingListResultChapter | string, no
     }
 
     await background.client.refreshNovel(novel);
+    background.updateReadingList(novel);
 
     if (cb) {
         cb();

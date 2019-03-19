@@ -21,6 +21,7 @@ interface ICustomWindow extends Window {
     getReadingList: () => Promise<IReadingListResult[]>;
     reloadReadingList: () => Promise<void>;
     tryLogin: (username: string, password: string) => Promise<boolean>;
+    updateReadingList: (novel: IReadingListResult) => boolean;
 }
 declare var window: ICustomWindow;
 
@@ -143,6 +144,14 @@ async function getReadingList(): Promise<IReadingListResult[]> {
     }
     return clone(readingList);
 }
+function updateReadingList(novel: IReadingListResult): boolean {
+    const index = readingList.findIndex((n) => n.id === novel.id && n.readingList === novel.readingList);
+    if (index < 0) {
+        return false;
+    }
+    readingList[index] = clone(novel);
+    return true;
+}
 
 // Check when a chapter has been finished
 const readChapterListener = new ReadChapterListener(
@@ -153,7 +162,9 @@ const readChapterListener = new ReadChapterListener(
         } else {
             await client.markChapterRead(novel.id, chapter.id);
         }
+        novel.status = chapter;
         await client.refreshNovel(novel);
+        updateReadingList(novel);
     },
 );
 
@@ -181,6 +192,7 @@ window.checkLoginStatus = checkLoginStatus;
 window.getReadingList = getReadingList;
 window.reloadReadingList = reloadReadingList;
 window.tryLogin = tryLogin;
+window.updateReadingList = updateReadingList;
 
 // Initial load
 (async () => {
