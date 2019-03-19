@@ -15,6 +15,7 @@ export class Settings {
     public customCss: Setting<boolean>;
     public autoMarkAsRead: Setting<boolean>;
     public groups: Setting<IGroup[]>;
+    public searchMode: Setting<string>;
 
     constructor(storage: Storage) {
         this.interval = new Setting<number>(storage, "interval", 5);
@@ -23,6 +24,7 @@ export class Settings {
         this.customCss = new Setting<boolean>(storage, "customCss", false);
         this.autoMarkAsRead = new Setting<boolean>(storage, "autoMarkAsRead", false);
         this.groups = new Setting<IGroup[]>(storage, "groups", []);
+        this.searchMode = new Setting<string>(storage, "SearchMode", "search");
     }
 
     public async preload(): Promise<void> {
@@ -32,5 +34,6 @@ export class Settings {
         await this.customCss.preload();
         await this.autoMarkAsRead.preload();
         await this.groups.preload();
+        await this.searchMode.preload();
     }
 }

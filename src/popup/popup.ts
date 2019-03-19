@@ -201,7 +201,7 @@ async function saveGroups(groups: IGroup[]) {
             search: {
                 value: "",
                 message: "",
-                mode: "search",
+                mode: settings.searchMode.get(),
                 results: [],
             },
             novels: {
@@ -257,6 +257,7 @@ async function saveGroups(groups: IGroup[]) {
             saveGroups,
             setSearchMode(mode: string): void {
                 this.search.mode = mode;
+                settings.searchMode.set(mode); // Fire and forget
                 doSearch();
             },
         },
