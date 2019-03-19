@@ -54,6 +54,31 @@ async function tryLogin(username: string, password: string): Promise<boolean> {
 
 // Get the status of novels in the user's reading list
 const lastChanges: { [novelId: number]: number } = {};
+async function notifyUser(novels: IReadingListResult[], notifications: boolean = true): Promise<void> {
+    // Get novels with changes
+    let novelsWithChanges = 0;
+    const novelsWithNewChanges = [];
+    for (const novel of novels) {
+        if (novel.status.id !== novel.latest.id) {
+            novelsWithChanges++;
+            if (!(novel.id in lastChanges) || lastChanges[novel.id] !== novel.latest.id) {
+                novelsWithNewChanges.push(`${novel.name} (${novel.latest.name})`);
+                lastChanges[novel.id] = novel.latest.id;
+            }
+        }
+    }
+
+    // Push notification
+    if (notifications) {
+        const notificationsEnabled = settings.notifications.get();
+        if (notificationsEnabled && novelsWithNewChanges.length > 0) {
+            notify("New novel chapters available",  "- " + novelsWithNewChanges.join("\n- "));
+        }
+    }
+
+    // Badge notification
+    setBadge(novelsWithChanges > 0 ? novelsWithChanges.toString() : "", "red", "white");
+}
 async function loadReadingList(): Promise<IReadingListResult[] | undefined> {
     const readingLists = await client.getReadingLists();
     window.readingLists = readingLists;
@@ -82,28 +107,7 @@ async function loadReadingList(): Promise<IReadingListResult[] | undefined> {
         return undefined;
     }
 
-    // Get novels with changes
-    let novelsWithChanges = 0;
-    const novelsWithNewChanges = [];
-    for (const novel of novels) {
-        if (novel.status.id !== novel.latest.id) {
-            novelsWithChanges++;
-            if (!(novel.id in lastChanges) || lastChanges[novel.id] !== novel.latest.id) {
-                novelsWithNewChanges.push(`${novel.name} (${novel.latest.name})`);
-                lastChanges[novel.id] = novel.latest.id;
-            }
-        }
-    }
-
-    // Push notification
-    const notificationsEnabled = settings.notifications.get();
-    if (notificationsEnabled && novelsWithNewChanges.length > 0) {
-        notify("New novel chapters available",  "- " + novelsWithNewChanges.join("\n- "));
-    }
-
-    // Badge notification
-    setBadge(novelsWithChanges > 0 ? novelsWithChanges.toString() : "", "red", "white");
-
+    notifyUser(novels);
     return novels;
 }
 
@@ -150,6 +154,7 @@ function updateReadingList(novel: IReadingListResult): boolean {
         return false;
     }
     readingList[index] = clone(novel);
+    notifyUser(readingList, false);
     return true;
 }
 
