@@ -1,6 +1,6 @@
 <template>
     <span v-if="!url">{{ txt }}</span>
-    <a :href="url" target="_blank" @click.prevent="openChapter(url, $event)" v-else>{{ txt }}</a>
+    <a :href="url" target="_blank" @click.prevent="openChapter(url, $event)" v-else v-html="txt"></a>
 </template>
 
 <script lang="ts">

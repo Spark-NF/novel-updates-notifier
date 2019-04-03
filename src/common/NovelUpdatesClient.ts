@@ -248,7 +248,7 @@ export class NovelUpdatesClient {
         if (equals.length > 0) {
             const ret = equals[0];
             if (equals.length > 1) {
-                ret.html += " <span class='ml-2 text-warning' title='More than one chapter with this name'>\
+                ret.html += " <span class='text-warning' title='More than one chapter with this name'>\
                     <i class='fa fa-exclamation-triangle'></i>\
                 </span>";
             }
