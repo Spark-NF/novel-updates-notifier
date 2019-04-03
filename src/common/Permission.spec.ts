@@ -1,4 +1,5 @@
 import { Permission } from "./Permission";
+import { sleep } from "./sleep";
 
 let permissionRequests: number;
 function setUpBrowser(contained: boolean, allowed: boolean) {
@@ -82,6 +83,7 @@ describe("Permission", () => {
         expect(permission2.isGranted()).toBe(false);
 
         const result = await permission1.request();
+        await sleep(20);
 
         expect(result).toBe(true);
         expect(permission1.isGranted()).toBe(true);

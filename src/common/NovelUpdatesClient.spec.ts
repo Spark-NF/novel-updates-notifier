@@ -1,7 +1,9 @@
 // tslint:disable:max-line-length
 
 import * as ajax from "./ajax";
+import { FakeStorageArea } from "./FakeStorageArea";
 import { NovelUpdatesClient } from "./NovelUpdatesClient";
+import { Storage } from "./Storage";
 
 jest.mock("./ajax");
 
@@ -35,17 +37,24 @@ describe("NovelUpdatesClient", () => {
         });
     }
 
+    async function makeStorage(): Promise<Storage> {
+        const mock = new FakeStorageArea();
+        const storage = new Storage();
+        await storage.init(mock, mock);
+        return storage;
+    }
+
     describe("checkLoginStatus", () => {
         it("Returns false if the user is not logged in", async () => {
             setLoginStatus(false);
-            const client = new NovelUpdatesClient(undefined);
+            const client = new NovelUpdatesClient(await makeStorage());
             const status = await client.checkLoginStatus();
             expect(status).toBe(false);
         });
 
         it("Returns true if the user is logged in", async () => {
             setLoginStatus(true);
-            const client = new NovelUpdatesClient(undefined);
+            const client = new NovelUpdatesClient(await makeStorage());
             const status = await client.checkLoginStatus();
             expect(status).toBe(true);
         });
@@ -61,7 +70,7 @@ describe("NovelUpdatesClient", () => {
                 </span></a></li></ul>0',
             ]);
 
-            const client = new NovelUpdatesClient(undefined);
+            const client = new NovelUpdatesClient(await makeStorage());
             const results = await client.search("Martial World");
 
             expect(results.length).toBe(2);
@@ -82,7 +91,7 @@ describe("NovelUpdatesClient", () => {
                 '<link rel="stylesheet" href="https://www.novelupdates.com/wp-content/themes/ndupdates-child/js/gadient/style.css"><link rel="stylesheet" href="https://www.novelupdates.com/wp-content/themes/ndupdates-child/js/chkstyle.css?ver=1.0.0"><link rel="stylesheet" href="https://www.novelupdates.com/wp-content/themes/ndupdates-child/js/seriestagging.css?ver=1.1.0"><link rel="stylesheet" href="https://www.novelupdates.com/wp-content/themes/ndupdates-child/js/chosen.min.css"><input type="hidden" id="mypostid" value="2072"><script type=\'text/javascript\' src=\'//www.novelupdates.com/wp-content/themes/ndupdates-child/js/jquery.popupoverlay.js\'></script><link rel="stylesheet" href="https://www.novelupdates.com/wp-content/themes/ndupdates-child/js/gh-buttons.css?ver=1.0.1">',
             ]);
 
-            const client = new NovelUpdatesClient(undefined);
+            const client = new NovelUpdatesClient(await makeStorage());
             const id = await client.getIdFromUrl("https://www.novelupdates.com/series/martial-world/");
 
             expect(id).toBe(2072);
@@ -99,7 +108,7 @@ describe("NovelUpdatesClient", () => {
                 </li></ol>0',
             ]);
 
-            const client = new NovelUpdatesClient(undefined);
+            const client = new NovelUpdatesClient(await makeStorage());
             const chapters = await client.loadSeriesChapters(2072);
 
             expect(chapters.length).toBe(2);
@@ -120,7 +129,7 @@ describe("NovelUpdatesClient", () => {
                 '<span style="position: absolute; top: 17px; right: -15px;"><span class="updateread getchp" style="float: right; position: relative; top: -13px; width: 24px; height: 24px;" title="I\'ve read the latest chapter!" onclick="latestchp(\'2310235\',\'2072\',this,\'yes\',\'2016-02-29&nrid=1328137\')"><img border="0" src="https://www.novelupdates.com/siteicons/updateicon.png" width="24" height="24"></span></span><ul class="rounded-list"><li><a class="getchps" id="mycurrent1328136" href="http://www.wuxiaworld.com/novel/martial-world/mw-chapter-1360" onmousedown="latestchp(\'1328136\',\'2072\',this,\'no\',\'2016-03-15&nrid=1328136\')">c1360</a></li><li><a class="getchps" id="mycurrent1127420" href="http://www.wuxiaworld.com/novel/martial-world/mw-chapter-1359" onmousedown="latestchp(\'1127420\',\'2072\',this,\'no\',\'2016-03-10&nrid=1127420\')">c1359</a></li><li><a class="getchps" id="mycurrent1124005" href="http://www.wuxiaworld.com/novel/martial-world/mw-chapter-1358" onmousedown="latestchp(\'1124005\',\'2072\',this,\'no\',\'2016-03-05&nrid=1124005\')">c1358</a></li><li><a class="getchps" id="mycurrent1328137" href="http://www.wuxiaworld.com/novel/martial-world/mw-chapter-1357" onmousedown="latestchp(\'1328137\',\'2072\',this,\'no\',\'2016-02-29&nrid=1328137\')">c1357</a></li></ul>',
             ]);
 
-            const client = new NovelUpdatesClient(undefined);
+            const client = new NovelUpdatesClient(await makeStorage());
             const chapters = await (client as any).getNextChaptersByUrl("https://www.novelupdates.com/readinglist_getchp.php?rid=2310235&sid=2072&date=2016-02-29&nrid=1328137", 1328137);
 
             expect(chapters.length).toBe(3);
@@ -142,7 +151,7 @@ describe("NovelUpdatesClient", () => {
     describe("getReadingLists", () => {
         it("Returns undefined if the user is not logged in", async () => {
             setLoginStatus(false);
-            const client = new NovelUpdatesClient(undefined);
+            const client = new NovelUpdatesClient(await makeStorage());
             const lists = await client.getReadingLists();
             expect(lists).toBe(undefined);
         });
@@ -179,7 +188,7 @@ describe("NovelUpdatesClient", () => {
             ]);
 
             setLoginStatus(true);
-            const client = new NovelUpdatesClient(undefined);
+            const client = new NovelUpdatesClient(await makeStorage());
             const lists = await client.getReadingLists();
 
             expect(lists.length).toBe(3);
@@ -201,7 +210,7 @@ describe("NovelUpdatesClient", () => {
     describe("getReadingListNovels", () => {
         it("Returns undefined if the user is not logged in", async () => {
             setLoginStatus(false);
-            const client = new NovelUpdatesClient(undefined);
+            const client = new NovelUpdatesClient(await makeStorage());
             const lists = await client.getReadingListNovels(0);
             expect(lists).toBe(undefined);
         });
@@ -233,12 +242,7 @@ describe("NovelUpdatesClient", () => {
 
             setLoginStatus(true);
 
-            const storage = {
-                getCache(): any { return undefined; },
-                setCache() { /* No op */ },
-            };
-
-            const client = new NovelUpdatesClient(storage as any);
+            const client = new NovelUpdatesClient(await makeStorage());
             const novels = await client.getReadingListNovels(0);
 
             expect(novels.length).toBe(2);
