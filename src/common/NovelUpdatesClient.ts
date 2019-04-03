@@ -163,29 +163,29 @@ export class NovelUpdatesClient {
     }
 
     // Get the list of next chapters
-    private nextChaptersCache: { [url: string]: IReadingListResultChapter[] } = {};
     private async getNextChaptersByUrl(
         url: string,
         currentChapter: number,
     ): Promise<IReadingListResultChapter[]> {
-        if (!(url in this.nextChaptersCache)) {
+        const cacheKey = "nextChapters_" + url;
+        let chapters: IReadingListResultChapter[] = await this.storage.getCache(cacheKey);
+        if (!chapters) {
             const rq = await ajax(url);
             const parser = new DOMParser();
             const xml = parser.parseFromString(rq.responseText, "text/html");
             const nextLinks = xml.getElementsByClassName("getchps") as HTMLCollectionOf<HTMLAnchorElement>;
 
-            const results: IReadingListResultChapter[] = [];
+            chapters = [];
             for (let i = nextLinks.length - 1; i >= 0; --i) {
                 const nextLink = nextLinks[i];
                 const id = parseInt(nextLink.id.match(/^mycurrent(\d+)$/)[1], 10);
                 if (id !== currentChapter) {
-                    results.push(chapterFromLink(id, nextLink));
+                    chapters.push(chapterFromLink(id, nextLink));
                 }
             }
-            this.nextChaptersCache[url] = results;
+            await this.storage.setCache(cacheKey, chapters, 24 * 60 * 60 * 1000);
         }
-
-        return this.nextChaptersCache[url];
+        return chapters;
     }
 
     // Check if we are logged in
