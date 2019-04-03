@@ -2,7 +2,7 @@
     "manifest_version": 2,
 	"name": "Novel Updates Notifier",
 	"short_name": "NU Notifier",
-	"version": "1.2.1",
+	"version": "1.2.2",
 
 	"author": "Spark-NF",
 	"developer": {
