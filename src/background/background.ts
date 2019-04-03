@@ -79,7 +79,7 @@ async function notifyUser(novels: IReadingListResult[], notifications: boolean =
     // Badge notification
     setBadge(novelsWithChanges > 0 ? novelsWithChanges.toString() : "", "red", "white");
 }
-async function loadReadingList(): Promise<IReadingListResult[] | undefined> {
+async function loadReadingList(): Promise<IReadingListResult[]> {
     const readingLists = await client.getReadingLists();
     window.readingLists = readingLists;
 
@@ -103,18 +103,18 @@ async function loadReadingList(): Promise<IReadingListResult[] | undefined> {
             }
         }
     }
-    if (novels.length === 0) {
-        return undefined;
+
+    if (novels.length > 0) {
+        notifyUser(novels);
     }
 
-    notifyUser(novels);
     return novels;
 }
 
 // Reading list accessor
 let readingList: IReadingListResult[];
 let listRefreshIntervalId: number;
-let listRefreshPromise: Promise<IReadingListResult[] | undefined>;
+let listRefreshPromise: Promise<IReadingListResult[]>;
 async function reloadReadingList(): Promise<void> {
     try {
         if (!listRefreshPromise) {
