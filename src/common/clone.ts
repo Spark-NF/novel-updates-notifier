@@ -1,4 +1,4 @@
-export function clone(obj: any): any {
+export function clone<T>(obj: T): T {
     if (obj === null || obj === undefined) {
         return obj;
     }
