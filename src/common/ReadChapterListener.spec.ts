@@ -24,7 +24,7 @@ function makeMock() {
     };
 }
 
-describe("ReadChapterListener", async () => {
+describe("ReadChapterListener", () => {
     const chapters: IReadingListResultChapter[] = [{
         id: 1,
         name: "c1",

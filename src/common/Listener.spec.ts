@@ -19,7 +19,7 @@ function makeMock(active: boolean) {
     };
 }
 
-describe("waitForPermission", async () => {
+describe("waitForPermission", () => {
     it("Directly calls add if the permission is already granted", async () => {
         const listener = makeMock(false);
         const permission = new FakePermission(true);
