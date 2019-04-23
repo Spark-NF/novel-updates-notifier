@@ -49,6 +49,25 @@ describe("Setting", () => {
         expect(val).toBe(7);
     });
 
+    it("Uses the builder if passed to the constructor", async () => {
+        const mock = new FakeStorageArea();
+        const storage = new Storage();
+        await storage.init(mock, mock);
+
+        const setter = new Setting<number>(storage, "test", 5, (a) => a * 2);
+        await setter.preload();
+
+        const first = setter.get();
+        expect(first).toBe(5);
+
+        await setter.set(7);
+
+        const getter = new Setting<number>(storage, "test", 5, (a) => a * 2);
+        await getter.preload();
+        const val = getter.get();
+        expect(val).toBe(14);
+    });
+
     it("Triggers the 'change' event when the value is changed", async () => {
         const handler = jest.fn();
 

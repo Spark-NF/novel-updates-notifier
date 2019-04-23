@@ -8,17 +8,21 @@ export class Setting<T> extends Observable {
     private key: string;
     private def: T;
     private value?: T;
+    private builder?: (obj: T) => T;
 
-    constructor(storage: Storage, key: string, def: T) {
+    constructor(storage: Storage, key: string, def: T, builder?: (obj: T) => T) {
         super();
 
         this.storage = storage;
         this.key = key;
         this.def = def;
+        this.builder = builder;
     }
 
     private async reload(): Promise<void> {
-        this.value = await this.storage.getSync(Setting.PREFIX + this.key) || this.def;
+        const loaded = await this.storage.getSync(Setting.PREFIX + this.key);
+        const built = this.builder && loaded ? this.builder(loaded) : loaded;
+        this.value = built || this.def;
     }
 
     private async sync(): Promise<void> {
