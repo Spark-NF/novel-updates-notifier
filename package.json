@@ -22,29 +22,28 @@
   },
   "homepage": "https://github.com/Spark-NF/novel-updates-notifier#readme",
   "dependencies": {
-    "@types/firefox-webext-browser": "67.0.0",
+    "@types/firefox-webext-browser": "67.0.2",
     "@types/vue": "2.0.0",
     "bootstrap": "4.3.1",
     "font-awesome": "4.7.0",
-    "rollup": "1.10.1",
-    "rollup-plugin-commonjs": "9.3.4",
-    "rollup-plugin-node-resolve": "4.2.3",
-    "rollup-plugin-tslint": "0.2.2",
-    "rollup-plugin-typescript": "1.0.1",
-    "rollup-plugin-vue": "5.0.0",
-    "typescript": "3.4.4",
+    "rollup": "1.16.7",
+    "rollup-plugin-commonjs": "10.0.1",
+    "rollup-plugin-node-resolve": "5.2.0",
+    "rollup-plugin-tslint": "0.2.2",    "rollup-plugin-typescript": "1.0.1",
+    "rollup-plugin-vue": "5.0.1",
+    "typescript": "3.5.3",
     "vue": "2.6.10",
-    "vue-class-component": "7.0.2",
-    "vue-property-decorator": "8.1.0",
+    "vue-class-component": "7.1.0",
+    "vue-property-decorator": "8.2.1",
     "vue-template-compiler": "2.6.10",
     "webextension-polyfill": "0.4.0"
   },
   "devDependencies": {
-    "@types/jest": "24.0.11",
-    "addons-linter": "1.9.1",
+    "@types/jest": "24.0.15",
+    "addons-linter": "1.10.1",
     "event-stream": "4.0.1",
-    "jest": "24.7.1",
+    "jest": "24.8.0",
     "ts-jest": "24.0.2",
-    "tslint": "5.16.0"
+    "tslint": "5.18.0"
   }
 }
