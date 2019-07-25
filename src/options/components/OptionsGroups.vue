@@ -1,6 +1,6 @@
 <template>
     <form>
-        <div class="novel-group" v-for="group in groups">
+        <div class="novel-group" v-for="(group, gIndex) in groups" :key="gIndex">
             <div class="form-group row">
                 <label for="name" class="col-4 col-form-label">Name</label>
                 <div class="col-8 input-group">
@@ -16,7 +16,7 @@
                 <label for="lists" class="col-4 col-form-label">Lists</label>
                 <div class="col-8">
                     <select name="lists" class="form-control" id="lists" v-model="group.readingLists" multiple>
-                        <option v-for="list in readingLists" :value="list.id">
+                        <option v-for="list in readingLists" :value="list.id" :key="list.IReadingList">
                             {{ list.name }}
                         </option>
                     </select>
@@ -33,7 +33,7 @@
                     <p class="text-muted mb-0 mt-2" v-if="group.filters.length === 0">
                         This group does not have any filter set.
                     </p>
-                    <div class="input-group mb-1" v-for="filter in group.filters">
+                    <div class="input-group mb-1" v-for="(filter, fIndex) in group.filters" :key="fIndex">
                         <div class="input-group-prepend">
                             <select class="form-control" v-model="filter.operator">
                                 <option value="gt">&gt;</option>
