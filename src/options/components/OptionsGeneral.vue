@@ -33,6 +33,12 @@
                 <label class="form-check-label" for="auto-mark-as-read">Automatically mark chapters as read</label>
             </div>
         </div>
+        <div class="form-group">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" name="sum-unread-chapters" id="sum-unread-chapters" value="1" v-model="sumUnreadChapters" />
+                <label class="form-check-label" for="sum-unread-chapters">Show total unread chapters in badge</label>
+            </div>
+        </div>
     </form>
 </template>
 
@@ -59,5 +65,8 @@ export default class OptionsGeneral extends Vue {
 
     get autoMarkAsRead(): boolean { return this.settings.autoMarkAsRead.get(); }
     set autoMarkAsRead(val: boolean) { this.settings.autoMarkAsRead.set(val); }
+
+    get sumUnreadChapters(): boolean { return this.settings.sumUnreadChapters.get(); }
+    set sumUnreadChapters(val: boolean) { this.settings.sumUnreadChapters.set(val); }
 };
 </script>

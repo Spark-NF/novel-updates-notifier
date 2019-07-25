@@ -60,7 +60,7 @@ async function notifyUser(novels: IReadingListResult[], notifications: boolean =
     const novelsWithNewChanges = [];
     for (const novel of novels) {
         if (novel.status.id && novel.status.id !== novel.latest.id) {
-            novelsWithChanges++;
+            novelsWithChanges += settings.sumUnreadChapters.get() ? novel.nextLength : 1;
             if (!(novel.id in lastChanges) || lastChanges[novel.id] !== novel.latest.id) {
                 novelsWithNewChanges.push(`${novel.name} (${novel.latest.name})`);
                 lastChanges[novel.id] = novel.latest.id;

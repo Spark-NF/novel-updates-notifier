@@ -14,6 +14,7 @@ export class Settings {
     public readInSidebar: Setting<boolean>;
     public customCss: Setting<boolean>;
     public autoMarkAsRead: Setting<boolean>;
+    public sumUnreadChapters: Setting<boolean>;
     public groups: Setting<IGroup[]>;
     public searchMode: Setting<string>;
 
@@ -23,6 +24,7 @@ export class Settings {
         this.readInSidebar = new Setting<boolean>(storage, "readInSidebar", false);
         this.customCss = new Setting<boolean>(storage, "customCss", false);
         this.autoMarkAsRead = new Setting<boolean>(storage, "autoMarkAsRead", false);
+        this.sumUnreadChapters = new Setting<boolean>(storage, "sumUnreadChapters", false);
         this.groups = new Setting<IGroup[]>(storage, "groups", []);
         this.searchMode = new Setting<string>(storage, "SearchMode", "search");
     }
@@ -33,6 +35,7 @@ export class Settings {
         await this.readInSidebar.preload();
         await this.customCss.preload();
         await this.autoMarkAsRead.preload();
+        await this.sumUnreadChapters.preload();
         await this.groups.preload();
         await this.searchMode.preload();
     }
