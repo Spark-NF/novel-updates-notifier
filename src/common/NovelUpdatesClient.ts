@@ -298,8 +298,8 @@ export class NovelUpdatesClient {
             let status: IReadingListResultChapter;
             let latest: IReadingListResultChapter;
 
-            if (cells.length > 3) {
-                const chapterLinks = row.getElementsByClassName("chp-release");
+            const chapterLinks = row.getElementsByClassName("chp-release");
+            if (chapterLinks.length >= 2) {
                 const statusLink = chapterLinks[0] as HTMLAnchorElement;
                 const latestLink = chapterLinks[1] as HTMLAnchorElement;
                 const inputs = Array.from(row.getElementsByTagName("input"));
