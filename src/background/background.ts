@@ -55,10 +55,13 @@ async function tryLogin(username: string, password: string): Promise<boolean> {
 // Get the status of novels in the user's reading list
 const lastChanges: { [novelId: number]: number } = {};
 async function notifyUser(novels: IReadingListResult[], notifications: boolean = true): Promise<void> {
+    // Skip ignored novels
+    const notIgnored = novels.filter((n) => !n.ignore);
+
     // Get novels with changes
     let novelsWithChanges = 0;
     const novelsWithNewChanges = [];
-    for (const novel of novels) {
+    for (const novel of notIgnored) {
         if (novel.status.id && novel.status.id !== novel.latest.id) {
             novelsWithChanges += settings.sumUnreadChapters.get() ? novel.nextLength : 1;
             if (!(novel.id in lastChanges) || lastChanges[novel.id] !== novel.latest.id) {
@@ -89,7 +92,7 @@ async function loadReadingList(): Promise<IReadingListResult[]> {
     if (groups.length > 0) {
         for (const group of groups) {
             for (const id of group.readingLists) {
-                const l = await client.getReadingListNovels(id);
+                const l = await client.getReadingListNovels(id, group.ignore);
                 if (l) {
                     novels.push(...l.filter((novel) => isValid(novel, group.filters)));
                 }

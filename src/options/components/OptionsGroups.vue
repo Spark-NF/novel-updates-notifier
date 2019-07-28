@@ -13,6 +13,12 @@
                 </div>
             </div>
             <div class="form-group row">
+                <label for="ignore" class="col-4 col-form-label">Ignore</label>
+                <div class="col-8 input-group">
+                    <input type="checkbox" name="ignore" id="ignore" value="1" v-model="group.ignore" />
+                </div>
+            </div>
+            <div class="form-group row">
                 <label for="lists" class="col-4 col-form-label">Lists</label>
                 <div class="col-8">
                     <select name="lists" class="form-control" id="lists" v-model="group.readingLists" multiple>

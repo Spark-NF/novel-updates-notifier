@@ -1,5 +1,5 @@
 <template>
-    <tr :class="{ 'table-warning': hasNew }" :id="'novel-row-' + novel.id">
+    <tr :class="{ 'table-warning': hasNew && !novel.ignore, 'table-secondary': hasNew && novel.ignore }" :id="'novel-row-' + novel.id">
         <td class="novel-name">
             <a :href="novel.url" target="_blank">
                 {{ novel.name }}

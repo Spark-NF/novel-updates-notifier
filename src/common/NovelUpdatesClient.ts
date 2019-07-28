@@ -31,6 +31,7 @@ export interface IReadingListResult {
     latest: IReadingListResultChapter;
     readingList: number;
     manual?: boolean;
+    ignore?: boolean;
 }
 
 export interface IReadingList {
@@ -275,7 +276,7 @@ export class NovelUpdatesClient {
         return chapters;
     }
 
-    public async getReadingListNovels(id: number): Promise<IReadingListResult[] | undefined> {
+    public async getReadingListNovels(id: number, ignore?: boolean): Promise<IReadingListResult[] | undefined> {
         if (!await this.checkLoginStatus()) {
             return undefined;
         }
@@ -345,6 +346,11 @@ export class NovelUpdatesClient {
             // Manual reading list
             if (manual) {
                 novel.manual = manual;
+            }
+
+            // Ignored reading lists
+            if (ignore) {
+                novel.ignore = ignore;
             }
 
             await this.loadNextChapters(novel, row);

@@ -6,6 +6,7 @@ export interface IGroup {
     name: string;
     readingLists: number[];
     filters: IFilter[];
+    ignore?: boolean;
 }
 
 export class Settings {
