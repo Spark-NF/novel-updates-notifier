@@ -67,3 +67,15 @@
 	border-top-left-radius: 0;
 	border-bottom-left-radius: 0;
 }
+
+.novel-group {
+	padding-bottom: 0.5rem;
+	border-bottom: 1px dotted #333;
+	margin-bottom: 1rem;
+}
+.novel-group:last-of-type {
+	border-bottom: none;
+}
+.novel-group .form-group {
+	margin-bottom: 0.5rem;
+}
