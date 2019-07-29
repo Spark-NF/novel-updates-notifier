@@ -219,6 +219,7 @@ async function saveGroups(groups: IGroup[]) {
                 groups: clone(settings.groups.get()),
                 readingLists: clone(background.readingLists),
                 hasSidebar: browser.sidebarAction !== undefined,
+                hasBadge: !!(browser.browserAction && browser.browserAction.setBadgeText),
                 openInSidebar: settings.readInSidebar.get(),
             },
         },

@@ -33,7 +33,7 @@
                 <label class="form-check-label" for="auto-mark-as-read">Automatically mark chapters as read</label>
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group" v-if="hasBadge">
             <div class="form-check">
                 <input type="checkbox" class="form-check-input" name="sum-unread-chapters" id="sum-unread-chapters" value="1" v-model="sumUnreadChapters" />
                 <label class="form-check-label" for="sum-unread-chapters">Show total unread chapters in badge</label>
@@ -50,6 +50,7 @@ import { Settings } from "../../common/Settings";
 export default class OptionsGeneral extends Vue {
     @Prop() readonly settings: Settings;
     @Prop() readonly hasSidebar: boolean;
+    @Prop() readonly hasBadge: boolean;
 
     get interval(): number { return this.settings.interval.get(); }
     set interval(val: number) { this.settings.interval.set(val); }

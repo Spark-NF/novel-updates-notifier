@@ -16,6 +16,7 @@ const settings = new Settings(storage);
         el: "#app",
         data: {
             hasSidebar: browser.sidebarAction !== undefined,
+            hasBadge: !!(browser.browserAction && browser.browserAction.setBadgeText),
         },
         computed: {
             settings(): Settings {
