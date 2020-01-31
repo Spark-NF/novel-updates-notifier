@@ -10,6 +10,7 @@ import OptionsGeneral from "../options/components/OptionsGeneral.vue";
 import OptionsGroups from "../options/components/OptionsGroups.vue";
 import ChapterLink from "./components/ChapterLink.vue";
 import NovelRow from "./components/NovelRow.vue";
+import Popup from "./components/Popup.vue";
 
 Vue.component("chapter-link", ChapterLink);
 Vue.component("novel-row", NovelRow);
@@ -190,7 +191,7 @@ async function saveGroups(groups: IGroup[]) {
     await storage.init();
     await settings.preload();
 
-    app = new Vue({
+    app = new Popup({
         el: "#app",
         data: {
             loadingMessage: "Loading...",

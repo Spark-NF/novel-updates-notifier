@@ -29,6 +29,9 @@ export default Object.keys(files).map(input => ({
         commonjs(),
         VuePlugin({
             template: {
+                transformAssetUrls: {
+                    img: [],
+                },
                 isProduction: false,
             },
         }),
