@@ -27,7 +27,11 @@ export default Object.keys(files).map(input => ({
     plugins: [
         resolve(),
         commonjs(),
-        VuePlugin(),
+        VuePlugin({
+            template: {
+                isProduction: false,
+            },
+        }),
         tslint({
             tsConfigSearchPath: "src",
             configuration: "src/tslint.json",
