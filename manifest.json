@@ -16,7 +16,7 @@
 		"96": "icons/icon-96.png",
 		"128": "icons/icon-128.png"
 	},
-	"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+	"content_security_policy": "script-src 'self'; object-src 'self'; connect-src https://www.novelupdates.com",
 
 	"applications": {
 		"gecko": {
