@@ -21,7 +21,7 @@ describe("NovelUpdatesClient", () => {
         } as any;
     }
 
-    function setUpAjax(responses: { [url: string]: string | number } | Array<string | number>) {
+    function setUpAjax(responses: { [url: string]: string | number } | (string | number)[]) {
         let index = 0;
         (ajax as any).ajax.mockImplementation((url: string) => {
             const response = Array.isArray(responses) ? responses[index++] : responses[url] || responses["*"];
