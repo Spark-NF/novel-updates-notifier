@@ -11,7 +11,7 @@
 ## About
 Add-on that notifies you when a novel from your reading list has a new chapter available.
 
-As a WebExtension, it is compatible with both Chrome and Firefox.
+As a WebExtension, it is compatible with both Chrome, Firefox, and the latest Edge version.
 
 ### Features
 * Checks when new chapters are out for the novels in your reading list

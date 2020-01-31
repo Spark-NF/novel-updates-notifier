@@ -8,7 +8,7 @@
     "watch": "bash scripts/watch.sh",
     "check": "bash scripts/check.sh",
     "test": "bash scripts/test.sh",
-    "package": "bash scripts/package.sh chrome && bash scripts/package.sh firefox",
+    "package": "bash scripts/package.sh chrome && bash scripts/package.sh firefox && bash scripts/package.sh edge",
     "check-package": "bash scripts/check-package.sh"
   },
   "repository": {
