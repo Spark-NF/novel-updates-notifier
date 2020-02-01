@@ -171,6 +171,7 @@ async function doLogin() {
         app.$data.login.error = "";
         app.$data.login.ok = true;
 
+        showLoader("Loading reading list...");
         await background.reloadReadingList();
         await displayNovels();
     } else {
