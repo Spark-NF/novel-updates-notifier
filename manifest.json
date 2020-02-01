@@ -26,11 +26,9 @@
 	},
 
 	"background": {
-		"scripts": [
-			"src/vendor/js/browser-polyfill.min.js",
-			"src/background/bundle.js"
-		]
-	},
+		"page": "src/background/background.html",
+        "persistent": true
+    },
 
 	"permissions": [
 		"storage",
