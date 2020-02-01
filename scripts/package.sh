@@ -20,8 +20,10 @@ zip -r -q $ZIPFILE . -x "src/**/*.ts" "src/**/*.js" "src/**/*.map" "src/common/"
 zip -r -q $ZIPFILE . -i "src/vendor/**/*.js" "src/**/bundle.js"
 
 # Generate and add manifest file
-if [ $TARGET == "chrome" ] || [ $TARGET == "edge" ]; then
+if [ $TARGET == "chrome" ]; then
     jq "del(.developer,.applications,.sidebar_action)" "manifest.json" > "packages/manifest.json"
+elif [ $TARGET == "edge" ]; then
+    jq "del(.developer,.applications,.sidebar_action,.browser_action.theme_icons)" "manifest.json" > "packages/manifest.json"
 else
     jq ".permissions=([.permissions,.optional_permissions]|flatten) | del(.optional_permissions)" "manifest.json" > "packages/manifest.json"
 fi
