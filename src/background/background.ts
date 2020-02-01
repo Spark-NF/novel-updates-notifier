@@ -42,7 +42,9 @@ async function tryLogin(username: string, password: string): Promise<boolean> {
     if (!username || !password) {
         return false;
     }
-    client.login(username, password);
+    try {
+        await client.login(username, password);
+    } catch (e) {}
     for (let i = 0; i < 30; ++i) {
         if (await client.checkLoginStatus()) {
             return true;
