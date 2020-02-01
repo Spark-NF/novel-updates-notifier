@@ -49,6 +49,9 @@ function fixUrl(url: string): string {
     if (url.startsWith("chrome-extension://")) {
         return "https:" + url.substr(17);
     }
+    if (url.startsWith("ms-browser-extension://")) {
+        return "https:" + url.substr(21);
+    }
     if (url.startsWith("//")) {
         return "https:" + url;
     }
