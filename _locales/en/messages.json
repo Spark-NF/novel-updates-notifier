@@ -1,0 +1,167 @@
+{
+    "extensionName": {
+        "message": "Novel Updates Notifier",
+        "description": "Name of the extension."
+    },
+    "extensionDescription": {
+        "message": "Add a notification icon and reading shortcuts for your Novel Updates reading list.",
+        "description": "Description of the extension."
+    },
+
+    "badgeOff": {
+        "message": "OFF"
+    },
+    "badgeError": {
+        "message": "ERR"
+    },
+
+    "loading": {
+        "message": "Loading..."
+    },
+    "loadingGettingNovelId": {
+        "message": "Getting novel ID..."
+    },
+    "loadingAddingNovel": {
+        "message": "Adding novel..."
+    },
+    "loadingRefreshingNovels": {
+        "message": "Refreshing novels..."
+    },
+    "loadingResults": {
+        "message": "Loading results..."
+    },
+    "loadingReadingList": {
+        "message": "Loading reading list..."
+    },
+
+    "novelTableHeaderName": {
+        "message": "Name"
+    },
+    "novelTableHeaderRead": {
+        "message": "Read"
+    },
+    "novelTableHeaderNext": {
+        "message": "Next"
+    },
+    "novelTableHeaderLatest": {
+        "message": "Latest"
+    },
+    "searchPlaceholder": {
+        "message": "Search..."
+    },
+    "buttonSettings": {
+        "message": "Settings"
+    },
+    "buttonOpen": {
+        "message": "Open"
+    },
+    "buttonRefresh": {
+        "message": "Refresh"
+    },
+    "nextRefresh": {
+        "message": "Next refresh in $TIMER$",
+        "placeholders": {
+            "timer" : {
+                "content" : "$1",
+                "example" : "12:34"
+            }
+        }
+    },
+    "novelTableButtonMarkLastRead": {
+        "message": "Mark last chapter as read"
+    },
+    "novelTableButtonEditManually": {
+        "message": "Edit last read chapter manually"
+    },
+    "novelTableButtonRemove": {
+        "message": "Remove novel from reading list"
+    },
+
+    "loginButton": {
+        "message": "Login"
+    },
+    "loginUsername": {
+        "message": "Username"
+    },
+    "loginPassword": {
+        "message": "Password"
+    },
+    "loginLoading": {
+        "message": "Logging in..."
+    },
+    "loginError": {
+        "message": "Login failure"
+    },
+
+    "settingsBack": {
+        "message": "Back"
+    },
+    "settingsGeneral": {
+        "message": "General settings"
+    },
+    "settingsGroups": {
+        "message": "Group settings"
+    },
+
+    "settingInterval": {
+        "message": "Interval"
+    },
+    "settingIntervalSuffix": {
+        "message": "minutes"
+    },
+    "settingNotifications": {
+        "message": "Enable notifications"
+    },
+    "settingSidebar": {
+        "message": "Open chapters in sidebar"
+    },
+    "settingSidebarCss": {
+        "message": "Use custom CSS in sidebar"
+    },
+    "settingMarkRead": {
+        "message": "Automatically mark chapters as read"
+    },
+    "settingSumUnread": {
+        "message": "Show total unread chapters in badge"
+    },
+
+    "settingGroupName": {
+        "message": "Name"
+    },
+    "settingGroupDelete": {
+        "message": "Delete this group"
+    },
+    "settingGroupIgnore": {
+        "message": "Ignore"
+    },
+    "settingGroupLists": {
+        "message": "Lists"
+    },
+    "settingGroupFilters": {
+        "message": "Filters"
+    },
+    "settingGroupFilterAdd": {
+        "message": "Add new filter"
+    },
+    "settingGroupFilterEmpty": {
+        "message": "This group does not have any filter set."
+    },
+    "settingGroupFilterVariableUnread": {
+        "message": "Unread chapters"
+    },
+    "settingGroupFilterVariableDays": {
+        "message": "Days since first unread"
+    },
+    "settingGroupFilterVariableLatest": {
+        "message": "Days since latest"
+    },
+    "settingGroupFilterVariableDelete": {
+        "message": "Delete this filter"
+    },
+    "settingGroupAdd": {
+        "message": "Add"
+    },
+    "settingGroupSave": {
+        "message": "Save"
+    }
+}

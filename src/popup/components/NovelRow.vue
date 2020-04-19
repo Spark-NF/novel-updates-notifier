@@ -30,13 +30,13 @@
             <chapter-link :chapter="novel.latest" :open-in-sidebar="openInSidebar" />
         </td>
         <td class="novel-actions" v-if="!loadingMessage">
-            <button class="btn btn-xs btn-icon btn-success" title="Mark last chapter as read" @click="markLatestAsRead" v-if="hasNew && novel.status.id && novel.latest.id !== undefined && !novel.manual">
+            <button class="btn btn-xs btn-icon btn-success" :title="'novelTableButtonMarkLastRead' | tr" @click="markLatestAsRead" v-if="hasNew && novel.status.id && novel.latest.id !== undefined && !novel.manual">
                 <i class="fa fa-check"></i>
             </button>
-            <button class="btn btn-xs btn-icon btn-warning" title="Edit last read chapter manually" @click="startEdition" v-if="!editing">
+            <button class="btn btn-xs btn-icon btn-warning" :title="'novelTableButtonEditManually' | tr" @click="startEdition" v-if="!editing">
                 <i class="fa fa-pencil"></i>
             </button>
-            <button class="btn btn-xs btn-icon btn-danger" title="Remove novel from reading list" @click="removeNovel(novel)">
+            <button class="btn btn-xs btn-icon btn-danger" :title="'novelTableButtonRemove' | tr" @click="removeNovel(novel)">
                 <i class="fa fa-trash-o"></i>
             </button>
         </td>
@@ -46,6 +46,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Emit } from "vue-property-decorator";
 import { IReadingListResult, NovelUpdatesClient, IReadingListResultChapter } from "../../common/NovelUpdatesClient";
+import { tr } from "../../common/translate";
 
 interface IBackground extends Window {
     client: NovelUpdatesClient;
@@ -97,7 +98,7 @@ export default class NovelRow extends Vue {
     }
 
     markChapterAsRead(chapter: IReadingListResultChapter | string, novel: IReadingListResult) {
-        this.loadingMessage = "Loading...";
+        this.loadingMessage = tr("loading");
         this.$emit("mark-chapter-as-read", chapter, novel, () => {
             this.loadingMessage = "";
         });

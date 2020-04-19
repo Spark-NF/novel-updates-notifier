@@ -11,20 +11,20 @@
                 <div class="block-body">
                     <p id="login-error" class="text-danger" v-if="login.error">{{ login.error }}</p>
                     <div class="form-group row">
-                        <label for="username" class="col-4 col-form-label">Username</label>
+                        <label for="username" class="col-4 col-form-label">{{ "loginUsername" | tr }}</label>
                         <div class="col-8">
                             <input type="text" class="form-control" name="username" id="username" v-model="login.username" />
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="password" class="col-4 col-form-label">Password</label>
+                        <label for="password" class="col-4 col-form-label">{{ "loginPassword" | tr }}</label>
                         <div class="col-8">
                             <input type="password" class="form-control" name="password" id="password" v-model="login.password" />
                         </div>
                     </div>
                 </div>
                 <div class="block-footer">
-                    <button type="submit" class="btn btn-primary"><i class="fa fa-sign-in"></i> Login</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-sign-in"></i> {{ "loginButton" | tr }}</button>
                 </div>
             </form>
         </div>
@@ -34,8 +34,8 @@
                     <options-groups :groups="settings.groups" :reading-lists="settings.readingLists" @save-groups="saveGroups" />
                 </div>
                 <div class="block-footer">
-                    <button class="btn btn-secondary float-right settings-back" @click="closeSettings"><i class="fa fa-chevron-circle-left"></i> Back</button>
-                    <button class="btn btn-primary float-left" id="open-general-settings" @click="openGeneralSettings"><i class="fa fa-cogs"></i> General settings</button>
+                    <button class="btn btn-secondary float-right settings-back" @click="closeSettings"><i class="fa fa-chevron-circle-left"></i> {{ "settingsBack" | tr }}</button>
+                    <button class="btn btn-primary float-left" id="open-general-settings" @click="openGeneralSettings"><i class="fa fa-cogs"></i> {{ "settingsGeneral" | tr }}</button>
                 </div>
             </div>
             <div id="settings-general" v-if="settings.panel === 'general'">
@@ -43,8 +43,8 @@
                     <options-general :settings="settingsObj" :has-sidebar="settings.hasSidebar" :has-badge="settings.hasBadge" />
                 </div>
                 <div class="block-footer">
-                    <button class="btn btn-secondary float-right settings-back" @click="closeSettings"><i class="fa fa-chevron-circle-left"></i> Back</button>
-                    <button class="btn btn-primary float-left" id="open-groups-settings" @click="openGroupsSettings"><i class="fa fa-list"></i> Group settings</button>
+                    <button class="btn btn-secondary float-right settings-back" @click="closeSettings"><i class="fa fa-chevron-circle-left"></i> {{ "settingsBack" | tr }}</button>
+                    <button class="btn btn-primary float-left" id="open-groups-settings" @click="openGroupsSettings"><i class="fa fa-list"></i> {{ "settingsGroups" | tr }}</button>
                 </div>
             </div>
         </div>
@@ -54,7 +54,7 @@
                     <form>
                         <div class="form-group">
                             <div style="position:relative">
-                                <input type="text" class="form-control" name="search" v-model="search.value" @input="doSearch" placeholder="Search..." />
+                                <input type="text" class="form-control" name="search" v-model="search.value" @input="doSearch" :placeholder="'searchPlaceholder' | tr" />
                                 <span style="position: absolute; right: 7px; top: 5px;">
                                     <div class="btn-group" role="group">
                                         <button type="button" class="btn btn-xs btn-icon" :class="{ 'btn-secondary': search.mode === 'filter', 'btn-outline-secondary': search.mode !== 'filter' }" @click="setSearchMode('filter')">
@@ -90,10 +90,10 @@
                 <table id="novel-table" class="table table-sm">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Read</th>
-                            <th>Next</th>
-                            <th>Latest</th>
+                            <th>{{ "novelTableHeaderName" | tr }}</th>
+                            <th>{{ "novelTableHeaderRead" | tr }}</th>
+                            <th>{{ "novelTableHeaderNext" | tr }}</th>
+                            <th>{{ "novelTableHeaderLatest" | tr }}</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -103,11 +103,11 @@
                 </table>
             </div>
             <div class="block-footer">
-                <button id="open-settings" class="btn btn-secondary float-right" @click="openSettings"><i class="fa fa-cogs"></i> Settings</button>
-                <a href="https://www.novelupdates.com/reading-list/" target="_blank" class="btn btn-success float-left mr-1"><i class="fa fa-external-link"></i> Open</a>
+                <button id="open-settings" class="btn btn-secondary float-right" @click="openSettings"><i class="fa fa-cogs"></i> {{ "buttonSettings" | tr }}</button>
+                <a href="https://www.novelupdates.com/reading-list/" target="_blank" class="btn btn-success float-left mr-1"><i class="fa fa-external-link"></i> {{ "buttonOpen" | tr }}</a>
                 <div class="d-flex align-items-center">
-                    <button id="refresh-novel-list" class="btn btn-info" @click="refreshNovels"><i class="fa fa-refresh"></i> Refresh</button>
-                    <span class="ml-3 text-muted">Next refresh in <span id="next-refresh">{{ novels.nextRefresh }}</span></span>
+                    <button id="refresh-novel-list" class="btn btn-info" @click="refreshNovels"><i class="fa fa-refresh"></i> {{ "buttonRefresh" | tr }}</button>
+                    <span class="ml-3 text-muted">{{ "nextRefresh" | tr(novels.nextRefresh) }}</span>
                     <span class="ml-2 text-warning" id="loading-error" :title="novels.error" v-if="novels.error"><i class="fa fa-exclamation-triangle"></i></span>
                 </div>
             </div>

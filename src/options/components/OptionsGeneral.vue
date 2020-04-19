@@ -1,42 +1,42 @@
 <template>
     <form>
         <div class="form-group row">
-            <label for="interval" class="col-4 col-form-label">Interval</label>
+            <label for="interval" class="col-4 col-form-label">{{ "settingInterval" | tr }}</label>
             <div class="col-8 input-group">
                 <input type="number" class="form-control" name="interval" id="interval" v-model="interval" />
                 <div class="input-group-append">
-                    <span class="input-group-text">minutes</span>
+                    <span class="input-group-text">{{ "settingIntervalSuffix" | tr }}</span>
                 </div>
             </div>
         </div>
         <div class="form-group">
             <div class="form-check">
                 <input type="checkbox" class="form-check-input" name="notifications" id="notifications" value="1" v-model="notifications" />
-                <label class="form-check-label" for="notifications">Enable notifications</label>
+                <label class="form-check-label" for="notifications">{{ "settingNotifications" | tr }}</label>
             </div>
         </div>
         <div class="form-group" v-if="hasSidebar">
             <div class="form-check">
                 <input type="checkbox" class="form-check-input" name="read-in-sidebar" id="read-in-sidebar" value="1" v-model="readInSidebar" />
-                <label class="form-check-label" for="read-in-sidebar">Open chapters in sidebar</label>
+                <label class="form-check-label" for="read-in-sidebar">{{ "settingSidebar" | tr }}</label>
             </div>
         </div>
         <div class="form-group" v-if="hasSidebar">
             <div class="form-check">
                 <input type="checkbox" class="form-check-input" name="custom-css" id="custom-css" value="1" v-model="customCss" />
-                <label class="form-check-label" for="custom-css">Use custom CSS in sidebar</label>
+                <label class="form-check-label" for="custom-css">{{ "settingSidebarCss" | tr }}</label>
             </div>
         </div>
         <div class="form-group">
             <div class="form-check">
                 <input type="checkbox" class="form-check-input" name="auto-mark-as-read" id="auto-mark-as-read" value="1" v-model="autoMarkAsRead" />
-                <label class="form-check-label" for="auto-mark-as-read">Automatically mark chapters as read</label>
+                <label class="form-check-label" for="auto-mark-as-read">{{ "settingMarkRead" | tr }}</label>
             </div>
         </div>
         <div class="form-group" v-if="hasBadge">
             <div class="form-check">
                 <input type="checkbox" class="form-check-input" name="sum-unread-chapters" id="sum-unread-chapters" value="1" v-model="sumUnreadChapters" />
-                <label class="form-check-label" for="sum-unread-chapters">Show total unread chapters in badge</label>
+                <label class="form-check-label" for="sum-unread-chapters">{{ "settingSumUnread" | tr }}</label>
             </div>
         </div>
     </form>

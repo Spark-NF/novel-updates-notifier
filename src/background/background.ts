@@ -10,6 +10,7 @@ import { ReadChapterListener } from "../common/ReadChapterListener";
 import { Settings } from "../common/Settings";
 import { sleep } from "../common/sleep";
 import { Storage } from "../common/Storage";
+import { tr } from "../common/translate";
 
 interface ICustomWindow extends Window {
     readingLists: any;
@@ -34,7 +35,7 @@ const client = new NovelUpdatesClient(storage);
 async function checkLoginStatus(): Promise<boolean> {
     const status = await client.checkLoginStatus();
     if (!status) {
-        await setBadge("OFF", "orange", "white");
+        await setBadge(tr("badgeOff"), "orange", "white");
     }
     return status;
 }
@@ -130,7 +131,7 @@ async function reloadReadingList(): Promise<void> {
     } catch (e) {
         // tslint:disable-next-line:no-console
         console.log("Error loading reading list", e);
-        setBadge("Error", "red", "white");
+        setBadge(tr("badgeError"), "red", "white");
         window.networkError = e.toString();
     } finally {
         listRefreshPromise = undefined;

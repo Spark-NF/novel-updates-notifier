@@ -1,0 +1,174 @@
+{
+    "extensionName": {
+        "message": "Novel Updates Notifier",
+        "description": "Nom de l'extension."
+    },
+    "extensionDescription": {
+        "message": "Ajoute une icône de notification et raccourcis pour les listes de lecture Novel Updates.",
+        "description": "Description de l'extension."
+    },
+
+    "badgeOff": {
+        "message": "OFF"
+    },
+    "badgeError": {
+        "message": "ERR"
+    },
+
+    "loading": {
+        "message": "Chargement..."
+    },
+    "loadingGettingNovelId": {
+        "message": "Récupération de l'ID de la novel..."
+    },
+    "loadingAddingNovel": {
+        "message": "Ajout de la novel..."
+    },
+    "loadingRefreshingNovels": {
+        "message": "Rafraîchissement des novels..."
+    },
+    "loadingResults": {
+        "message": "Chargement des résultats..."
+    },
+    "loadingReadingList": {
+        "message": "Chargement des listes de lecture..."
+    },
+
+    "novelTableHeaderName": {
+        "message": "Nom"
+    },
+    "novelTableHeaderRead": {
+        "message": "Lu"
+    },
+    "novelTableHeaderNext": {
+        "message": "Suivant"
+    },
+    "novelTableHeaderLatest": {
+        "message": "Dernier"
+    },
+    "searchPlaceholder": {
+        "message": "Recherche..."
+    },
+    "buttonSettings": {
+        "message": "Options"
+    },
+    "buttonOpen": {
+        "message": "Ouvrir"
+    },
+    "buttonRefresh": {
+        "message": "Rafraîchir"
+    },
+    "nextRefresh": {
+        "message": "Rafraîchissement dans $1"
+    },
+    "novelTableButtonMarkLastRead": {
+        "message": "Marquer le dernier chapitre comme lu"
+    },
+    "novelTableButtonEditManually": {
+        "message": "Modifier le dernier chapitre lu manuellement"
+    },
+    "novelTableButtonRemove": {
+        "message": "Retirer la novel de la liste de lecture"
+    },
+
+    "loginButton": {
+        "message": "Connexion"
+    },
+    "loginUsername": {
+        "message": "Identifiant"
+    },
+    "loginPassword": {
+        "message": "Mot de passe"
+    },
+    "loginLoading": {
+        "message": "Connexion..."
+    },
+    "loginError": {
+        "message": "Erreur de connexion"
+    },
+
+    "settingsBack": {
+        "message": "Retour"
+    },
+    "settingsGeneral": {
+        "message": "Options générales"
+    },
+    "settingsGroups": {
+        "message": "Option de groupes"
+    },
+
+    "settingInterval": {
+        "message": "Intervalle"
+    },
+    "settingIntervalSuffix": {
+        "message": "minutes"
+    },
+    "settingNotifications": {
+        "message": "Activer les notifications"
+    },
+    "settingSidebar": {
+        "message": "Ouvrir les chapitres dans la barre latérale"
+    },
+    "settingSidebarCss": {
+        "message": "Utiliser un CSS personnalisé dans la barre latérale"
+    },
+    "settingMarkRead": {
+        "message": "Marquer les chapitres comme lus automatiquement"
+    },
+    "settingSumUnread": {
+        "message": "Afficher le nombre total de chapitres non lus dans le badge"
+    },
+
+    "settingGroupName": {
+        "message": "Nom"
+    },
+    "settingGroupDelete": {
+        "message": "Supprimer ce groupe"
+    },
+    "settingGroupIgnore": {
+        "message": "Ignorer"
+    },
+    "settingGroupLists": {
+        "message": "Listes"
+    },
+    "settingGroupFilters": {
+        "message": "Filtres"
+    },
+    "settingGroupFilterAdd": {
+        "message": "Ajouter un filtre"
+    },
+    "settingGroupFilterEmpty": {
+        "message": "Ce groupe n'a pas encore de filtre."
+    },
+    "settingGroupFilterVariableUnread": {
+        "message": "Chapitres non lus"
+    },
+    "settingGroupFilterVariableDays": {
+        "message": "Jours depuis le premier chapitre non lu"
+    },
+    "settingGroupFilterVariableLatest": {
+        "message": "Jours depuis le dernier chapitre"
+    },
+    "settingGroupFilterVariableDelete": {
+        "message": "Supprimer ce filtre"
+    },
+    "settingGroupAdd": {
+        "message": "Ajouter"
+    },
+    "settingGroupSave": {
+        "message": "Enregistrer"
+    },
+
+
+
+    "notificationContent": {
+        "message": "! You clicked $URL$.",
+        "description": "Tells the user which link they clicked.",
+        "placeholders": {
+            "url" : {
+                "content" : "$1",
+                "example" : "https://developer.mozilla.org"
+            }
+        }
+    }
+}

@@ -1,6 +1,6 @@
 {
     "manifest_version": 2,
-	"name": "Novel Updates Notifier",
+	"name": "__MSG_extensionName__",
 	"short_name": "NU Notifier",
 	"version": "1.4.0",
 
@@ -9,7 +9,7 @@
 		"name": "Spark-NF",
 		"url": "https://github.com/Spark-NF"
 	},
-    "description": "Add a notification icon and reading shortcuts for your Novel Updates reading list.",
+    "description": "__MSG_extensionDescription__",
 	"homepage_url": "https://github.com/Spark-NF/novel-updates-notifier",
     "icons": {
         "48": "icons/icon-48.png",
@@ -17,6 +17,7 @@
 		"128": "icons/icon-128.png"
 	},
 	"content_security_policy": "script-src 'self'; object-src 'self'; connect-src https://www.novelupdates.com",
+	"default_locale": "en",
 
 	"applications": {
 		"gecko": {

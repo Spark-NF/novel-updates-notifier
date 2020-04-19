@@ -6,6 +6,7 @@ import { IReadingList, IReadingListResult, IReadingListResultChapter, ISearchRes
 import { IGroup, Settings } from "../common/Settings";
 import { Storage } from "../common/Storage";
 import { secondsToString } from "../common/time";
+import { tr } from "../common/translate";
 import OptionsGeneral from "../options/components/OptionsGeneral.vue";
 import OptionsGroups from "../options/components/OptionsGroups.vue";
 import ChapterLink from "./components/ChapterLink.vue";
@@ -16,6 +17,7 @@ Vue.component("chapter-link", ChapterLink);
 Vue.component("novel-row", NovelRow);
 Vue.component("options-general", OptionsGeneral);
 Vue.component("options-groups", OptionsGroups);
+Vue.filter("tr", tr);
 
 interface IBackground extends Window {
     client: NovelUpdatesClient;
@@ -45,15 +47,15 @@ function hideLoader(): void {
 }
 
 async function addNovel(url: string) {
-    showLoader("Getting novel ID...");
+    showLoader(tr("loadingGettingNovelId"));
     app.$data.search.value = "";
     app.$data.search.results = [];
     const id = await background.client.getIdFromUrl(url);
 
-    showLoader("Adding novel...");
+    showLoader(tr("loadingAddingNovel"));
     await background.client.putInList(id, 0);
 
-    showLoader("Refreshing novels...");
+    showLoader(tr("loadingRefreshingNovels"));
     await background.reloadReadingList();
     await displayNovels();
 }
@@ -127,7 +129,7 @@ function openGroupsSettings() {
 
 // Button to refresh novel list
 async function refreshNovels() {
-    showLoader("Refreshing novels...");
+    showLoader(tr("loadingRefreshingNovels"));
 
     await background.reloadReadingList();
     await displayNovels();
@@ -150,7 +152,7 @@ async function doSearch() {
     if (val.length === 0) {
         app.$data.search.results = [];
     } else {
-        app.$data.search.message = "Loading results...";
+        app.$data.search.message = tr("loadingResults");
         const results = await background.client.search(val);
 
         // If the current val is deprecated because the user kept typing, stop here
@@ -165,17 +167,17 @@ async function doSearch() {
 
 // Store credentials on login form submit
 async function doLogin() {
-    showLoader("Logging in...");
+    showLoader(tr("loginLoading"));
 
     if (await background.tryLogin(app.$data.login.username, app.$data.login.password)) {
         app.$data.login.error = "";
         app.$data.login.ok = true;
 
-        showLoader("Loading reading list...");
+        showLoader(tr("loadingReadingList"));
         await background.reloadReadingList();
         await displayNovels();
     } else {
-        app.$data.login.error = "Login failure";
+        app.$data.login.error = tr("loginError");
 
         hideLoader();
     }
@@ -195,7 +197,7 @@ async function saveGroups(groups: IGroup[]) {
     app = new Popup({
         el: "#app",
         data: {
-            loadingMessage: "Loading...",
+            loadingMessage: tr("loading"),
             login: {
                 ok: true,
                 error: "",
@@ -269,7 +271,7 @@ async function saveGroups(groups: IGroup[]) {
     });
 
     if (await background.checkLoginStatus()) {
-        showLoader("Loading reading list...");
+        showLoader(tr("loadingReadingList"));
         await displayNovels();
     } else {
         hideLoader();
