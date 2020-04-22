@@ -48,7 +48,17 @@
                 </div>
             </div>
         </div>
-        <div id="novel-list" v-if="novels.ok">
+        <div id="error" v-if="novels.cloudflareError" style="padding: 20px 0">
+            <div>
+                <img src="../common/error.png" alt="Error" /><br/>
+                <span>
+                    Cloudflare challenge detected<br/><br/>
+                    <a href="https://www.novelupdates.com/reading-list/" target="_blank" class="btn btn-success"><i class="fa fa-external-link"></i> {{ "buttonOpen" | tr }} </a>
+                    <button class="btn btn-info" @click="refreshNovels"><i class="fa fa-refresh"></i> {{ "buttonRefresh" | tr }}</button>
+                </span>
+            </div>
+        </div>
+        <div id="novel-list" v-else-if="novels.ok">
             <div class="block-body">
                 <div id="search">
                     <form>
@@ -106,7 +116,7 @@
                 <button id="open-settings" class="btn btn-secondary float-right" @click="openSettings"><i class="fa fa-cogs"></i> {{ "buttonSettings" | tr }}</button>
                 <a href="https://www.novelupdates.com/reading-list/" target="_blank" class="btn btn-success float-left mr-1"><i class="fa fa-external-link"></i> {{ "buttonOpen" | tr }}</a>
                 <div class="d-flex align-items-center">
-                    <button id="refresh-novel-list" class="btn btn-info" @click="refreshNovels"><i class="fa fa-refresh"></i> {{ "buttonRefresh" | tr }}</button>
+                    <button class="btn btn-info" @click="refreshNovels"><i class="fa fa-refresh"></i> {{ "buttonRefresh" | tr }}</button>
                     <span class="ml-3 text-muted">{{ "nextRefresh" | tr(novels.nextRefresh) }}</span>
                     <span class="ml-2 text-warning" id="loading-error" :title="novels.error" v-if="novels.error"><i class="fa fa-exclamation-triangle"></i></span>
                 </div>

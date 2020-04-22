@@ -59,6 +59,7 @@ async function updateRefreshLabel() {
 
     // Show network error
     app.$data.novels.error = background.networkError;
+    app.$data.novels.cloudflareError = background.cloudflareError;
 }
 setInterval(updateRefreshLabel, 1000);
 
@@ -200,6 +201,7 @@ async function saveGroups(groups: IGroup[]) {
             novels: {
                 ok: false,
                 error: "",
+                cloudflareError: false,
                 nextRefresh: "",
                 results: [],
                 editing: undefined,

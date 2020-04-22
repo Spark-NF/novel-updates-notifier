@@ -218,6 +218,11 @@ export class NovelUpdatesClient {
         }
 
         const rq = await ajax("https://www.novelupdates.com/sort-reading-list/");
+        const st = rq.status;
+        if ((st === 403 || st === 429 || st === 503) && rq.getResponseHeader("server") === "cloudflare") {
+            throw new Error("Cloudflare");
+        }
+
         const parser = new DOMParser();
         const xml = parser.parseFromString(rq.responseText, "text/html");
         const rows = xml.getElementById("myTable read_rl_sort").getElementsByTagName("tr");

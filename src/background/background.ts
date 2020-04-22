@@ -17,6 +17,7 @@ export interface ICustomWindow extends Window {
     client: NovelUpdatesClient;
     nextListRefresh: Date;
     networkError?: string;
+    cloudflareError?: boolean;
 
     checkLoginStatus: (login?: boolean) => Promise<boolean>;
     getReadingList: () => Promise<IReadingListResult[]>;
@@ -45,7 +46,9 @@ async function tryLogin(username: string, password: string): Promise<boolean> {
     }
     try {
         await client.login(username, password);
-    } catch (e) {}
+    } catch (e) {
+        /* no-op */
+    }
     for (let i = 0; i < 30; ++i) {
         if (await client.checkLoginStatus()) {
             return true;
@@ -128,11 +131,19 @@ async function reloadReadingList(): Promise<void> {
         }
         readingList = await listRefreshPromise;
         window.networkError = undefined;
+        window.cloudflareError = undefined;
     } catch (e) {
-        // tslint:disable-next-line:no-console
-        console.log("Error loading reading list", e);
-        setBadge(tr("badgeError"), "red", "white");
-        window.networkError = e.toString();
+        if (e.message === "Cloudflare") {
+            // tslint:disable-next-line:no-console
+            console.log("Clouflare challenge while loading reading list");
+            setBadge(tr("badgeCloudflareError"), "red", "white");
+            window.cloudflareError = true;
+        } else {
+            // tslint:disable-next-line:no-console
+            console.log("Error loading reading list", e);
+            setBadge(tr("badgeError"), "red", "white");
+            window.networkError = e.toString();
+        }
     } finally {
         listRefreshPromise = undefined;
     }
