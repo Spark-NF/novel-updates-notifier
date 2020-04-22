@@ -16,7 +16,7 @@ mkdir -p "packages"
 
 # Add basic files
 rm -f $ZIPFILE
-zip -r -q $ZIPFILE . -x "src/**/*.ts" "src/**/*.js" "src/**/*.vue" "src/**/*.map" "src/common/" -i "LICENSE" "README.md" "icons/*" "src/**/*"
+zip -r -q $ZIPFILE . -x "src/**/*.ts" "src/**/*.js" "src/**/*.vue" "src/**/*.map" "src/common/" -i "LICENSE" "README.md" "icons/*" "src/**/*" "_locales/**/*"
 zip -r -q $ZIPFILE . -i "src/vendor/**/*.js" "src/**/bundle.js"
 
 # Generate and add manifest file
