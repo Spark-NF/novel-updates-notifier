@@ -1,8 +1,9 @@
 // tslint:disable:max-line-length
 
 import Vue from "vue";
+import { ICustomWindow } from "../background/background";
 import { clone } from "../common/clone";
-import { IReadingList, IReadingListResult, IReadingListResultChapter, ISearchResult, NovelUpdatesClient } from "../common/NovelUpdatesClient";
+import { IReadingListResult, IReadingListResultChapter, ISearchResult } from "../common/NovelUpdatesClient";
 import { IGroup, Settings } from "../common/Settings";
 import { Storage } from "../common/Storage";
 import { secondsToString } from "../common/time";
@@ -19,21 +20,7 @@ Vue.component("options-general", OptionsGeneral);
 Vue.component("options-groups", OptionsGroups);
 Vue.filter("tr", tr);
 
-interface IBackground extends Window {
-    client: NovelUpdatesClient;
-    readingLists: IReadingList[];
-
-    checkLoginStatus: (login?: boolean) => Promise<boolean>;
-    getReadingList: () => Promise<IReadingListResult[]>;
-    reloadReadingList: () => Promise<void>;
-    tryLogin: (username: string, password: string) => Promise<boolean>;
-    updateReadingList: (novel: IReadingListResult) => boolean;
-
-    nextListRefresh?: Date;
-    networkError?: string;
-}
-
-const background = browser.extension.getBackgroundPage() as IBackground;
+const background = browser.extension.getBackgroundPage() as ICustomWindow;
 let app: Vue;
 
 const storage = new Storage();

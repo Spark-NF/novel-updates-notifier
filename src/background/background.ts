@@ -12,7 +12,7 @@ import { sleep } from "../common/sleep";
 import { Storage } from "../common/Storage";
 import { tr } from "../common/translate";
 
-interface ICustomWindow extends Window {
+export interface ICustomWindow extends Window {
     readingLists: any;
     client: NovelUpdatesClient;
     nextListRefresh: Date;
