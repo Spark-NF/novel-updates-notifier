@@ -4,7 +4,7 @@
 
 [![Firefox add-on version](https://img.shields.io/amo/v/novel-updates-notifier.svg)](https://addons.mozilla.org/en-US/firefox/addon/novel-updates-notifier/)
 [![Chrome add-on version](https://img.shields.io/chrome-web-store/v/plhhbkakiaffbinchcacleepogbjlban.svg)](https://chrome.google.com/webstore/detail/novel-updates-notifier/plhhbkakiaffbinchcacleepogbjlban)
-[![Build Status](https://travis-ci.org/Spark-NF/novel-updates-notifier.svg?branch=master)](https://travis-ci.org/Spark-NF/novel-updates-notifier)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/Spark-NF/novel-updates-notifier/build.yml)](https://github.com/Spark-NF/novel-updates-notifier/actions)
 [![Code Coverage](https://img.shields.io/codecov/c/github/Spark-NF/novel-updates-notifier.svg)](https://codecov.io/gh/Spark-NF/novel-updates-notifier)
 [![Project license](https://img.shields.io/github/license/Spark-NF/novel-updates-notifier.svg)](https://raw.githubusercontent.com/Spark-NF/novel-updates-notifier/master/LICENSE)
 
