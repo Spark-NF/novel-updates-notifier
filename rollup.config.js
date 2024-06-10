@@ -17,12 +17,12 @@ export default Object.keys(files).map(input => ({
     output: {
         file: files[input],
         format: "iife",
-        treeshake: false,
         globals: {
             "vue": "Vue",
             "vue-class-component": "VueClassComponent",
         },
     },
+    treeshake: false,
     external: ["vue", "vue-class-component"],
     plugins: [
         resolve(),
