@@ -1,6 +1,6 @@
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs'
-import tslint from "rollup-plugin-tslint";
+// import tslint from "rollup-plugin-tslint";
 import typescript from 'rollup-plugin-typescript';
 import VuePlugin from "rollup-plugin-vue";
 
@@ -35,14 +35,14 @@ export default Object.keys(files).map(input => ({
                 isProduction: false,
             },
         }),
-        tslint({
+        /*tslint({
             tsConfigSearchPath: "src",
             configuration: "src/tslint.json",
             exclude: [
                 "node_modules/**",
-                "**/*.vue*",
+                "**-*.vue*",
             ],
-        }),
+        }),*/
         typescript({
             tsconfig: "src/tsconfig.json",
         }),

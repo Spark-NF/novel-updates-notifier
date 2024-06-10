@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     preset: "ts-jest",
     testEnvironment: "jest-environment-jsdom",
 
@@ -21,7 +21,7 @@ module.exports = {
     globals: {
         "ts-jest": {
             diagnostics: false,
-            tsConfig: "src/tsconfig.json"
+            tsconfig: "src/tsconfig.json"
         }
     }
 };
