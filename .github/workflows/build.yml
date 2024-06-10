@@ -16,9 +16,7 @@ jobs:
           node-version: "18.x"
 
       - name: Install dependencies
-        run: |
-          npm install -g codecov
-          npm ci
+        run: npm ci
 
       - name: Lint
         run: npm run check
@@ -33,4 +31,7 @@ jobs:
         run: npm run package
 
       - name: Publish coverage
-        run: codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
