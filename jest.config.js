@@ -18,10 +18,13 @@ export default {
         "src/**/*.ts",
     ],
 
-    globals: {
-        "ts-jest": {
-            diagnostics: false,
-            tsconfig: "src/tsconfig.json"
-        }
-    }
+    transform: {
+        "^.+\\.tsx?$": [
+            "ts-jest",
+            {
+                diagnostics: false,
+                tsconfig: "src/tsconfig.json"
+            },
+        ],
+    },
 };
