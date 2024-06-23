@@ -32,7 +32,7 @@
     "rollup-plugin-eslint": "7.0.0",
     "rollup-plugin-node-resolve": "5.2.0",
     "rollup-plugin-typescript": "1.0.1",
-    "rollup-plugin-vue": "5.1.6",
+    "rollup-plugin-vue": "6.0.0",
     "typescript": "5.4.5",
     "vue": "2.7.16",
     "vue-class-component": "7.2.6",
