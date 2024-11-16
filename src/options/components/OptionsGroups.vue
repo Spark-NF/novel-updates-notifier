@@ -46,9 +46,9 @@ function saveGroups() {
         <div class="novel-group" v-for="(group, gIndex) in groups" :key="gIndex">
             <div class="form-group row">
                 <label for="name" class="col-4 col-form-label">{{ tr("settingGroupName") }}</label>
-                <div class="col-8 input-group">
-                    <input type="text" class="form-control" name="name" id="name" v-model="group.name" />
-                    <div class="input-group-append">
+                <div class="col-8">
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="name" id="name" v-model="group.name" />
                         <button type="button" class="btn btn-danger" :title="tr('settingGroupDelete')" @click.prevent="removeGroup(group)">
                             <i class="fa fa-trash-o"></i>
                         </button>
@@ -57,8 +57,10 @@ function saveGroups() {
             </div>
             <div class="form-group row">
                 <label for="ignore" class="col-4 col-form-label">{{ tr("settingGroupIgnore") }}</label>
-                <div class="col-8 input-group">
-                    <input type="checkbox" name="ignore" id="ignore" value="1" v-model="group.ignore" />
+                <div class="col-8">
+                    <div class="form-check col-form-label">
+                        <input type="checkbox" class="form-check-input" name="ignore" id="ignore" value="1" v-model="group.ignore" />
+                    </div>
                 </div>
             </div>
             <div class="form-group row">
@@ -73,7 +75,7 @@ function saveGroups() {
             </div>
             <div class="form-group row">
                 <label for="lists" class="col-4 col-form-label">
-                    <button class="btn btn-success btn-xs btn-icon float-right" :title="tr('settingGroupFilterAdd')" @click.prevent="addFilter(group)">
+                    <button class="btn btn-success btn-xs btn-icon float-end" :title="tr('settingGroupFilterAdd')" @click.prevent="addFilter(group)">
                         <i class="fa fa-plus"></i>
                     </button>
                     {{ tr("settingGroupFilters") }}
@@ -83,26 +85,22 @@ function saveGroups() {
                         {{ tr("settingGroupFilterEmpty") }}
                     </p>
                     <div class="input-group mb-1" v-for="(filter, fIndex) in group.filters" :key="fIndex">
-                        <div class="input-group-prepend">
-                            <select class="form-control" v-model="filter.operator">
-                                <option value="gt">&gt;</option>
-                                <option value="ge">&ge;</option>
-                                <option value="eq">=</option>
-                                <option value="le">&le;</option>
-                                <option value="lt">&lt;</option>
-                            </select>
-                        </div>
+                        <select class="form-select operator-select" v-model="filter.operator">
+                            <option value="gt">&gt;</option>
+                            <option value="ge">&ge;</option>
+                            <option value="eq">=</option>
+                            <option value="le">&le;</option>
+                            <option value="lt">&lt;</option>
+                        </select>
                         <input type="number" class="form-control" v-model.number="filter.value" />
-                        <div class="input-group-append">
-                            <select class="form-control rounded-0" v-model="filter.what">
-                                <option value="unread">{{ tr("settingGroupFilterVariableUnread") }}</option>
-                                <option value="days_since_first_unread">{{ tr("settingGroupFilterVariableDays") }}</option>
-                                <option value="days_since_latest">{{ tr("settingGroupFilterVariableLatest") }}</option>
-                            </select>
-                            <button type="button" class="btn btn-danger" :title="tr('settingGroupFilterVariableDelete')" @click.prevent="removeFilter(group, filter)">
-                                <i class="fa fa-trash-o"></i>
-                            </button>
-                        </div>
+                        <select class="form-select" v-model="filter.what">
+                            <option value="unread">{{ tr("settingGroupFilterVariableUnread") }}</option>
+                            <option value="days_since_first_unread">{{ tr("settingGroupFilterVariableDays") }}</option>
+                            <option value="days_since_latest">{{ tr("settingGroupFilterVariableLatest") }}</option>
+                        </select>
+                        <button type="button" class="btn btn-danger" :title="tr('settingGroupFilterVariableDelete')" @click.prevent="removeFilter(group, filter)">
+                            <i class="fa fa-trash-o"></i>
+                        </button>
                     </div>
                 </div>
             </div>

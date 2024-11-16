@@ -274,8 +274,8 @@ onMounted(() => {
                     <options-groups :groups="settings.groups" :reading-lists="settings.readingLists" @save-groups="saveGroups" />
                 </div>
                 <div class="block-footer">
-                    <button class="btn btn-secondary float-right settings-back" @click="closeSettings"><i class="fa fa-chevron-circle-left"></i> {{ tr("settingsBack") }}</button>
-                    <button class="btn btn-primary float-left" id="open-general-settings" @click="openGeneralSettings"><i class="fa fa-cogs"></i> {{ tr("settingsGeneral") }}</button>
+                    <button class="btn btn-secondary float-end settings-back" @click="closeSettings"><i class="fa fa-chevron-circle-left"></i> {{ tr("settingsBack") }}</button>
+                    <button class="btn btn-primary float-start" id="open-general-settings" @click="openGeneralSettings"><i class="fa fa-cogs"></i> {{ tr("settingsGeneral") }}</button>
                 </div>
             </div>
             <div id="settings-general" v-if="settings.panel === 'general'">
@@ -283,8 +283,8 @@ onMounted(() => {
                     <options-general :settings="props.settings" :has-sidebar="settings.hasSidebar" :has-badge="settings.hasBadge" />
                 </div>
                 <div class="block-footer">
-                    <button class="btn btn-secondary float-right settings-back" @click="closeSettings"><i class="fa fa-chevron-circle-left"></i> {{ tr("settingsBack") }}</button>
-                    <button class="btn btn-primary float-left" id="open-groups-settings" @click="openGroupsSettings"><i class="fa fa-list"></i> {{ tr("settingsGroups") }}</button>
+                    <button class="btn btn-secondary float-end settings-back" @click="closeSettings"><i class="fa fa-chevron-circle-left"></i> {{ tr("settingsBack") }}</button>
+                    <button class="btn btn-primary float-start" id="open-groups-settings" @click="openGroupsSettings"><i class="fa fa-list"></i> {{ tr("settingsGroups") }}</button>
                 </div>
             </div>
         </div>
@@ -320,21 +320,23 @@ onMounted(() => {
                     </form>
                     <p v-if="search.message">{{ search.message }}</p>
                     <table id="search-results" class="table table-sm" v-if="searchResults && searchResults.length > 0">
-                        <tr v-for="result in searchResults" :key="result.url">
-                            <td class="novel-icon" style="width: 0%">
-                                <img :src="result.img" alt="" />
-                            </td>
-                            <td class="novel-name">
-                                <a :href="result.url" target="_blank">
-                                    {{ result.name }}
-                                </a>
-                            </td>
-                            <td style="width: 0%">
-                                <button class="btn btn-xs btn-success btn-icon" @click="addNovel(result.url)">
-                                    <i class="fa fa-plus"></i>
-                                </button>
-                            </td>
-                        </tr>
+                        <tbody>
+                            <tr v-for="result in searchResults" :key="result.url">
+                                <td class="novel-icon">
+                                    <img :src="result.img" alt="" />
+                                </td>
+                                <td class="novel-name w-100">
+                                    <a :href="result.url" target="_blank">
+                                        {{ result.name }}
+                                    </a>
+                                </td>
+                                <td>
+                                    <button class="btn btn-xs btn-success btn-icon" @click="addNovel(result.url)">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
                 <table id="novel-table" class="table table-sm">
@@ -353,12 +355,12 @@ onMounted(() => {
                 </table>
             </div>
             <div class="block-footer">
-                <button id="open-settings" class="btn btn-secondary float-right" @click="openSettings"><i class="fa fa-cogs"></i> {{ tr("buttonSettings") }}</button>
-                <a href="https://www.novelupdates.com/reading-list/" target="_blank" class="btn btn-success float-left mr-1"><i class="fa fa-external-link"></i> {{ tr("buttonOpen") }}</a>
+                <button id="open-settings" class="btn btn-secondary float-end" @click="openSettings"><i class="fa fa-cogs"></i> {{ tr("buttonSettings") }}</button>
+                <a href="https://www.novelupdates.com/reading-list/" target="_blank" class="btn btn-success float-start me-1"><i class="fa fa-external-link"></i> {{ tr("buttonOpen") }}</a>
                 <div class="d-flex align-items-center">
                     <button class="btn btn-info" @click="refreshNovels"><i class="fa fa-refresh"></i> {{ tr("buttonRefresh") }}</button>
-                    <span class="ml-3 text-muted">{{ tr("nextRefresh", novels.nextRefresh) }}</span>
-                    <span class="ml-2 text-warning" id="loading-error" :title="novels.error" v-if="novels.error"><i class="fa fa-exclamation-triangle"></i></span>
+                    <span class="ms-3 text-muted">{{ tr("nextRefresh", novels.nextRefresh) }}</span>
+                    <span class="ms-2 text-warning" id="loading-error" :title="novels.error" v-if="novels.error"><i class="fa fa-exclamation-triangle"></i></span>
                 </div>
             </div>
         </div>

@@ -24,7 +24,7 @@
   "homepage": "https://github.com/Spark-NF/novel-updates-notifier#readme",
   "dependencies": {
     "@types/firefox-webext-browser": "120.0.3",
-    "bootstrap": "4.6.2",
+    "bootstrap": "5.3.3",
     "font-awesome": "4.7.0",
     "rollup": "4.27.2",
     "rollup-plugin-commonjs": "10.1.0",

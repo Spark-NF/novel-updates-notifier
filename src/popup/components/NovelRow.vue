@@ -95,7 +95,7 @@ async function startEdition() {
             <a :href="novel.url" target="_blank">
                 {{ novel.name }}
             </a>
-            <span class="badge badge-primary" v-if="novel.nextLength > 0">
+            <span class="badge bg-primary" v-if="novel.nextLength > 0">
                 {{ novel.nextLength }}
             </span>
         </td>

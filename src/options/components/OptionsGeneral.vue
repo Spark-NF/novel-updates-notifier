@@ -38,9 +38,9 @@ const sumUnreadChapters = computed({
     <form>
         <div class="form-group row">
             <label for="interval" class="col-4 col-form-label">{{ tr("settingInterval") }}</label>
-            <div class="col-8 input-group">
-                <input type="number" class="form-control" name="interval" id="interval" v-model="interval" />
-                <div class="input-group-append">
+            <div class="col-8">
+                <div class="input-group">
+                    <input type="number" class="form-control" name="interval" id="interval" v-model="interval" />
                     <span class="input-group-text">{{ tr("settingIntervalSuffix") }}</span>
                 </div>
             </div>

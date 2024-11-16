@@ -12,6 +12,10 @@ body {
 	position: relative;
 }
 
+select.operator-select {
+	max-width: 70px;
+}
+
 .block-body {
 	padding: 15px;
 	padding-bottom: 85px;
