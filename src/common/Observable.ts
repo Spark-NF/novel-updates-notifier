@@ -1,4 +1,4 @@
-// tslint:disable:ban-types
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 
 export class Observable {
     private events: { [event: string]: Function[] } = {};
