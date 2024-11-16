@@ -7,7 +7,7 @@ describe("notify", () => {
             notifications: {
                 create: mock,
             },
-            extension: {
+            runtime: {
                 getURL: (x: string) => x,
             },
         } as any;

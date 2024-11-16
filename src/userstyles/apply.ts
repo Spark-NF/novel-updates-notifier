@@ -15,7 +15,7 @@
                     const link = document.createElement("link");
                     link.setAttribute("rel", "stylesheet");
                     link.setAttribute("type", "text/css");
-                    link.setAttribute("href", browser.extension.getURL("src/userstyles/css/" + domain + ".css"));
+                    link.setAttribute("href", browser.runtime.getURL("src/userstyles/css/" + domain + ".css"));
                     head.appendChild(link);
                 });
             }
