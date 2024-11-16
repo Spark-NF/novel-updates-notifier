@@ -34,7 +34,7 @@
     "rollup-plugin-typescript": "1.0.1",
     "rollup-plugin-vue": "5.1.6",
     "typescript": "5.6.3",
-    "vue": "2.7.16",
+    "vue": "3.0.0",
     "vue-class-component": "7.2.6",
     "vue-property-decorator": "8.4.1",
     "vue-template-compiler": "2.7.16",
