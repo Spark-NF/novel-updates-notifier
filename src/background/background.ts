@@ -135,7 +135,7 @@ async function reloadReadingList(): Promise<void> {
     } catch (e) {
         if (e.message === "Cloudflare") {
             // tslint:disable-next-line:no-console
-            console.log("Clouflare challenge while loading reading list");
+            console.log("Clouflare challenge while loading reading list...");
             setBadge(tr("badgeCloudflareError"), "red", "white");
             window.cloudflareError = true;
         } else {

@@ -2,7 +2,7 @@ import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs'
 // import {eslint} from "rollup-plugin-eslint";
 import typescript from 'rollup-plugin-typescript';
-import VuePlugin from "rollup-plugin-vue";
+import vuePlugin from "rollup-plugin-vue";
 
 const files = {
     "src/background/background.ts": "src/background/bundle.js",
@@ -19,21 +19,19 @@ export default Object.keys(files).map(input => ({
         format: "iife",
         globals: {
             "vue": "Vue",
-            "vue-class-component": "VueClassComponent",
         },
     },
     treeshake: false,
-    external: ["vue", "vue-class-component"],
+    external: ["vue"],
     plugins: [
         resolve(),
         commonjs(),
-        VuePlugin({
-            template: {
-                transformAssetUrls: {
-                    img: [],
-                },
-                isProduction: false,
+        vuePlugin({
+            target: "browser",
+            transformAssetUrls: {
+                img: [],
             },
+            isProduction: false,
         }),
         /*eslint({
             include: "src-**-*.ts",

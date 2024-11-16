@@ -1,26 +1,15 @@
-<template>
-    <options-general :settings="settings" :has-sidebar="hasSidebar" :has-badge="hasBadge" />
-</template>
-
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import { Settings } from "../../common/Settings";
+<script setup lang="ts">
 import OptionsGeneral from "./OptionsGeneral.vue";
+import { Settings } from "../../common/Settings";
 
-@Component({
-    components: { OptionsGeneral }
-})
-export default class Options extends Vue {
-    @Prop() settings: Settings;
+const props = defineProps<{
+    settings: Settings
+}>();
 
-    public hasSidebar: boolean;
-    public hasBadge: boolean;
-
-    constructor(opts: any) {
-        super();
-
-        this.hasSidebar = browser.sidebarAction !== undefined;
-        this.hasBadge = !!(browser.browserAction && browser.browserAction.setBadgeText);
-    }
-};
+const hasSidebar = browser.sidebarAction !== undefined;
+const hasBadge = !!(browser.browserAction && browser.browserAction.setBadgeText);
 </script>
+
+<template>
+    <options-general :settings="props.settings" :has-sidebar="hasSidebar" :has-badge="hasBadge" />
+</template>
