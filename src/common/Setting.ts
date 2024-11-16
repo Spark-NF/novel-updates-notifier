@@ -55,6 +55,8 @@ export class Setting<T> extends Observable {
 
             this.fireEvent("change", [this.value]);
             browser.runtime.sendMessage({ type: "setting-change", key: this.key });
+
+            console.debug("Set setting", this.key, this.value);
         }
     }
 }
