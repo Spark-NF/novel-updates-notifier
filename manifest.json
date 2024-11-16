@@ -19,7 +19,7 @@
 	"content_security_policy": "script-src 'self'; object-src 'self'; connect-src https://www.novelupdates.com",
 	"default_locale": "en",
 
-	"applications": {
+	"browser_specific_settings": {
 		"gecko": {
 			"id": "novel-updates-notifier-firefox@nicolas-faure.fr",
 			"strict_min_version": "55.0"
