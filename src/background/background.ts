@@ -134,13 +134,11 @@ async function reloadReadingList(): Promise<void> {
         window.cloudflareError = undefined;
     } catch (e) {
         if (e.message === "Cloudflare") {
-            // tslint:disable-next-line:no-console
-            console.log("Clouflare challenge while loading reading list...");
+            console.error("Clouflare challenge while loading reading list...");
             setBadge(tr("badgeCloudflareError"), "red", "white");
             window.cloudflareError = true;
         } else {
-            // tslint:disable-next-line:no-console
-            console.log("Error loading reading list", e);
+            console.error("Error loading reading list", e);
             setBadge(tr("badgeError"), "red", "white");
             window.networkError = e.toString();
         }

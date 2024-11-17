@@ -264,8 +264,7 @@ export class NovelUpdatesClient {
             return ret;
         }
 
-        // tslint:disable-next-line:no-console
-        console.log("No chapter found by name", name);
+        console.warn("No chapter found by name", name);
         return undefined;
     }
 
