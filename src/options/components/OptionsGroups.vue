@@ -105,7 +105,7 @@ function saveGroups() {
                 </div>
             </div>
         </div>
-        <button type="button" class="btn btn-success" @click.prevent="addGroup"><i class="fa fa-plus"></i> {{ tr("settingGroupAdd") }}</button>
+        <button type="button" class="btn btn-success me-1" @click.prevent="addGroup"><i class="fa fa-plus"></i> {{ tr("settingGroupAdd") }}</button>
         <button type="button" class="btn btn-primary" @click.prevent="saveGroups"><i class="fa fa-save"></i> {{ tr("settingGroupSave") }}</button>
     </form>
 </template>
