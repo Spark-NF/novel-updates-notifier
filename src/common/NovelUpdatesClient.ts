@@ -275,7 +275,7 @@ export class NovelUpdatesClient {
             && chapters.length >= 1
             && novel.latest.id !== undefined
             && chapters[chapters.length - 1].id !== novel.latest.id;
-        if (!chapters || wrongLatest) {
+        if (!chapters || chapters.length === 0 || wrongLatest) {
             chapters = await this.loadSeriesChapters(novel.id);
             const storageDuration = (novel.latest.id !== undefined ? 24 : 2) * 60 * 60 * 1000;
             await this.storage.setCache(cacheKey, chapters, storageDuration);
