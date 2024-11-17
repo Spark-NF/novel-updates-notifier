@@ -294,7 +294,7 @@ onMounted(() => {
                 <span>
                     Cloudflare challenge detected<br/><br/>
                     <a href="https://www.novelupdates.com/reading-list/" target="_blank" class="btn btn-success"><i class="fa fa-external-link"></i> {{ tr("buttonOpen") }} </a>
-                    <button class="btn btn-info" @click="refreshNovels"><i class="fa fa-refresh"></i> {{ tr("buttonRefresh") }}</button>
+                    <button class="btn btn-info ms-1" @click="refreshNovels"><i class="fa fa-refresh"></i> {{ tr("buttonRefresh") }}</button>
                 </span>
             </div>
         </div>
