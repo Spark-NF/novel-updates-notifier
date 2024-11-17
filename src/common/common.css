@@ -25,6 +25,10 @@
 	margin-right: 0;
 }
 
+.me-1px {
+	margin-right: 1px;
+}
+
 .btn-info {
 	--bs-btn-color: #fff;
 	--bs-btn-hover-color: #fff;

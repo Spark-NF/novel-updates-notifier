@@ -121,10 +121,10 @@ async function startEdition() {
             <chapter-link :chapter="novel.latest" :open-in-sidebar="openInSidebar" />
         </td>
         <td class="novel-actions" v-if="!loadingMessage">
-            <button class="btn btn-xs btn-icon btn-success" :title="tr('novelTableButtonMarkLastRead')" @click="markLatestAsRead" v-if="hasNew && novel.status.id && novel.latest.id !== undefined && !novel.manual">
+            <button class="btn btn-xs btn-icon btn-success me-1px" :title="tr('novelTableButtonMarkLastRead')" @click="markLatestAsRead" v-if="hasNew && novel.status.id && novel.latest.id !== undefined && !novel.manual">
                 <i class="fa fa-check"></i>
             </button>
-            <button class="btn btn-xs btn-icon btn-warning" :title="tr('novelTableButtonEditManually')" @click="startEdition" v-if="!editing">
+            <button class="btn btn-xs btn-icon btn-warning me-1px" :title="tr('novelTableButtonEditManually')" @click="startEdition" v-if="!editing">
                 <i class="fa fa-pencil"></i>
             </button>
             <button class="btn btn-xs btn-icon btn-danger" :title="tr('novelTableButtonRemove')" @click="removeNovel(novel)">
