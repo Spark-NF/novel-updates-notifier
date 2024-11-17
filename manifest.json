@@ -38,7 +38,7 @@
 		"storage",
 		"cookies",
 		"notifications",
-		"*://www.novelupdates.com/*"
+		"*://*.novelupdates.com/*"
 	],
 	"optional_permissions": [
 		"webNavigation",
