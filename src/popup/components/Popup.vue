@@ -242,7 +242,7 @@ onMounted(() => {
     <div :class="{ 'no-overflow': loadingMessage || settings.open }">
         <div id="loader" class="overlay" v-if="loadingMessage">
             <div>
-                <img src="../../common/loading.gif" alt="" /><br/>
+                <img src="../common/loading.gif" alt="" /><br/>
                 <span>{{ loadingMessage }}</span>
             </div>
         </div>
@@ -290,7 +290,7 @@ onMounted(() => {
         </div>
         <div id="error" v-if="novels.cloudflareError" style="padding: 20px 0">
             <div>
-                <img src="../../common/error.png" alt="Error" /><br/>
+                <img src="../common/error.png" alt="Error" /><br/>
                 <span>
                     Cloudflare challenge detected<br/><br/>
                     <a href="https://www.novelupdates.com/reading-list/" target="_blank" class="btn btn-success"><i class="fa fa-external-link"></i> {{ tr("buttonOpen") }} </a>

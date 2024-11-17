@@ -100,7 +100,7 @@ async function startEdition() {
             </span>
         </td>
         <td class="novel-loading" colspan="4" v-if="loadingMessage">
-            <img src="../../common/loading.gif" alt="" />
+            <img src="../common/loading.gif" alt="" />
             {{ loadingMessage }}
         </td>
         <td class="novel-chapter" v-if="!loadingMessage">
