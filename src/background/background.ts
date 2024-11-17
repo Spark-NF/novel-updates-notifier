@@ -25,7 +25,7 @@ export interface ICustomWindow extends Window {
     tryLogin: (username: string, password: string) => Promise<boolean>;
     updateReadingList: (novel: IReadingListResult) => boolean;
 }
-declare var window: ICustomWindow;
+declare let window: ICustomWindow;
 
 const storage = new Storage();
 const settings = new Settings(storage);
@@ -46,7 +46,7 @@ async function tryLogin(username: string, password: string): Promise<boolean> {
     }
     try {
         await client.login(username, password);
-    } catch (e) {
+    } catch {
         /* no-op */
     }
     for (let i = 0; i < 30; ++i) {

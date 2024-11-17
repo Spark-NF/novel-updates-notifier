@@ -2,7 +2,7 @@ export function objectToParams(obj: any): string {
     let str = "";
     if (typeof obj === "object") {
         for (const key in obj) {
-            if (obj.hasOwnProperty(key) && obj[key] !== undefined && typeof obj[key] !== "object") {
+            if (Object.prototype.hasOwnProperty.call(obj, key) && obj[key] !== undefined && typeof obj[key] !== "object") {
                 if (str !== "") {
                     str += "&";
                 }

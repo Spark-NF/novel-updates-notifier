@@ -1,7 +1,7 @@
 import { WebNavigationListener } from "./WebNavigationListener";
 
 class TestListener extends WebNavigationListener {
-    protected async onCommitted(data: any): Promise<void> { /* No-op */ }
+    protected async onCommitted(): Promise<void> { /* No-op */ }
 }
 
 function makeMock() {

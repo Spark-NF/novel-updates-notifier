@@ -1,6 +1,6 @@
 import { IListener } from "./Listener";
 
-declare var chrome: any;
+// declare var chrome: any;
 
 export class ContentScriptsManager implements IListener {
     private domains: string[];

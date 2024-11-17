@@ -5,7 +5,7 @@ export class FakeStorageArea implements browser.storage.StorageArea {
         keys = Array.isArray(keys) || keys === null || keys === undefined ? keys : [keys];
         const ret: { [key: string]: any } = {};
         for (const key in this.data) {
-            if (this.data.hasOwnProperty(key) && (keys === null || (keys as string[]).includes(key))) {
+            if (Object.prototype.hasOwnProperty.call(this.data, key) && (keys === null || (keys as string[]).includes(key))) {
                 ret[key] = this.data[key];
             }
         }
@@ -14,7 +14,7 @@ export class FakeStorageArea implements browser.storage.StorageArea {
 
     public async set(items: any): Promise<void> {
         for (const key in items) {
-            if (items.hasOwnProperty(key)) {
+            if (Object.prototype.hasOwnProperty.call(items, key)) {
                 this.data[key] = items[key];
             }
         }

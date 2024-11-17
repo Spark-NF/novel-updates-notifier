@@ -4,7 +4,7 @@ export class Observable {
     private events: { [event: string]: Function[] } = {};
 
     public addEventListener(name: string, handler: Function): void {
-        if (this.events.hasOwnProperty(name)) {
+        if (Object.prototype.hasOwnProperty.call(this.events, name)) {
             this.events[name].push(handler);
         } else {
             this.events[name] = [handler];
@@ -12,7 +12,7 @@ export class Observable {
     }
 
     public removeEventListener(name: string, handler: Function) {
-        if (!this.events.hasOwnProperty(name)) {
+        if (!Object.prototype.hasOwnProperty.call(this.events, name)) {
             return;
         }
 
@@ -23,7 +23,7 @@ export class Observable {
     }
 
     public fireEvent(name: string, args?: any[]) {
-        if (!this.events.hasOwnProperty(name)) {
+        if (!Object.prototype.hasOwnProperty.call(this.events, name)) {
             return;
         }
 
@@ -32,7 +32,7 @@ export class Observable {
         }
 
         for (const handler of this.events[name]) {
-            handler.apply(null, args);
+            handler(...args);
         }
     }
 }

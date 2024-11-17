@@ -20,7 +20,7 @@ export class Storage {
             if (await browser.storage.sync.get(undefined)) {
                 return browser.storage.sync;
             }
-        } catch (e) { /* ignore */ }
+        } catch { /* ignore */ }
         return browser.storage.local;
     }
 
